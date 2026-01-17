@@ -20,7 +20,7 @@ export const CounterFeature = () => {
   return (
     <div>
       <h2>Counter Feature</h2>
-      <p>Count: {count}</p>
+      <p>Count: { count }</p>
       <button onClick={increment}>+</button>
       <button onClick={decrement}>-</button>
       <button onClick={reset}>Reset</button>
