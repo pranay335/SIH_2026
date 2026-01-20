@@ -1,35 +1,30 @@
-require('dotenv').config();
-const mongoose = require('mongoose');
-const app = require('./app');
+const express = require('express');
+const cors = require('cors');
+const connectDB = require('./config/database');
+const complaintRoutes = require('./routes/complaintRoutes');
+const userRoutes = require('./routes/userRoutes');
+const errorHandler = require('./middleware/errorHandler');
 
-// MongoDB Connection
-const connectDB = async () => {
-  try {
-    const mongoURI =
-      process.env.MONGO_URI || 'mongodb://localhost:27017/complaints_db';
+const app = express();
 
-    await mongoose.connect(mongoURI, {
-      serverSelectionTimeoutMS: 5000,   // modern, safe option
-    });
+app.use(cors());
+app.use(express.json({ limit: '10mb' }));
 
-    console.log('✅ MongoDB Connected successfully');
-  } catch (error) {
-    console.error('❌ MongoDB Connection Error:', error.message);
-    process.exit(1);
-  }
-};
+app.get('/', (req, res) => {
+  res.send('🚀 Backend server is running!');
+});
+
+app.use('/api/complaints', complaintRoutes);
+app.use('/api/users', userRoutes);
+
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
 // Connect to database and start server
-connectDB()
-  .then(() => {
-    app.listen(PORT, () => {
-      console.log(`🚀 Server is running on port ${PORT}`);
-      console.log(`📡 API available at http://localhost:${PORT}/api`);
-    });
-  })
-  .catch((err) => {
-    console.error('Failed to start server:', err);
-    process.exit(1);
+connectDB().then(() => {
+  app.listen(PORT, () => {
+    console.log(`🚀 Server is running on port ${PORT}`);
+    console.log(`📡 API available at http://localhost:${PORT}/api`);
   });
+});
