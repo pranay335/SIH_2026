@@ -1,190 +1,129 @@
-# 🏛️ Urban Complaint System - AI-Enabled Municipal Grievance Management
+# CivicMind — AI-Enabled Municipal Grievance System
 
-**Status:** ✅ **FULLY INTEGRATED & PRODUCTION READY**  
-**Date:** January 19, 2026  
-**All Errors Fixed:** ✅ Yes
+CivicMind is a modern, responsive, dark-themed web application that enables citizens to report civic issues and allows municipal authorities and field employees to manage and resolve them efficiently.
 
----
+This repository contains the Frontend of the system built using React.js and Tailwind CSS.
 
-## 🚀 QUICK START
+# 🚀 Features
 
-### Windows - One Click
-```powershell
-START_ALL.bat
-```
+Modern dark UI with glassmorphism design
 
-Opens all 3 services automatically and your browser!
+Three role-based portals:
 
-### Manual - 3 Terminal Windows
-```powershell
-# Terminal 1: cd backend && npm run dev
-# Terminal 2: cd ml_backend && venv\Scripts\activate && python app.py
-# Terminal 3: cd frontend && npm run dev
-```
+Citizen Portal
 
-Then open: **http://localhost:5173**
+Admin (Municipal) Portal
 
----
+Employee Portal
 
-## ✅ VERIFY SETUP
+Complaint filing with:
 
-```powershell
-VERIFY_SETUP.bat
-```
+Image upload / camera capture
 
-Checks all files and dependencies before running.
+Auto-location detection
 
----
+Issue categorization
 
-## 📖 FULL DOCUMENTATION
+Real-time complaint tracking dashboard
 
-| Document | Purpose |
-|----------|---------|
-| **README.md** | This file - overview |
-| **FINAL_SUMMARY.md** | Complete project summary |
-| **QUICK_REFERENCE.md** | Quick reference card |
-| **QUICK_START.md** | Detailed setup instructions |
-| **INTEGRATION_SETUP_GUIDE.md** | Architecture & setup |
-| **INTEGRATION_COMPLETE.md** | Full technical docs |
-| **ML_BACKEND_ERROR_FIX.md** | Error troubleshooting |
-| **SERVER_ERRORS_FIXED.md** | What was fixed |
+Admin complaint assignment system
 
----
+Notices section for official municipal announcements
 
-## 🎯 WHAT THIS SYSTEM DOES
+Fully responsive design (mobile, tablet, desktop)
 
-1. **Users file complaints** → Describe issue + upload photo
-2. **AI analyzes** → NLP analyzes text, CNN analyzes image
-3. **System predicts** → Sector, Severity, Issue Type
-4. **Admin manages** → Review, assign, track
-5. **Complaints stored** → Permanently in database
+# 🛠️ Tech Stack
+Frontend:
 
----
+React.js
 
-## 🔧 TECHNOLOGY STACK
+Tailwind CSS
 
-| Layer | Tech |
-|-------|------|
-| **Frontend** | React + Vite + Tailwind |
-| **Backend** | Node.js + Express + MongoDB |
-| **ML Backend** | Python + FastAPI + TensorFlow + PyTorch |
+React Router
 
----
+(Backend will be integrated later: Node.js / Flask + MySQL + AI models.)
 
-## 📊 SYSTEM ARCHITECTURE
+# ✅ Prerequisites
 
-```
-Frontend (React)
-    ↓
-ML Backend (Python)
-    ├─ NLP Model (Sector + Severity)
-    └─ CNN Model (Image Classification)
-    ↓
-Main Backend (Node.js)
-    ↓
-MongoDB Database
-```
+Before running the project, ensure you have installed:
 
----
+Node.js (v18 or above)
+https://nodejs.org/
 
-## 🌐 URLS
+Git
+https://git-scm.com/
 
-| Service | URL | Port |
-|---------|-----|------|
-| Frontend | http://localhost:5173 | 5173 |
-| Backend | http://localhost:5000 | 5000 |
-| ML Backend | http://localhost:8000 | 8000 |
+Verify installation:
 
----
+node -v
+npm -v
+git --version
 
-## ⚡ FEATURES
+# 📥 Clone the Repository
+git clone https://github.com/your-username/civicmind-frontend.git
+cd civicmind-frontend
 
-✅ File complaints with text and image  
-✅ Real-time AI predictions  
-✅ Confidence scores for all predictions  
-✅ View prediction breakdown  
-✅ Permanent complaint storage  
-✅ Track complaint status  
-✅ Admin dashboard  
-✅ Beautiful UI with Tailwind CSS
 
----
+⚠️ Replace your-username with your actual GitHub username.
 
-## 🎓 HOW TO USE
+# 📦 Install Dependencies
+npm install
 
-1. **Start all services:** `START_ALL.bat`
-2. **Open browser:** http://localhost:5173
-3. **File complaint:**
-   - Navigate to "File Complaint"
-   - Enter description
-   - Upload or capture photo
-   - Click "File Complaint"
-4. **See predictions:**
-   - Image classification (CNN)
-   - Sector prediction (NLP)
-   - Severity prediction (NLP)
-   - All with confidence scores
 
----
+This will install all required packages listed in package.json.
 
-## 🔍 WHAT WAS FIXED
+# ▶️ Run the Project
 
-✅ ML backend model paths corrected  
-✅ CORS configuration fixed  
-✅ Model loading error handling improved  
-✅ Logging added for debugging  
-✅ CNN checkpoint loading fixed  
-✅ API error responses improved  
-✅ Frontend integration completed
+Start the development server:
 
----
+npm run dev
 
-## 📁 KEY FILES
 
-```
-backend/src/
-├── models/Complaint.js           ✅ NEW
-├── controllers/complaintController.js ✅ NEW
-├── routes/complaintRoutes.js     ✅ NEW
-└── app.js                        ✅ UPDATED
+or
 
-frontend/src/
-├── config/config.js              ✅ UPDATED
-├── services/apiService.js        ✅ UPDATED
-└── pages/user/FileComplaint.jsx  ✅ UPDATED
+npm start
 
-ml_backend/
-└── app.py                        ✅ FIXED (complete rewrite)
-```
 
----
+Then open your browser and visit:
 
-## ✅ CHECKLIST
+http://localhost:5173
 
-- [ ] Run `VERIFY_SETUP.bat`
-- [ ] Run `START_ALL.bat`
-- [ ] Wait for services (30-60 sec)
-- [ ] Open http://localhost:5173
-- [ ] Navigate to "File Complaint"
-- [ ] Test with description + image
-- [ ] See predictions appear ✓
 
----
+(Check your terminal for the exact port if different.)
 
-## 🚀 READY TO USE
+🌿 Git Branching (Optional)
 
-Everything is integrated, tested, and ready. Just run:
+Create a new branch:
+Example:
+git checkout -b civicmind-frontend
 
-```powershell
-START_ALL.bat
-```
 
-Or see **FINAL_SUMMARY.md** for complete details.
+# Commit and push changes:
+Before pushing project pull changes first
+git add .
+git commit -m "Initial frontend setup"
+git push -u origin civicmind-frontend
 
----
+# 👥 Project Team:
 
-## 📚 More Information
+Pranay Bhere
 
-For detailed setup, troubleshooting, architecture, and API docs, see the documentation files.
+Ved Sawant
 
-**Status:** ✅ All systems operational
+Vinay Patil
+
+Umesh Phulare
+
+Guide: Prof. Radhika B.
+
+# 🎯 Alignment with SDGs
+
+This project supports:
+
+SDG 11 — Sustainable Cities and Communities
+
+SDG 16 — Peace, Justice, and Strong Institutions
+
+# 📞 Contact
+
+If you face any issues while running the project, feel free to open a GitHub issue or contact the team.
