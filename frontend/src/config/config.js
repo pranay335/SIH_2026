@@ -1,19 +1,25 @@
-// Example configuration file
-// This file contains application-wide configuration settings
-
-export const API_BASE_URL = 'https://api.example.com';
-export const APP_NAME = 'My App';
+// Application configuration
+export const API_BASE_URL = 'http://localhost:5000/api';
+export const ML_API_BASE_URL = 'http://localhost:8000';
+export const APP_NAME = 'Urban Complaint System';
 export const VERSION = '1.0.0';
 
-// Database configuration (if needed)
-export const DB_CONFIG = {
-  host: 'localhost',
-  port: 5432,
-  database: 'myapp_db'
+// API endpoints
+export const API_ENDPOINTS = {
+  USERS: '/users',
+  COMPLAINTS: '/complaints',
+  PREDICTIONS: '/predict',
 };
 
 // Feature flags
 export const FEATURES = {
   enableDarkMode: true,
-  enableNotifications: false
+  enableNotifications: true,
+  enableMLPredictions: true,
+};
+
+// Timeout configurations (in milliseconds)
+export const TIMEOUTS = {
+  API_CALL: 30000,
+  ML_PREDICTION: 60000,
 };

@@ -1,25 +1,37 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../../components/button.jsx';
+import { predictionService, complaintService } from '../../services/apiService.js';
 
 const FileComplaint = () => {
     const [formData, setFormData] = useState({
         description: '',
-        sector: '',
-        location: '',
-        image: null
+        image: null,
+        location: ''
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [imagePreview, setImagePreview] = useState(null);
+    const [predictionResult, setPredictionResult] = useState(null);
+    const [error, setError] = useState(null);
+    const [showCameraModal, setShowCameraModal] = useState(false);
+    const [stream, setStream] = useState(null);
+    const [cameraError, setCameraError] = useState(null);
     const navigate = useNavigate();
 
-    const sectors = [
-        'Road',
-        'Water',
-        'Electricity',
-        'Garbage',
-        'Drainage'
-    ];
+    useEffect(() => {
+        if (showCameraModal && stream) {
+            const video = document.getElementById('camera-video');
+            if (video) {
+                video.srcObject = stream;
+            }
+        }
+        
+        return () => {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+        };
+    }, [showCameraModal, stream]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -38,13 +50,55 @@ const FileComplaint = () => {
         }
     };
 
-    const handleCameraCapture = () => {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = 'image/*';
-        input.capture = 'environment';
-        input.onchange = (e) => handleImageChange(e);
-        input.click();
+    const startCamera = async () => {
+        try {
+            setCameraError(null);
+            const mediaStream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: 'environment' },
+                audio: false
+            });
+            setStream(mediaStream);
+            setShowCameraModal(true);
+        } catch (error) {
+            console.error('Camera access error:', error);
+            setCameraError('Unable to access camera. Please check permissions or use file upload.');
+            
+            // Fallback to basic file input with camera
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.capture = 'environment';
+            input.onchange = (e) => handleImageChange(e);
+            input.click();
+        }
+    };
+
+    const stopCamera = () => {
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+            setStream(null);
+        }
+        setShowCameraModal(false);
+    };
+
+    const capturePhoto = () => {
+        const video = document.getElementById('camera-video');
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const context = canvas.getContext('2d');
+        context.drawImage(video, 0, 0);
+        
+        canvas.toBlob((blob) => {
+            const file = new File([blob], 'camera-capture.jpg', { type: 'image/jpeg' });
+            setFormData(prev => ({ ...prev, image: file }));
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+            stopCamera();
+        }, 'image/jpeg', 0.95);
     };
 
     const handleGetLocation = () => {
@@ -58,33 +112,77 @@ const FileComplaint = () => {
                     }));
                 },
                 (error) => {
-                    alert('Unable to retrieve location. Please enter manually.');
+                    setError('Unable to retrieve location. Please enter manually.');
                     console.error('Geolocation error:', error);
                 }
             );
         } else {
-            alert('Geolocation is not supported by your browser.');
+            setError('Geolocation is not supported by your browser.');
         }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setIsSubmitting(true);
         
-        // Simulate API call
-        setTimeout(() => {
-            console.log('Complaint submitted:', formData);
-            alert('Complaint submitted successfully!');
-            setFormData({
-                description: '',
-                sector: '',
-                location: '',
-                image: null
+        if (!formData.description || !formData.image || !formData.location) {
+            setError('Please provide description, image, and location');
+            return;
+        }
+
+        setIsSubmitting(true);
+        setError(null);
+        setPredictionResult(null);
+
+        try {
+            // Call ML backend API for predictions
+            const predictionResponse = await predictionService.predictComplaint(
+                formData.description,
+                formData.image
+            );
+
+            // Prepare complaint data to save in main backend
+            const complaintData = {
+                complaint_id: predictionResponse.complaint.complaint_id,
+                description: formData.description,
+                location: formData.location,
+                image: imagePreview, // Store base64 image
+                nlp_result: predictionResponse.complaint.nlp_result,
+                cnn_result: predictionResponse.complaint.cnn_result,
+                status: predictionResponse.complaint.status,
+            };
+
+            // Save complaint to main backend database
+            const savedComplaint = await complaintService.fileComplaint(complaintData);
+
+            // Set prediction result to display
+            setPredictionResult({
+                message: savedComplaint.message,
+                complaint: savedComplaint.complaint,
             });
-            setImagePreview(null);
+            
+        } catch (err) {
+            console.error('Prediction/Filing error:', err);
+            setError(err.message || 'Failed to process complaint. Please try again.');
+        } finally {
             setIsSubmitting(false);
-            navigate('/user/my-complaints');
-        }, 2000);
+        }
+    };
+
+    const handleReset = () => {
+        setFormData({
+            description: '',
+            image: null,
+            location: ''
+        });
+        setImagePreview(null);
+        setPredictionResult(null);
+        setError(null);
+        setCameraError(null);
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+            setStream(null);
+        }
+        setShowCameraModal(false);
     };
 
     return (
@@ -101,28 +199,6 @@ const FileComplaint = () => {
                 </div>
 
                 <form onSubmit={handleSubmit} className="glass rounded-2xl p-6 md:p-8 space-y-6">
-                    {/* Sector */}
-                    <div>
-                        <label htmlFor="sector" className="block text-sm font-medium text-white/90 mb-2">
-                            Sector *
-                        </label>
-                        <select
-                            id="sector"
-                            name="sector"
-                            required
-                            value={formData.sector}
-                            onChange={handleInputChange}
-                            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:border-transparent transition-all duration-300"
-                        >
-                            <option value="">Select a sector</option>
-                            {sectors.map((sector) => (
-                                <option key={sector} value={sector} className="bg-[#0B0F1A]">
-                                    {sector}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-
                     {/* Description */}
                     <div>
                         <label htmlFor="description" className="block text-sm font-medium text-white/90 mb-2">
@@ -166,10 +242,10 @@ const FileComplaint = () => {
                         </div>
                     </div>
 
-                    {/* Image Upload */}
+                    {/* Image Upload/Camera */}
                     <div>
                         <label className="block text-sm font-medium text-white/90 mb-2">
-                            Photo Evidence
+                            Photo Evidence *
                         </label>
                         <div className="space-y-4">
                             {imagePreview ? (
@@ -193,28 +269,24 @@ const FileComplaint = () => {
                                     </button>
                                 </div>
                             ) : (
-                                <div className="flex flex-col sm:flex-row gap-3">
-                                    <label className="flex-1 cursor-pointer">
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            onChange={handleImageChange}
-                                            className="hidden"
-                                        />
-                                        <div className="px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white/80 hover:bg-white/10 transition-all duration-300 text-center">
-                                            📁 Upload Image
-                                        </div>
-                                    </label>
-                                    <Button
-                                        type="button"
-                                        label="📷 Camera"
-                                        variant="secondary"
-                                        onClick={handleCameraCapture}
-                                    />
-                                </div>
+                                <Button
+                                    type="button"
+                                    label="📷 Camera"
+                                    variant="secondary"
+                                    onClick={startCamera}
+                                    className="w-full"
+                                />
                             )}
                         </div>
                     </div>
+
+                    {/* Error Message */}
+                    {error && (
+                        <div className="p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200">
+                            <p className="font-medium">Error</p>
+                            <p className="text-sm">{error}</p>
+                        </div>
+                    )}
 
                     {/* Submit Button */}
                     <div className="pt-4 flex gap-4">
@@ -228,15 +300,205 @@ const FileComplaint = () => {
                         />
                         <Button
                             type="submit"
-                            label={isSubmitting ? "Submitting..." : "Submit Complaint"}
+                            label={isSubmitting ? "Analyzing..." : "File Complaint"}
                             variant="primary"
                             size="large"
-                            disabled={isSubmitting}
+                            disabled={isSubmitting || !formData.description || !formData.image || !formData.location}
                             className="flex-1"
                         />
                     </div>
                 </form>
+
+                {/* Prediction Results */}
+                {predictionResult && predictionResult.complaint && (
+                    <div className="mt-8 glass rounded-2xl p-6 md:p-8 space-y-6">
+                        <div className="flex items-center justify-between mb-6">
+                            <h3 className="text-2xl font-bold text-white">
+                                <span className="text-gradient">Prediction Results</span>
+                            </h3>
+                            <button
+                                onClick={handleReset}
+                                className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-white transition-colors text-sm"
+                            >
+                                File Another Complaint
+                            </button>
+                        </div>
+
+                        {/* Success Message */}
+                        <div className="p-4 bg-green-500/20 border border-green-500/50 rounded-lg text-green-200">
+                            <p className="font-medium text-lg">✓ {predictionResult.message}</p>
+                            <p className="text-sm mt-1">Complaint ID: {predictionResult.complaint.complaint_id}</p>
+                            <p className="text-sm mt-1">Location: {predictionResult.complaint.location}</p>
+                        </div>
+
+                        {/* Image Classification */}
+                        <div className="bg-white/5 rounded-xl p-6 border border-white/10">
+                            <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                                <span className="text-2xl">🖼️</span>
+                                Image Classification
+                            </h4>
+                            <div className="space-y-3">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-white/80">Identified Image Type:</span>
+                                    <span className="text-white font-semibold text-lg">
+                                        {predictionResult.complaint.cnn_result.predicted_class}
+                                    </span>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <span className="text-white/80">Confidence:</span>
+                                    <span className="text-[#3B82F6] font-semibold">
+                                        {(predictionResult.complaint.cnn_result.confidence * 100).toFixed(1)}%
+                                    </span>
+                                </div>
+                                <div className="mt-4 pt-4 border-t border-white/10">
+                                    <div className="w-full bg-white/10 rounded-full h-2">
+                                        <div
+                                            className="bg-gradient-to-r from-[#3B82F6] to-[#8B5CF6] h-2 rounded-full transition-all duration-500"
+                                            style={{ width: `${predictionResult.complaint.cnn_result.confidence * 100}%` }}
+                                        ></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* NLP Predictions */}
+                        <div className="bg-white/5 rounded-xl p-6 border border-white/10">
+                            <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                                <span className="text-2xl">📝</span>
+                                Text Analysis Results
+                            </h4>
+                            <div className="grid md:grid-cols-2 gap-6">
+                                {/* Sector Prediction */}
+                                <div className="space-y-3">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-white/80">Predicted Sector:</span>
+                                        <span className="text-white font-semibold">
+                                            {predictionResult.complaint.nlp_result.predicted_sector}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-white/80">Confidence:</span>
+                                        <span className="text-[#10B981] font-semibold">
+                                            {(predictionResult.complaint.nlp_result.sector_confidence * 100).toFixed(1)}%
+                                        </span>
+                                    </div>
+                                    <div className="w-full bg-white/10 rounded-full h-2">
+                                        <div
+                                            className="bg-gradient-to-r from-[#10B981] to-[#3B82F6] h-2 rounded-full transition-all duration-500"
+                                            style={{ width: `${predictionResult.complaint.nlp_result.sector_confidence * 100}%` }}
+                                        ></div>
+                                    </div>
+                                </div>
+
+                                {/* Severity Prediction */}
+                                <div className="space-y-3">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-white/80">Predicted Severity:</span>
+                                        <span className={`font-semibold ${
+                                            predictionResult.complaint.nlp_result.predicted_severity === 'High' || 
+                                            predictionResult.complaint.nlp_result.predicted_severity === '2' ||
+                                            predictionResult.complaint.nlp_result.predicted_severity === 2
+                                                ? 'text-red-400' 
+                                                : predictionResult.complaint.nlp_result.predicted_severity === 'Medium' ||
+                                                  predictionResult.complaint.nlp_result.predicted_severity === '1' ||
+                                                  predictionResult.complaint.nlp_result.predicted_severity === 1
+                                                ? 'text-yellow-400'
+                                                : 'text-green-400'
+                                        }`}>
+                                            {predictionResult.complaint.nlp_result.predicted_severity}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-white/80">Confidence:</span>
+                                        <span className="text-[#F59E0B] font-semibold">
+                                            {(predictionResult.complaint.nlp_result.severity_confidence * 100).toFixed(1)}%
+                                        </span>
+                                    </div>
+                                    <div className="w-full bg-white/10 rounded-full h-2">
+                                        <div
+                                            className="bg-gradient-to-r from-[#F59E0B] to-[#EF4444] h-2 rounded-full transition-all duration-500"
+                                            style={{ width: `${predictionResult.complaint.nlp_result.severity_confidence * 100}%` }}
+                                        ></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Status */}
+                        <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                            <div className="flex items-center justify-between">
+                                <span className="text-white/80">Status:</span>
+                                <span className="px-4 py-2 bg-yellow-500/20 text-yellow-300 rounded-lg font-semibold">
+                                    {predictionResult.complaint.status}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
+
+            {/* Camera Modal */}
+            {showCameraModal && (
+                <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div className="bg-gray-900 rounded-2xl w-full max-w-2xl overflow-hidden">
+                        <div className="p-6 border-b border-gray-700">
+                            <div className="flex items-center justify-between">
+                                <h3 className="text-xl font-semibold text-white">📷 Capture Photo</h3>
+                                <button
+                                    onClick={stopCamera}
+                                    className="p-2 hover:bg-gray-800 rounded-lg text-white transition-colors"
+                                >
+                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div className="p-6">
+                            {cameraError ? (
+                                <div className="text-center py-8">
+                                    <div className="text-red-400 mb-4">❌ {cameraError}</div>
+                                    <button
+                                        onClick={stopCamera}
+                                        className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+                                    >
+                                        Close
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="space-y-4">
+                                    <div className="relative bg-black rounded-lg overflow-hidden" style={{ aspectRatio: '4/3' }}>
+                                        <video
+                                            id="camera-video"
+                                            autoPlay
+                                            playsInline
+                                            muted
+                                            className="w-full h-full object-cover"
+                                            style={{ transform: 'scaleX(-1)' }}
+                                        />
+                                    </div>
+                                    
+                                    <div className="flex justify-center gap-4">
+                                        <button
+                                            onClick={stopCamera}
+                                            className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            onClick={capturePhoto}
+                                            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center gap-2"
+                                        >
+                                            📸 Capture Photo
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

@@ -1,12 +1,11 @@
-// Example API service
-// This file contains functions for making API calls
-
-const API_BASE_URL = 'https://api.example.com';
+// API service for communicating with backend
+import { API_BASE_URL, ML_API_BASE_URL } from '../config/config.js';
 
 // Generic fetch wrapper
 const apiRequest = async (endpoint, options = {}) => {
   try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const url = `${API_BASE_URL}${endpoint}`;
+    const response = await fetch(url, {
       headers: {
         'Content-Type': 'application/json',
         ...options.headers,
@@ -15,12 +14,34 @@ const apiRequest = async (endpoint, options = {}) => {
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorData = await response.json().catch(() => ({ detail: 'Unknown error' }));
+      throw new Error(errorData.message || errorData.detail || `HTTP error! status: ${response.status}`);
     }
 
     return await response.json();
   } catch (error) {
     console.error('API request failed:', error);
+    throw error;
+  }
+};
+
+// ML API request wrapper for predictions
+const mlApiRequest = async (endpoint, formData) => {
+  try {
+    const url = `${ML_API_BASE_URL}${endpoint}`;
+    const response = await fetch(url, {
+      method: 'POST',
+      body: formData, // Use FormData directly, don't set Content-Type
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ detail: 'Unknown error' }));
+      throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('ML API request failed:', error);
     throw error;
   }
 };
@@ -56,23 +77,63 @@ export const userService = {
   },
 };
 
+// Complaint-related API calls
+export const complaintService = {
+  async fileComplaint(complaintData) {
+    return apiRequest('/complaints', {
+      method: 'POST',
+      body: JSON.stringify(complaintData),
+    });
+  },
+
+  async getComplaints() {
+    return apiRequest('/complaints');
+  },
+
+  async getComplaintById(id) {
+    return apiRequest(`/complaints/${id}`);
+  },
+
+  async getComplaintsByUser(userId) {
+    return apiRequest(`/complaints/user/${userId}`);
+  },
+
+  async updateComplaint(id, complaintData) {
+    return apiRequest(`/complaints/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(complaintData),
+    });
+  },
+};
+
+// ML Prediction API calls
+export const predictionService = {
+  async predictComplaint(description, image) {
+    const formData = new FormData();
+    formData.append('description', description);
+    formData.append('image', image);
+
+    return mlApiRequest('/predict', formData);
+  },
+};
+
 // Authentication service
 export const authService = {
   async login(credentials) {
-    return apiRequest('/auth/login', {
+    return apiRequest('/users/login', {
       method: 'POST',
       body: JSON.stringify(credentials),
     });
   },
 
   async logout() {
-    return apiRequest('/auth/logout', {
+    return apiRequest('/users/logout', {
       method: 'POST',
     });
   },
 
   async refreshToken() {
-    return apiRequest('/auth/refresh', {
+    return apiRequest('/users/refresh', {
       method: 'POST',
     });
   },
