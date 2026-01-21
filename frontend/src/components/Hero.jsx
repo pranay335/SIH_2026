@@ -1,6 +1,27 @@
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import Button from './button.jsx';
 
 const Hero = () => {
+    const { isAuthenticated } = useAuth();
+    const navigate = useNavigate();
+
+    const handleReportIssue = () => {
+        if (isAuthenticated) {
+            navigate('/user/complaint');
+        } else {
+            navigate('/login');
+        }
+    };
+
+    const handleViewDashboard = () => {
+        if (isAuthenticated) {
+            navigate('/user-dashboard');
+        } else {
+            navigate('/login');
+        }
+    };
+
     return (
         <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 md:pt-24">
             {/* Animated Background */}
@@ -24,13 +45,13 @@ const Hero = () => {
                         label="Report an Issue" 
                         variant="primary"
                         size="large"
-                        onClick={() => document.getElementById('complaint-form')?.scrollIntoView({ behavior: 'smooth' })}
+                        onClick={handleReportIssue}
                     />
                     <Button 
                         label="View Dashboard" 
                         variant="outline"
                         size="large"
-                        onClick={() => document.getElementById('dashboard')?.scrollIntoView({ behavior: 'smooth' })}
+                        onClick={handleViewDashboard}
                     />
                 </div>
             </div>

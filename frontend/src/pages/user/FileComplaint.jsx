@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Button from '../../components/button.jsx';
@@ -7,14 +7,33 @@ import { predictionService, complaintService } from '../../services/apiService.j
 const FileComplaint = () => {
     const [formData, setFormData] = useState({
         description: '',
-        image: null
+        image: null,
+        location: ''
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [imagePreview, setImagePreview] = useState(null);
     const [predictionResult, setPredictionResult] = useState(null);
     const [error, setError] = useState(null);
+    const [showCameraModal, setShowCameraModal] = useState(false);
+    const [stream, setStream] = useState(null);
+    const [cameraError, setCameraError] = useState(null);
     const navigate = useNavigate();
     const { user } = useAuth();
+
+    useEffect(() => {
+        if (showCameraModal && stream) {
+            const video = document.getElementById('camera-video');
+            if (video) {
+                video.srcObject = stream;
+            }
+        }
+        
+        return () => {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+        };
+    }, [showCameraModal, stream]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -33,20 +52,78 @@ const FileComplaint = () => {
         }
     };
 
-    const handleCameraCapture = () => {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = 'image/*';
-        input.capture = 'environment';
-        input.onchange = (e) => handleImageChange(e);
-        input.click();
+    const startCamera = async () => {
+        try {
+            setCameraError(null);
+            const mediaStream = await navigator.mediaDevices.getUserMedia({
+                video: { 
+                    facingMode: 'environment',
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+                },
+                audio: false
+            });
+            setStream(mediaStream);
+            setShowCameraModal(true);
+        } catch (error) {
+            console.error('Camera access error:', error);
+            setCameraError('Camera access is required. Please allow camera permissions and try again.');
+        }
+    };
+
+    const stopCamera = () => {
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+            setStream(null);
+        }
+        setShowCameraModal(false);
+    };
+
+    const capturePhoto = () => {
+        const video = document.getElementById('camera-video');
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const context = canvas.getContext('2d');
+        context.drawImage(video, 0, 0);
+        
+        canvas.toBlob((blob) => {
+            const file = new File([blob], 'camera-capture.jpg', { type: 'image/jpeg' });
+            setFormData(prev => ({ ...prev, image: file }));
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+            stopCamera();
+        }, 'image/jpeg', 0.95);
+    };
+
+    const handleGetLocation = () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    setFormData(prev => ({
+                        ...prev,
+                        location: `${latitude}, ${longitude}`
+                    }));
+                },
+                (error) => {
+                    setError('Unable to retrieve location. Please enter manually.');
+                    console.error('Geolocation error:', error);
+                }
+            );
+        } else {
+            setError('Geolocation is not supported by your browser.');
+        }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         
-        if (!formData.description || !formData.image) {
-            setError('Please provide both description and image');
+        if (!formData.description || !formData.image || !formData.location) {
+            setError('Please provide description, image, and location');
             return;
         }
 
@@ -65,6 +142,7 @@ const FileComplaint = () => {
             const complaintData = {
                 complaint_id: predictionResponse.complaint.complaint_id,
                 description: formData.description,
+                location: formData.location,
                 image: imagePreview, // Store base64 image
                 nlp_result: predictionResponse.complaint.nlp_result,
                 cnn_result: predictionResponse.complaint.cnn_result,
@@ -92,11 +170,18 @@ const FileComplaint = () => {
     const handleReset = () => {
         setFormData({
             description: '',
-            image: null
+            image: null,
+            location: ''
         });
         setImagePreview(null);
         setPredictionResult(null);
         setError(null);
+        setCameraError(null);
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+            setStream(null);
+        }
+        setShowCameraModal(false);
     };
 
     return (
@@ -130,7 +215,33 @@ const FileComplaint = () => {
                         />
                     </div>
 
-                    {/* Image Upload */}
+                    {/* Location */}
+                    <div>
+                        <label htmlFor="location" className="block text-sm font-medium text-white/90 mb-2">
+                            Location *
+                        </label>
+                        <div className="flex gap-2">
+                            <input
+                                type="text"
+                                id="location"
+                                name="location"
+                                required
+                                value={formData.location}
+                                onChange={handleInputChange}
+                                className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:border-transparent transition-all duration-300"
+                                placeholder="Address or coordinates"
+                            />
+                            <Button
+                                type="button"
+                                label="📍 Auto"
+                                variant="secondary"
+                                size="small"
+                                onClick={handleGetLocation}
+                            />
+                        </div>
+                    </div>
+
+                    {/* Image Upload/Camera */}
                     <div>
                         <label className="block text-sm font-medium text-white/90 mb-2">
                             Photo Evidence *
@@ -157,25 +268,13 @@ const FileComplaint = () => {
                                     </button>
                                 </div>
                             ) : (
-                                <div className="flex flex-col sm:flex-row gap-3">
-                                    <label className="flex-1 cursor-pointer">
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            onChange={handleImageChange}
-                                            className="hidden"
-                                        />
-                                        <div className="px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white/80 hover:bg-white/10 transition-all duration-300 text-center">
-                                            📁 Upload Image
-                                        </div>
-                                    </label>
-                                    <Button
-                                        type="button"
-                                        label="📷 Camera"
-                                        variant="secondary"
-                                        onClick={handleCameraCapture}
-                                    />
-                                </div>
+                                <Button
+                                    type="button"
+                                    label="📷 Camera"
+                                    variant="secondary"
+                                    onClick={startCamera}
+                                    className="w-full"
+                                />
                             )}
                         </div>
                     </div>
@@ -203,7 +302,7 @@ const FileComplaint = () => {
                             label={isSubmitting ? "Analyzing..." : "File Complaint"}
                             variant="primary"
                             size="large"
-                            disabled={isSubmitting || !formData.description || !formData.image}
+                            disabled={isSubmitting || !formData.description || !formData.image || !formData.location}
                             className="flex-1"
                         />
                     </div>
@@ -228,6 +327,7 @@ const FileComplaint = () => {
                         <div className="p-4 bg-green-500/20 border border-green-500/50 rounded-lg text-green-200">
                             <p className="font-medium text-lg">✓ {predictionResult.message}</p>
                             <p className="text-sm mt-1">Complaint ID: {predictionResult.complaint.complaint_id}</p>
+                            <p className="text-sm mt-1">Location: {predictionResult.complaint.location}</p>
                         </div>
 
                         {/* Image Classification */}
@@ -335,6 +435,75 @@ const FileComplaint = () => {
                     </div>
                 )}
             </div>
+
+            {/* Camera Modal */}
+            {showCameraModal && (
+                <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div className="bg-gray-900 rounded-2xl w-full max-w-2xl overflow-hidden">
+                        <div className="p-6 border-b border-gray-700">
+                            <div className="flex items-center justify-between">
+                                <h3 className="text-xl font-semibold text-white">📷 Capture Photo</h3>
+                                <button
+                                    onClick={stopCamera}
+                                    className="p-2 hover:bg-gray-800 rounded-lg text-white transition-colors"
+                                >
+                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div className="p-6">
+                            {cameraError ? (
+                                <div className="text-center py-8">
+                                    <div className="text-red-400 mb-4">❌ {cameraError}</div>
+                                    <button
+                                        onClick={startCamera}
+                                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                                    >
+                                        Try Again
+                                    </button>
+                                    <button
+                                        onClick={stopCamera}
+                                        className="ml-4 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="space-y-4">
+                                    <div className="relative bg-black rounded-lg overflow-hidden" style={{ aspectRatio: '4/3' }}>
+                                        <video
+                                            id="camera-video"
+                                            autoPlay
+                                            playsInline
+                                            muted
+                                            className="w-full h-full object-cover"
+                                            style={{ transform: 'scaleX(-1)' }}
+                                        />
+                                    </div>
+                                    
+                                    <div className="flex justify-center gap-4">
+                                        <button
+                                            onClick={stopCamera}
+                                            className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            onClick={capturePhoto}
+                                            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center gap-2"
+                                        >
+                                            📸 Capture Photo
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
