@@ -28,6 +28,41 @@ const Navbar = () => {
     const handleReportIssue = () => {
         if (isAuthenticated && role === 'user') {
             navigate('/user/complaint');
+        } else if (isAuthenticated && role === 'admin') {
+            navigate('/admin-dashboard');
+        } else {
+            navigate('/login');
+        }
+        setIsMenuOpen(false);
+    };
+
+    const handleTrackProgress = () => {
+        if (isAuthenticated && role === 'user') {
+            navigate('/user/my-complaints');
+        } else if (isAuthenticated && role === 'admin') {
+            navigate('/admin/complaints');
+        } else {
+            navigate('/login');
+        }
+        setIsMenuOpen(false);
+    };
+
+    const handleGrievances = () => {
+        if (isAuthenticated && role === 'user') {
+            navigate('/user/my-complaints');
+        } else if (isAuthenticated && role === 'admin') {
+            navigate('/admin/complaints');
+        } else {
+            navigate('/login');
+        }
+        setIsMenuOpen(false);
+    };
+
+    const handleNotices = () => {
+        if (isAuthenticated && role === 'user') {
+            navigate('/user/notices');
+        } else if (isAuthenticated && role === 'admin') {
+            navigate('/admin/notices');
         } else {
             navigate('/login');
         }
@@ -50,24 +85,24 @@ const Navbar = () => {
                         {!isAuthenticated ? (
                             <>
                                 {/* Public Navigation */}
-                                <a 
-                                    href="#dashboard" 
+                                <button 
+                                    onClick={handleReportIssue}
                                     className="text-white/80 hover:text-[#60A5FA] transition-colors duration-300"
                                 >
                                     Dashboard
-                                </a>
-                                <a 
-                                    href="#grievances" 
+                                </button>
+                                <button 
+                                    onClick={handleGrievances}
                                     className="text-white/80 hover:text-[#60A5FA] transition-colors duration-300"
                                 >
                                     Grievances
-                                </a>
-                                <a 
-                                    href="#notices" 
+                                </button>
+                                <button 
+                                    onClick={handleNotices}
                                     className="text-white/80 hover:text-[#60A5FA] transition-colors duration-300"
                                 >
                                     Notices
-                                </a>
+                                </button>
                                 <Button 
                                     label="Report Issue" 
                                     variant="primary"
@@ -190,27 +225,24 @@ const Navbar = () => {
                         {!isAuthenticated ? (
                             <>
                                 {/* Public Mobile Navigation */}
-                                <a 
-                                    href="#dashboard" 
+                                <button 
+                                    onClick={handleReportIssue}
                                     className="block text-white/80 hover:text-[#60A5FA] transition-colors duration-300"
-                                    onClick={() => setIsMenuOpen(false)}
                                 >
                                     Dashboard
-                                </a>
-                                <a 
-                                    href="#grievances" 
+                                </button>
+                                <button 
+                                    onClick={handleGrievances}
                                     className="block text-white/80 hover:text-[#60A5FA] transition-colors duration-300"
-                                    onClick={() => setIsMenuOpen(false)}
                                 >
                                     Grievances
-                                </a>
-                                <a 
-                                    href="#notices" 
+                                </button>
+                                <button 
+                                    onClick={handleNotices}
                                     className="block text-white/80 hover:text-[#60A5FA] transition-colors duration-300"
-                                    onClick={() => setIsMenuOpen(false)}
                                 >
                                     Notices
-                                </a>
+                                </button>
                                 <div className="pt-2 space-y-2">
                                     <Button 
                                         label="Report Issue" 

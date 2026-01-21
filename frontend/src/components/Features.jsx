@@ -1,4 +1,30 @@
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+
 const Features = () => {
+    const { isAuthenticated, role } = useAuth();
+    const navigate = useNavigate();
+
+    const handleQuickReporting = () => {
+        if (isAuthenticated && role === 'user') {
+            navigate('/user/complaint');
+        } else if (isAuthenticated && role === 'admin') {
+            navigate('/admin-dashboard');
+        } else {
+            navigate('/login');
+        }
+    };
+
+    const handleTrackProgress = () => {
+        if (isAuthenticated && role === 'user') {
+            navigate('/user/my-complaints');
+        } else if (isAuthenticated && role === 'admin') {
+            navigate('/admin/complaints');
+        } else {
+            navigate('/login');
+        }
+    };
+
     const features = [
         {
             icon: (
@@ -7,7 +33,8 @@ const Features = () => {
                 </svg>
             ),
             title: "Quick Reporting",
-            description: "Report civic issues in minutes with photo upload, location tagging, and detailed descriptions."
+            description: "Report civic issues in minutes with photo upload, location tagging, and detailed descriptions.",
+            onClick: handleQuickReporting
         },
         {
             icon: (
@@ -16,7 +43,8 @@ const Features = () => {
                 </svg>
             ),
             title: "Track Progress",
-            description: "Monitor the status of your complaints in real-time with detailed updates and notifications."
+            description: "Monitor status of your complaints in real-time with detailed updates and notifications.",
+            onClick: handleTrackProgress
         },
         {
             icon: (
@@ -46,7 +74,10 @@ const Features = () => {
                     {features.map((feature, index) => (
                         <div
                             key={index}
-                            className="glass glass-hover rounded-2xl p-8 transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl hover:shadow-[#3B82F6]/20"
+                            onClick={feature.onClick}
+                            className={`glass glass-hover rounded-2xl p-8 transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl hover:shadow-[#3B82F6]/20 ${
+                                feature.onClick ? 'cursor-pointer' : ''
+                            }`}
                         >
                             <div className="text-[#60A5FA] mb-6">
                                 {feature.icon}

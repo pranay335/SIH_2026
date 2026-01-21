@@ -54,22 +54,18 @@ const FileComplaint = () => {
         try {
             setCameraError(null);
             const mediaStream = await navigator.mediaDevices.getUserMedia({
-                video: { facingMode: 'environment' },
+                video: { 
+                    facingMode: 'environment',
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+                },
                 audio: false
             });
             setStream(mediaStream);
             setShowCameraModal(true);
         } catch (error) {
             console.error('Camera access error:', error);
-            setCameraError('Unable to access camera. Please check permissions or use file upload.');
-            
-            // Fallback to basic file input with camera
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = 'image/*';
-            input.capture = 'environment';
-            input.onchange = (e) => handleImageChange(e);
-            input.click();
+            setCameraError('Camera access is required. Please allow camera permissions and try again.');
         }
     };
 
@@ -460,10 +456,16 @@ const FileComplaint = () => {
                                 <div className="text-center py-8">
                                     <div className="text-red-400 mb-4">❌ {cameraError}</div>
                                     <button
-                                        onClick={stopCamera}
-                                        className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+                                        onClick={startCamera}
+                                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
                                     >
-                                        Close
+                                        Try Again
+                                    </button>
+                                    <button
+                                        onClick={stopCamera}
+                                        className="ml-4 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
+                                    >
+                                        Cancel
                                     </button>
                                 </div>
                             ) : (
