@@ -40,19 +40,36 @@ const Register = () => {
             return;
         }
 
-        // Simulate API call
-        setTimeout(() => {
-            const userData = {
-                id: Date.now().toString(),
-                name: formData.name,
-                email: formData.email,
-                phone: formData.phone
-            };
+        try {
+            const response = await fetch('http://localhost:5000/api/users/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: formData.name,
+                    email: formData.email,
+                    password: formData.password,
+                    phone: formData.phone
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || 'Registration failed');
+            }
+
+            // Store token and user data
+            localStorage.setItem('civicmind_token', data.token);
+            login(data.user, data.user.role);
             
-            login(userData, 'user');
             navigate('/user-dashboard');
+        } catch (err) {
+            setError(err.message || 'Registration failed. Please try again.');
+        } finally {
             setIsLoading(false);
-        }, 1500);
+        }
     };
 
     return (

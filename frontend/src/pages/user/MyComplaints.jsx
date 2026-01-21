@@ -1,63 +1,53 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 const MyComplaints = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const [statusFilter, setStatusFilter] = useState(searchParams.get('status') || 'all');
+    const [complaints, setComplaints] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+    const { user, getToken } = useAuth();
 
-    const complaints = [
-        {
-            id: 'CM-2024-001',
-            sector: 'Road',
-            date: '2024-01-15',
-            status: 'in-progress',
-            title: 'Pothole on Main Street',
-            description: 'Large pothole causing traffic issues',
-            location: 'Main Street, Sector 5'
-        },
-        {
-            id: 'CM-2024-002',
-            sector: 'Water',
-            date: '2024-01-14',
-            status: 'pending',
-            title: 'Water Leakage Issue',
-            description: 'Continuous water leakage from main pipe',
-            location: 'Park Road, Sector 3'
-        },
-        {
-            id: 'CM-2024-003',
-            sector: 'Garbage',
-            date: '2024-01-12',
-            status: 'resolved',
-            title: 'Garbage Collection Delay',
-            description: 'Garbage not collected for 3 days',
-            location: 'Residential Area, Sector 2'
-        },
-        {
-            id: 'CM-2024-004',
-            sector: 'Electricity',
-            date: '2024-01-10',
-            status: 'resolved',
-            title: 'Street Light Not Working',
-            description: 'Street light pole #45 not functioning',
-            location: 'Market Street, Sector 1'
-        },
-        {
-            id: 'CM-2024-005',
-            sector: 'Drainage',
-            date: '2024-01-08',
-            status: 'in-progress',
-            title: 'Blocked Drain',
-            description: 'Drain blocked causing waterlogging',
-            location: 'School Road, Sector 4'
+    useEffect(() => {
+        fetchComplaints();
+    }, []);
+
+    const fetchComplaints = async () => {
+        try {
+            const token = getToken();
+            if (!token) {
+                throw new Error('Authentication required');
+            }
+
+            const response = await fetch(`http://localhost:5000/api/complaints/user/${user.id}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch complaints');
+            }
+
+            const data = await response.json();
+            setComplaints(data);
+            console.log(`✅ Fetched ${data.length} complaints for user ${user.email}`);
+        } catch (err) {
+            console.error('❌ Error fetching complaints:', err);
+            setError(err.message);
+        } finally {
+            setLoading(false);
         }
-    ];
+    };
 
     const statusFilters = [
         { value: 'all', label: 'All' },
-        { value: 'pending', label: 'Pending' },
-        { value: 'in-progress', label: 'In Progress' },
-        { value: 'resolved', label: 'Resolved' }
+        { value: 'Pending', label: 'Pending' },
+        { value: 'Under Review', label: 'In Progress' },
+        { value: 'Resolved', label: 'Resolved' }
     ];
 
     const filteredComplaints = statusFilter === 'all'
@@ -66,9 +56,9 @@ const MyComplaints = () => {
 
     const getStatusBadge = (status) => {
         const styles = {
-            'in-progress': 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
-            'resolved': 'bg-green-500/20 text-green-400 border-green-500/30',
-            'pending': 'bg-red-500/20 text-red-400 border-red-500/30'
+            'Under Review': 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
+            'Resolved': 'bg-green-500/20 text-green-400 border-green-500/30',
+            'Pending': 'bg-red-500/20 text-red-400 border-red-500/30'
         };
         return styles[status] || 'bg-gray-500/20 text-gray-400 border-gray-500/30';
     };
@@ -81,6 +71,36 @@ const MyComplaints = () => {
             setSearchParams({ status: value });
         }
     };
+
+    if (loading) {
+        return (
+            <div className="p-4 sm:p-6 lg:p-8">
+                <div className="max-w-7xl mx-auto">
+                    <div className="text-center py-12">
+                        <p className="text-white/50">Loading complaints...</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="p-4 sm:p-6 lg:p-8">
+                <div className="max-w-7xl mx-auto">
+                    <div className="glass rounded-xl p-12 text-center">
+                        <p className="text-red-400 text-lg mb-4">Error: {error}</p>
+                        <button 
+                            onClick={fetchComplaints}
+                            className="px-4 py-2 bg-[#3B82F6] text-white rounded-lg hover:bg-[#2563EB] transition-colors"
+                        >
+                            Retry
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="p-4 sm:p-6 lg:p-8">
@@ -119,7 +139,7 @@ const MyComplaints = () => {
                     <div className="space-y-4">
                         {filteredComplaints.map((complaint) => (
                             <div
-                                key={complaint.id}
+                                key={complaint._id}
                                 className="glass glass-hover rounded-xl p-6 transform transition-all duration-300"
                             >
                                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -127,28 +147,24 @@ const MyComplaints = () => {
                                         <div className="flex items-start justify-between mb-3">
                                             <div>
                                                 <h3 className="text-lg font-semibold text-white mb-1">
-                                                    {complaint.title}
+                                                    {complaint.complaint_id}
                                                 </h3>
                                                 <p className="text-white/60 text-sm font-mono mb-2">
-                                                    {complaint.id}
+                                                    {complaint._id}
                                                 </p>
                                             </div>
                                             <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusBadge(complaint.status)}`}>
-                                                {complaint.status.replace('-', ' ')}
+                                                {complaint.status}
                                             </span>
                                         </div>
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                                             <div>
-                                                <span className="text-white/60">Sector: </span>
-                                                <span className="text-white">{complaint.sector}</span>
+                                                <span className="text-white/60">Priority: </span>
+                                                <span className="text-white">{complaint.priority}</span>
                                             </div>
                                             <div>
                                                 <span className="text-white/60">Date: </span>
-                                                <span className="text-white">{complaint.date}</span>
-                                            </div>
-                                            <div className="sm:col-span-2">
-                                                <span className="text-white/60">Location: </span>
-                                                <span className="text-white">{complaint.location}</span>
+                                                <span className="text-white">{new Date(complaint.createdAt).toLocaleDateString()}</span>
                                             </div>
                                         </div>
                                         <p className="text-white/70 text-sm mt-3">

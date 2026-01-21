@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import Button from '../components/button.jsx';
+import { useAuth } from '../../context/AuthContext';
+import Button from '../../components/button.jsx';
 
-const Login = () => {
+const AdminLogin = () => {
     const [formData, setFormData] = useState({
         email: '',
-        password: '',
-        role: 'user'
+        password: ''
     });
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
@@ -34,7 +33,7 @@ const Login = () => {
                 body: JSON.stringify({
                     email: formData.email,
                     password: formData.password,
-                    role: formData.role
+                    role: 'admin'
                 })
             });
 
@@ -48,12 +47,7 @@ const Login = () => {
             localStorage.setItem('civicmind_token', data.token);
             login(data.user, data.user.role);
             
-            // Redirect based on role
-            if (data.user.role === 'user') {
-                navigate('/user-dashboard');
-            } else {
-                navigate('/admin-dashboard');
-            }
+            navigate('/admin-dashboard');
         } catch (err) {
             setError(err.message || 'Login failed. Please try again.');
         } finally {
@@ -66,10 +60,10 @@ const Login = () => {
             <div className="w-full max-w-md">
                 <div className="text-center mb-8">
                     <h1 className="text-4xl font-bold mb-2">
-                        <span className="text-white">Welcome to </span>
-                        <span className="text-gradient">CivicMind</span>
+                        <span className="text-white">Admin </span>
+                        <span className="text-gradient">Login</span>
                     </h1>
-                    <p className="text-white/70 mt-2">Sign in to continue</p>
+                    <p className="text-white/70 mt-2">CivicMind Municipal Portal</p>
                 </div>
 
                 <div className="glass rounded-2xl p-8 space-y-6">
@@ -83,7 +77,7 @@ const Login = () => {
                         {/* Email */}
                         <div>
                             <label htmlFor="email" className="block text-sm font-medium text-white/90 mb-2">
-                                Email Address
+                                Admin Email
                             </label>
                             <input
                                 type="email"
@@ -93,14 +87,14 @@ const Login = () => {
                                 value={formData.email}
                                 onChange={handleInputChange}
                                 className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:border-transparent transition-all duration-300"
-                                placeholder="your.email@example.com"
+                                placeholder="admin@civicmind.com"
                             />
                         </div>
 
                         {/* Password */}
                         <div>
                             <label htmlFor="password" className="block text-sm font-medium text-white/90 mb-2">
-                                Password
+                                Admin Password
                             </label>
                             <input
                                 type="password"
@@ -110,74 +104,46 @@ const Login = () => {
                                 value={formData.password}
                                 onChange={handleInputChange}
                                 className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:border-transparent transition-all duration-300"
-                                placeholder="Enter your password"
+                                placeholder="Enter admin password"
                             />
-                        </div>
-
-                        {/* Role Selection */}
-                        <div>
-                            <label htmlFor="role" className="block text-sm font-medium text-white/90 mb-2">
-                                Login As
-                            </label>
-                            <select
-                                id="role"
-                                name="role"
-                                required
-                                value={formData.role}
-                                onChange={handleInputChange}
-                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:border-transparent transition-all duration-300"
-                            >
-                                <option value="user" className="bg-[#0B0F1A]">Citizen (User)</option>
-                                <option value="admin" className="bg-[#0B0F1A]">Municipal (Admin)</option>
-                            </select>
-                        </div>
-
-                        {/* Forgot Password Link */}
-                        <div className="flex justify-end">
-                            <Link
-                                to="/forgot-password"
-                                className="text-sm text-[#60A5FA] hover:text-[#3B82F6] transition-colors duration-300"
-                            >
-                                Forgot Password?
-                            </Link>
                         </div>
 
                         {/* Submit Button */}
                         <Button
                             type="submit"
-                            label={isLoading ? "Signing in..." : "Sign In"}
+                            label={isLoading ? "Signing in..." : "Sign In as Admin"}
                             variant="primary"
                             size="large"
                             disabled={isLoading}
                             className="w-full"
                         />
 
-                        {/* Register Link */}
+                        {/* User Login Link */}
                         <div className="text-center pt-4">
                             <p className="text-white/70 text-sm">
-                                Don't have an account?{' '}
+                                Are you a citizen?{' '}
                                 <Link
-                                    to="/register"
+                                    to="/login"
                                     className="text-[#60A5FA] hover:text-[#3B82F6] font-medium transition-colors duration-300"
                                 >
-                                    Register as Citizen
-                                </Link>
-                            </p>
-                            <p className="text-white/70 text-sm mt-2">
-                                Are you an admin?{' '}
-                                <Link
-                                    to="/admin-login"
-                                    className="text-[#10B981] hover:text-[#059669] font-medium transition-colors duration-300"
-                                >
-                                    Admin Login
+                                    User Login
                                 </Link>
                             </p>
                         </div>
                     </form>
+                </div>
+
+                {/* Default Admin Info */}
+                <div className="mt-6 text-center">
+                    <div className="glass rounded-lg p-4 text-sm">
+                        <p className="text-white/60 mb-2">Default Admin Credentials:</p>
+                        <p className="text-white/80"><span className="text-[#60A5FA]">Email:</span> admin@civicmind.com</p>
+                        <p className="text-white/80"><span className="text-[#60A5FA]">Password:</span> admin123</p>
+                    </div>
                 </div>
             </div>
         </div>
     );
 };
 
-export default Login;
+export default AdminLogin;

@@ -11,7 +11,9 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         const savedUser = localStorage.getItem('civicmind_user');
         const savedRole = localStorage.getItem('civicmind_role');
-        if (savedUser && savedRole) {
+        const savedToken = localStorage.getItem('civicmind_token');
+        
+        if (savedUser && savedRole && savedToken) {
             setUser(JSON.parse(savedUser));
             setRole(savedRole);
         }
@@ -30,6 +32,11 @@ export const AuthProvider = ({ children }) => {
         setRole(null);
         localStorage.removeItem('civicmind_user');
         localStorage.removeItem('civicmind_role');
+        localStorage.removeItem('civicmind_token');
+    };
+
+    const getToken = () => {
+        return localStorage.getItem('civicmind_token');
     };
 
     const value = {
@@ -38,6 +45,7 @@ export const AuthProvider = ({ children }) => {
         loading,
         login,
         logout,
+        getToken,
         isAuthenticated: !!user && !!role
     };
 

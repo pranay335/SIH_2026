@@ -8,6 +8,7 @@ import AdminLayout from './layouts/AdminLayout';
 
 // Auth Pages
 import Login from './pages/login';
+import AdminLogin from './pages/admin/AdminLogin';
 import Register from './pages/register';
 import ForgotPassword from './pages/ForgotPassword';
 
@@ -57,6 +58,7 @@ function App() {
                     {/* Public Routes */}
                     <Route path="/" element={<Home />} />
                     <Route path="/login" element={<Login />} />
+                    <Route path="/admin-login" element={<AdminLogin />} />
                     <Route path="/register" element={<Register />} />
                     <Route path="/forgot-password" element={<ForgotPassword />} />
 

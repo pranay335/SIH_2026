@@ -1,6 +1,6 @@
 // Application configuration
 export const API_BASE_URL = 'http://localhost:5000/api';
-export const ML_API_BASE_URL = 'http://localhost:8000';
+export const ML_API_BASE_URL = 'http://127.0.0.1:8000'; // Use 127.0.0.1 to avoid HTTPS redirects
 export const APP_NAME = 'Urban Complaint System';
 export const VERSION = '1.0.0';
 

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import Button from '../../components/button.jsx';
 import { predictionService, complaintService } from '../../services/apiService.js';
 
@@ -13,6 +14,7 @@ const FileComplaint = () => {
     const [predictionResult, setPredictionResult] = useState(null);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
+    const { user } = useAuth();
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -67,6 +69,7 @@ const FileComplaint = () => {
                 nlp_result: predictionResponse.complaint.nlp_result,
                 cnn_result: predictionResponse.complaint.cnn_result,
                 status: predictionResponse.complaint.status,
+                user_id: user.id // Add the current user's ID
             };
 
             // Save complaint to main backend database

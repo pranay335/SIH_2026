@@ -1,29 +1,195 @@
 const User = require('../models/User');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 // @desc    Get all users
 // @route   GET /api/users
 // @access  Public
 const getUsers = async (req, res) => {
   try {
-    const users = await User.find();
+    const users = await User.find().select('-password');
     res.json(users);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// @desc    Create a user
-// @route   POST /api/users
+// @desc    Register a new user
+// @route   POST /api/users/register
 // @access  Public
-const createUser = async (req, res) => {
-  const { name, email } = req.body;
+const registerUser = async (req, res) => {
   try {
-    const user = new User({ name, email });
+    const { name, email, password, phone, role = 'user' } = req.body;
+
+    // Check if user exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: 'User already exists' });
+    }
+
+    // Hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // Create user
+    const user = new User({
+      name,
+      email,
+      password: hashedPassword,
+      phone,
+      role // Allow role specification for admin creation
+    });
+
     const savedUser = await user.save();
-    res.status(201).json(savedUser);
+    console.log(` User registered successfully: ${email} (${savedUser.role})`);
+
+    // Generate JWT
+    const token = jwt.sign(
+      { userId: savedUser._id, email: savedUser.email, role: savedUser.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+
+    res.status(201).json({
+      message: 'User registered successfully',
+      token,
+      user: {
+        id: savedUser._id,
+        name: savedUser.name,
+        email: savedUser.email,
+        role: savedUser.role,
+        phone: savedUser.phone
+      }
+    });
+  } catch (error) {
+    console.error(' Registration error:', error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Login user
+// @route   POST /api/users/login
+// @access  Public
+const loginUser = async (req, res) => {
+  try {
+    const { email, password, role = 'user' } = req.body;
+
+    // Find user
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
+
+    // Check password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
+
+    // Check role
+    if (user.role !== role) {
+      return res.status(400).json({ message: 'Invalid role for this account' });
+    }
+
+    console.log(` User logged in successfully: ${email} (${user.role})`);
+
+    // Generate JWT
+    const token = jwt.sign(
+      { userId: user._id, email: user.email, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+
+    res.json({
+      message: 'Login successful',
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        phone: user.phone
+      }
+    });
+  } catch (error) {
+    console.error(' Login error:', error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Create a user (admin only)
+// @route   POST /api/users
+// @access  Private
+const createUser = async (req, res) => {
+  const { name, email, password, role = 'user' } = req.body;
+  try {
+    // Hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const user = new User({ name, email, password: hashedPassword, role });
+    const savedUser = await user.save();
+    
+    res.status(201).json({
+      id: savedUser._id,
+      name: savedUser.name,
+      email: savedUser.email,
+      role: savedUser.role
+    });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
 
-module.exports = { getUsers, createUser };
+// @desc    Create default admin user
+// @route   POST /api/users/create-admin
+// @access  Public (for initial setup)
+const createDefaultAdmin = async (req, res) => {
+  try {
+    const { name, email, password, phone } = req.body;
+
+    // Check if admin already exists
+    const existingAdmin = await User.findOne({ email });
+    if (existingAdmin) {
+      return res.status(400).json({ message: 'Admin user already exists' });
+    }
+
+    // Hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // Create admin user
+    const admin = new User({
+      name,
+      email,
+      password: hashedPassword,
+      role: 'admin',
+      phone
+    });
+
+    const savedAdmin = await admin.save();
+    console.log(` Default admin created: ${email}`);
+
+    res.status(201).json({
+      message: 'Admin user created successfully',
+      admin: {
+        id: savedAdmin._id,
+        name: savedAdmin.name,
+        email: savedAdmin.email,
+        role: savedAdmin.role,
+        phone: savedAdmin.phone
+      }
+    });
+  } catch (error) {
+    console.error(' Error creating admin:', error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { 
+  getUsers, 
+  registerUser, 
+  loginUser, 
+  createUser,
+  createDefaultAdmin
+};

@@ -4,10 +4,14 @@ import { API_BASE_URL, ML_API_BASE_URL } from '../config/config.js';
 // Generic fetch wrapper
 const apiRequest = async (endpoint, options = {}) => {
   try {
+    // Get token from localStorage
+    const token = localStorage.getItem('civicmind_token');
+    
     const url = `${API_BASE_URL}${endpoint}`;
     const response = await fetch(url, {
       headers: {
         'Content-Type': 'application/json',
+        ...(token && { 'Authorization': `Bearer ${token}` }),
         ...options.headers,
       },
       ...options,

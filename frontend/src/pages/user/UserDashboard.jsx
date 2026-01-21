@@ -1,51 +1,82 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 const UserDashboard = () => {
+    const [complaints, setComplaints] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+    const { user, getToken } = useAuth();
+
+    useEffect(() => {
+        fetchComplaints();
+    }, []);
+
+    const fetchComplaints = async () => {
+        try {
+            const token = getToken();
+            if (!token) {
+                throw new Error('Authentication required');
+            }
+
+            const response = await fetch(`http://localhost:5000/api/complaints/user/${user.id}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch complaints');
+            }
+
+            const data = await response.json();
+            setComplaints(data);
+            console.log(`✅ Fetched ${data.length} complaints for dashboard`);
+        } catch (err) {
+            console.error('❌ Error fetching dashboard data:', err);
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Calculate stats from real data
+    const totalComplaints = complaints.length;
+    const inProgressComplaints = complaints.filter(c => c.status === 'Under Review').length;
+    const resolvedComplaints = complaints.filter(c => c.status === 'Resolved').length;
+
     const stats = [
-        { label: 'Total Complaints', value: '24', icon: '📋', color: 'from-blue-500 to-cyan-500', link: '/user/my-complaints' },
-        { label: 'In Progress', value: '8', icon: '⏳', color: 'from-yellow-500 to-orange-500', link: '/user/my-complaints?status=in-progress' },
-        { label: 'Resolved', value: '14', icon: '✅', color: 'from-green-500 to-emerald-500', link: '/user/my-complaints?status=resolved' }
+        { label: 'Total Complaints', value: totalComplaints.toString(), icon: '📋', color: 'from-blue-500 to-cyan-500', link: '/user/my-complaints' },
+        { label: 'In Progress', value: inProgressComplaints.toString(), icon: '⏳', color: 'from-yellow-500 to-orange-500', link: '/user/my-complaints?status=Under Review' },
+        { label: 'Resolved', value: resolvedComplaints.toString(), icon: '✅', color: 'from-green-500 to-emerald-500', link: '/user/my-complaints?status=Resolved' }
     ];
 
-    const recentComplaints = [
-        {
-            id: 'CM-2024-001',
-            sector: 'Road',
-            date: '2024-01-15',
-            status: 'in-progress',
-            title: 'Pothole on Main Street'
-        },
-        {
-            id: 'CM-2024-002',
-            sector: 'Water',
-            date: '2024-01-14',
-            status: 'pending',
-            title: 'Water Leakage Issue'
-        },
-        {
-            id: 'CM-2024-003',
-            sector: 'Garbage',
-            date: '2024-01-12',
-            status: 'resolved',
-            title: 'Garbage Collection Delay'
-        },
-        {
-            id: 'CM-2024-004',
-            sector: 'Electricity',
-            date: '2024-01-10',
-            status: 'resolved',
-            title: 'Street Light Not Working'
-        }
-    ];
+    // Get recent complaints (last 4)
+    const recentComplaints = complaints
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .slice(0, 4);
 
     const getStatusBadge = (status) => {
         const styles = {
-            'in-progress': 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
-            'resolved': 'bg-green-500/20 text-green-400 border-green-500/30',
-            'pending': 'bg-red-500/20 text-red-400 border-red-500/30'
+            'Under Review': 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
+            'Resolved': 'bg-green-500/20 text-green-400 border-green-500/30',
+            'Pending': 'bg-red-500/20 text-red-400 border-red-500/30'
         };
         return styles[status] || 'bg-gray-500/20 text-gray-400 border-gray-500/30';
     };
+
+    if (loading) {
+        return (
+            <div className="p-4 sm:p-6 lg:p-8">
+                <div className="max-w-7xl mx-auto">
+                    <div className="text-center py-12">
+                        <p className="text-white/50">Loading dashboard...</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="p-4 sm:p-6 lg:p-8">
@@ -112,44 +143,56 @@ const UserDashboard = () => {
                         </Link>
                     </div>
 
-                    <div className="overflow-x-auto">
-                        <table className="w-full">
-                            <thead>
-                                <tr className="border-b border-white/10">
-                                    <th className="text-left py-3 px-4 text-white/80 font-medium text-sm">Complaint ID</th>
-                                    <th className="text-left py-3 px-4 text-white/80 font-medium text-sm">Sector</th>
-                                    <th className="text-left py-3 px-4 text-white/80 font-medium text-sm">Date</th>
-                                    <th className="text-left py-3 px-4 text-white/80 font-medium text-sm">Status</th>
-                                    <th className="text-left py-3 px-4 text-white/80 font-medium text-sm">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {recentComplaints.map((complaint) => (
-                                    <tr
-                                        key={complaint.id}
-                                        className="border-b border-white/5 hover:bg-white/5 transition-colors duration-300"
-                                    >
-                                        <td className="py-4 px-4 text-white font-mono text-sm">{complaint.id}</td>
-                                        <td className="py-4 px-4 text-white/70">{complaint.sector}</td>
-                                        <td className="py-4 px-4 text-white/60 text-sm">{complaint.date}</td>
-                                        <td className="py-4 px-4">
-                                            <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusBadge(complaint.status)}`}>
-                                                {complaint.status.replace('-', ' ')}
-                                            </span>
-                                        </td>
-                                        <td className="py-4 px-4">
-                                            <Link
-                                                to={`/user/my-complaints?view=${complaint.id}`}
-                                                className="text-[#60A5FA] hover:text-[#3B82F6] text-sm font-medium transition-colors"
-                                            >
-                                                View Details
-                                            </Link>
-                                        </td>
+                    {recentComplaints.length > 0 ? (
+                        <div className="overflow-x-auto">
+                            <table className="w-full">
+                                <thead>
+                                    <tr className="border-b border-white/10">
+                                        <th className="text-left py-3 px-4 text-white/80 font-medium text-sm">Complaint ID</th>
+                                        <th className="text-left py-3 px-4 text-white/80 font-medium text-sm">Priority</th>
+                                        <th className="text-left py-3 px-4 text-white/80 font-medium text-sm">Date</th>
+                                        <th className="text-left py-3 px-4 text-white/80 font-medium text-sm">Status</th>
+                                        <th className="text-left py-3 px-4 text-white/80 font-medium text-sm">Action</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
+                                </thead>
+                                <tbody>
+                                    {recentComplaints.map((complaint) => (
+                                        <tr
+                                            key={complaint._id}
+                                            className="border-b border-white/5 hover:bg-white/5 transition-colors duration-300"
+                                        >
+                                            <td className="py-4 px-4 text-white font-mono text-sm">{complaint.complaint_id}</td>
+                                            <td className="py-4 px-4 text-white/70">{complaint.priority}</td>
+                                            <td className="py-4 px-4 text-white/60 text-sm">{new Date(complaint.createdAt).toLocaleDateString()}</td>
+                                            <td className="py-4 px-4">
+                                                <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusBadge(complaint.status)}`}>
+                                                    {complaint.status}
+                                                </span>
+                                            </td>
+                                            <td className="py-4 px-4">
+                                                <Link
+                                                    to={`/user/my-complaints?view=${complaint._id}`}
+                                                    className="text-[#60A5FA] hover:text-[#3B82F6] text-sm font-medium transition-colors"
+                                                >
+                                                    View Details
+                                                </Link>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    ) : (
+                        <div className="text-center py-8">
+                            <p className="text-white/50">No complaints filed yet.</p>
+                            <Link
+                                to="/user/complaint"
+                                className="inline-block mt-4 px-6 py-3 bg-gradient-to-r from-[#3B82F6] to-[#60A5FA] text-white rounded-lg font-medium hover:from-[#2563EB] hover:to-[#3B82F6] transition-all duration-300"
+                            >
+                                File Your First Complaint
+                            </Link>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

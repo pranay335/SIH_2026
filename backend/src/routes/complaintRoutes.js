@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const auth = require('../middleware/auth');
 const {
   fileComplaint,
   getComplaints,
@@ -8,19 +9,19 @@ const {
   getComplaintsByUser,
 } = require('../controllers/complaintController');
 
-// File a new complaint
-router.post('/', fileComplaint);
+// File a new complaint (protected)
+router.post('/', auth, fileComplaint);
 
-// Get all complaints
-router.get('/', getComplaints);
+// Get all complaints (protected)
+router.get('/', auth, getComplaints);
 
-// Get complaints by user
-router.get('/user/:userId', getComplaintsByUser);
+// Get complaints by user (protected)
+router.get('/user/:userId', auth, getComplaintsByUser);
 
-// Get complaint by ID
-router.get('/:id', getComplaintById);
+// Get complaint by ID (protected)
+router.get('/:id', auth, getComplaintById);
 
-// Update complaint
-router.put('/:id', updateComplaint);
+// Update complaint (protected)
+router.put('/:id', auth, updateComplaint);
 
 module.exports = router;
