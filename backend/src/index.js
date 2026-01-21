@@ -3,6 +3,7 @@ const cors = require('cors');
 const connectDB = require('./config/database');
 const complaintRoutes = require('./routes/complaintRoutes');
 const userRoutes = require('./routes/userRoutes');
+const noticeRoutes = require('./routes/noticeRoutes');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
@@ -16,6 +17,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/complaints', complaintRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/notices', noticeRoutes);
 
 app.use(errorHandler);
 

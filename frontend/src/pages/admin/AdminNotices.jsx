@@ -1,47 +1,107 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Button from '../../components/button.jsx';
+import { useAuth } from '../../context/AuthContext';
 
 const AdminNotices = () => {
     const [isCreating, setIsCreating] = useState(false);
+    const [notices, setNotices] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
     const [formData, setFormData] = useState({
         title: '',
         department: '',
         description: '',
         priority: 'medium'
     });
+    
+    const { getToken } = useAuth();
 
-    const notices = [
-        {
-            id: 1,
-            title: 'Road Maintenance Schedule',
-            department: 'Infrastructure',
-            date: '2024-01-15',
-            description: 'Scheduled maintenance work on Main Street from Jan 20-25.',
-            priority: 'high'
-        },
-        {
-            id: 2,
-            title: 'Water Supply Interruption',
-            department: 'Utilities',
-            date: '2024-01-14',
-            description: 'Water supply will be interrupted in Sector 5 on Jan 18.',
-            priority: 'high'
-        }
-    ];
 
     const departments = ['Infrastructure', 'Utilities', 'Events', 'Recreation', 'Waste Management'];
+
+    // Fetch notices from backend
+    const fetchNotices = async () => {
+        try {
+            setLoading(true);
+            const response = await fetch('/api/notices', {
+                headers: {
+                    'Authorization': `Bearer ${getToken()}`
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to fetch notices');
+            }
+            
+            const data = await response.json();
+            setNotices(data);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchNotices();
+    }, []);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Creating notice:', formData);
-        alert('Notice created successfully!');
-        setFormData({ title: '', department: '', description: '', priority: 'medium' });
-        setIsCreating(false);
+        
+        try {
+            const response = await fetch('/api/notices', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getToken()}`
+                },
+                body: JSON.stringify(formData)
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Failed to create notice');
+            }
+            
+            // Reset form and refresh notices
+            setFormData({ title: '', department: '', description: '', priority: 'medium' });
+            setIsCreating(false);
+            await fetchNotices();
+            alert('Notice created successfully!');
+        } catch (err) {
+            alert(`Error: ${err.message}`);
+        }
+    };
+
+    const handleDelete = async (noticeId) => {
+        if (!window.confirm('Are you sure you want to delete this notice?')) {
+            return;
+        }
+        
+        try {
+            const response = await fetch(`/api/notices/${noticeId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${getToken()}`
+                }
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Failed to delete notice');
+            }
+            
+            await fetchNotices();
+            alert('Notice deleted successfully!');
+        } catch (err) {
+            alert(`Error: ${err.message}`);
+        }
     };
 
     const getPriorityColor = (priority) => {
@@ -166,44 +226,63 @@ const AdminNotices = () => {
                 )}
 
                 {/* Existing Notices */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {notices.map((notice) => (
-                        <div
-                            key={notice.id}
-                            className={`glass glass-hover rounded-xl p-6 border-l-4 ${getPriorityColor(notice.priority)} transform transition-all duration-300 ease-in-out hover:scale-105`}
-                        >
-                            <div className="flex items-start justify-between mb-3">
-                                <span className="px-3 py-1 rounded-full text-xs font-medium bg-[#3B82F6]/20 text-[#60A5FA] border border-[#3B82F6]/30">
-                                    {notice.department}
-                                </span>
-                                <span className="text-xs text-white/50">{notice.date}</span>
-                            </div>
-                            <h3 className="text-xl font-semibold text-white mb-3">
-                                {notice.title}
-                            </h3>
-                            <p className="text-white/70 text-sm leading-relaxed mb-4">
-                                {notice.description}
-                            </p>
-                            <div className="flex items-center justify-between">
-                                <span className={`px-2 py-1 rounded text-xs font-medium ${
-                                    notice.priority === 'high' ? 'text-red-400' :
-                                    notice.priority === 'medium' ? 'text-yellow-400' :
-                                    'text-blue-400'
-                                }`}>
-                                    {notice.priority.toUpperCase()} Priority
-                                </span>
-                                <div className="flex gap-2">
-                                    <button className="text-[#60A5FA] hover:text-[#3B82F6] text-sm font-medium transition-colors">
-                                        Edit
-                                    </button>
-                                    <button className="text-red-400 hover:text-red-500 text-sm font-medium transition-colors">
-                                        Delete
-                                    </button>
+                {loading ? (
+                    <div className="flex justify-center items-center py-12">
+                        <div className="text-white/70">Loading notices...</div>
+                    </div>
+                ) : error ? (
+                    <div className="flex justify-center items-center py-12">
+                        <div className="text-red-400">Error: {error}</div>
+                    </div>
+                ) : notices.length === 0 ? (
+                    <div className="flex justify-center items-center py-12">
+                        <div className="text-white/70">No notices found. Create your first notice!</div>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {notices.map((notice) => (
+                            <div
+                                key={notice._id}
+                                className={`glass glass-hover rounded-xl p-6 border-l-4 ${getPriorityColor(notice.priority)} transform transition-all duration-300 ease-in-out hover:scale-105`}
+                            >
+                                <div className="flex items-start justify-between mb-3">
+                                    <span className="px-3 py-1 rounded-full text-xs font-medium bg-[#3B82F6]/20 text-[#60A5FA] border border-[#3B82F6]/30">
+                                        {notice.department}
+                                    </span>
+                                    <span className="text-xs text-white/50">
+                                        {new Date(notice.createdAt).toLocaleDateString()}
+                                    </span>
+                                </div>
+                                <h3 className="text-xl font-semibold text-white mb-3">
+                                    {notice.title}
+                                </h3>
+                                <p className="text-white/70 text-sm leading-relaxed mb-4">
+                                    {notice.description}
+                                </p>
+                                <div className="flex items-center justify-between">
+                                    <span className={`px-2 py-1 rounded text-xs font-medium ${
+                                        notice.priority === 'high' ? 'text-red-400' :
+                                        notice.priority === 'medium' ? 'text-yellow-400' :
+                                        'text-blue-400'
+                                    }`}>
+                                        {notice.priority.toUpperCase()} Priority
+                                    </span>
+                                    <div className="flex gap-2">
+                                        <button className="text-[#60A5FA] hover:text-[#3B82F6] text-sm font-medium transition-colors">
+                                            Edit
+                                        </button>
+                                        <button 
+                                            onClick={() => handleDelete(notice._id)}
+                                            className="text-red-400 hover:text-red-500 text-sm font-medium transition-colors"
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
-                </div>
+                        ))}
+                    </div>
+                )}
             </div>
         </div>
     );
