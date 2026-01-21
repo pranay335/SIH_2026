@@ -76,11 +76,28 @@ const Register = () => {
         <div className="min-h-screen bg-[#0B0F1A] flex items-center justify-center px-4 py-12">
             <div className="w-full max-w-md">
                 <div className="text-center mb-8">
-                    <h1 className="text-4xl font-bold mb-2">
-                        <span className="text-white">Create </span>
-                        <span className="text-gradient">Account</span>
+                    <div className="mb-6">
+                        <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-xl">
+                            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div className="flex items-center justify-between mb-4">
+                        <Link 
+                            to="/" 
+                            className="flex items-center text-gray-400 hover:text-white transition-colors duration-200 group"
+                        >
+                            <svg className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            <span className="text-sm">Back to Home</span>
+                        </Link>
+                    </div>
+                    <h1 className="text-2xl font-semibold text-white mb-2">
+                        Create Account
                     </h1>
-                    <p className="text-white/70 mt-2">Register as a Citizen</p>
+                    <p className="text-gray-400 text-sm">Register for CivicMind Portal</p>
                 </div>
 
                 <div className="glass rounded-2xl p-8 space-y-6">
@@ -93,7 +110,7 @@ const Register = () => {
                     <form onSubmit={handleSubmit} className="space-y-5">
                         {/* Name */}
                         <div>
-                            <label htmlFor="name" className="block text-sm font-medium text-white/90 mb-2">
+                            <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
                                 Full Name
                             </label>
                             <input
@@ -103,14 +120,14 @@ const Register = () => {
                                 required
                                 value={formData.name}
                                 onChange={handleInputChange}
-                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:border-transparent transition-all duration-300"
+                                className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                                 placeholder="John Doe"
                             />
                         </div>
 
                         {/* Email */}
                         <div>
-                            <label htmlFor="email" className="block text-sm font-medium text-white/90 mb-2">
+                            <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
                                 Email Address
                             </label>
                             <input
@@ -120,14 +137,14 @@ const Register = () => {
                                 required
                                 value={formData.email}
                                 onChange={handleInputChange}
-                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:border-transparent transition-all duration-300"
-                                placeholder="your.email@example.com"
+                                className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                                placeholder="name@example.com"
                             />
                         </div>
 
                         {/* Phone */}
                         <div>
-                            <label htmlFor="phone" className="block text-sm font-medium text-white/90 mb-2">
+                            <label htmlFor="phone" className="block text-sm font-medium text-gray-300 mb-2">
                                 Phone Number
                             </label>
                             <input
@@ -137,14 +154,14 @@ const Register = () => {
                                 required
                                 value={formData.phone}
                                 onChange={handleInputChange}
-                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:border-transparent transition-all duration-300"
-                                placeholder="+1234567890"
+                                className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                                placeholder="+1 (555) 123-4567"
                             />
                         </div>
 
                         {/* Password */}
                         <div>
-                            <label htmlFor="password" className="block text-sm font-medium text-white/90 mb-2">
+                            <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
                                 Password
                             </label>
                             <input
@@ -154,14 +171,14 @@ const Register = () => {
                                 required
                                 value={formData.password}
                                 onChange={handleInputChange}
-                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:border-transparent transition-all duration-300"
-                                placeholder="At least 6 characters"
+                                className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                                placeholder="Min. 6 characters"
                             />
                         </div>
 
                         {/* Confirm Password */}
                         <div>
-                            <label htmlFor="confirmPassword" className="block text-sm font-medium text-white/90 mb-2">
+                            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 mb-2">
                                 Confirm Password
                             </label>
                             <input
@@ -171,12 +188,21 @@ const Register = () => {
                                 required
                                 value={formData.confirmPassword}
                                 onChange={handleInputChange}
-                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:border-transparent transition-all duration-300"
-                                placeholder="Re-enter your password"
+                                className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                                placeholder="Re-enter password"
                             />
                         </div>
 
                         {/* Submit Button */}
+                        <div className="pt-2">
+                            <label className="flex items-start">
+                                <input type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-800 border-gray-600 rounded focus:ring-blue-500 focus:ring-2 mt-1" required />
+                                <span className="ml-2 text-sm text-gray-400">
+                                    I agree to the <a href="#" className="text-blue-400 hover:text-blue-300">Terms of Service</a> and <a href="#" className="text-blue-400 hover:text-blue-300">Privacy Policy</a>
+                                </span>
+                            </label>
+                        </div>
+
                         <div className="pt-2">
                             <Button
                                 type="submit"
@@ -189,14 +215,14 @@ const Register = () => {
                         </div>
 
                         {/* Login Link */}
-                        <div className="text-center pt-4">
-                            <p className="text-white/70 text-sm">
+                        <div className="text-center pt-6 border-t border-gray-700">
+                            <p className="text-gray-400 text-sm">
                                 Already have an account?{' '}
                                 <Link
                                     to="/login"
-                                    className="text-[#60A5FA] hover:text-[#3B82F6] font-medium transition-colors duration-300"
+                                    className="text-blue-400 hover:text-blue-300 font-medium transition-colors duration-200"
                                 >
-                                    Sign In
+                                    Sign in
                                 </Link>
                             </p>
                         </div>

@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 
 // @desc    Get all users
 // @route   GET /api/users
@@ -186,10 +187,84 @@ const createDefaultAdmin = async (req, res) => {
   }
 };
 
+// @desc    Forgot password
+// @route   POST /api/users/forgot-password
+// @access  Public
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    // Find user
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Generate reset token
+    const resetToken = user.generatePasswordResetToken();
+    await user.save();
+
+    console.log(` Password reset token generated for: ${email}`);
+    console.log(` Reset token (for development): ${resetToken}`);
+    
+    // In production, you would send an email here
+    // For now, we'll just return success with the token for development
+    res.json({
+      message: 'Password reset link sent to your email',
+      resetToken // Remove this in production
+    });
+  } catch (error) {
+    console.error(' Forgot password error:', error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Reset password
+// @route   POST /api/users/reset-password
+// @access  Public
+const resetPassword = async (req, res) => {
+  try {
+    const { token, newPassword } = req.body;
+
+    // Hash the token to compare with stored token
+    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+
+    // Find user with valid reset token
+    const user = await User.findOne({
+      resetPasswordToken: hashedToken,
+      resetPasswordExpires: { $gt: Date.now() }
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid or expired reset token' });
+    }
+
+    // Hash new password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    // Update password and clear reset fields
+    user.password = hashedPassword;
+    user.clearPasswordResetFields();
+    await user.save();
+
+    console.log(` Password reset successful for: ${user.email}`);
+
+    res.json({
+      message: 'Password reset successful'
+    });
+  } catch (error) {
+    console.error(' Reset password error:', error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = { 
   getUsers, 
   registerUser, 
   loginUser, 
   createUser,
-  createDefaultAdmin
+  createDefaultAdmin,
+  forgotPassword,
+  resetPassword
 };
