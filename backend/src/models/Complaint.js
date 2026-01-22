@@ -16,6 +16,14 @@ const complaintSchema = new mongoose.Schema(
       type: String, // Store as base64 or URL
       required: true,
     },
+    location: {
+      type: String,
+      required: true,
+    },
+    sector: {
+      type: String,
+      required: true,
+    },
     nlp_result: {
       predicted_sector: String,
       predicted_severity: String,
@@ -48,6 +56,14 @@ const complaintSchema = new mongoose.Schema(
     notes: {
       type: String,
       default: '',
+    },
+    estimatedResolution: {
+      type: Date,
+      default: null,
+    },
+    resolvedDate: {
+      type: Date,
+      default: null,
     },
   },
   {
