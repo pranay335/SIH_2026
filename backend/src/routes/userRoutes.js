@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { getUsers, createUser, registerUser, loginUser, createDefaultAdmin, forgotPassword, resetPassword } = require('../controllers/userController');
+const { createEmployee, getEmployees, getUsers, createUser, registerUser, loginUser, createDefaultAdmin, forgotPassword, resetPassword } = require('../controllers/userController');
+const auth = require('../middleware/auth');
 
 // Public routes
 router.post('/register', registerUser);
@@ -10,7 +11,11 @@ router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);
 
 // Protected routes
-router.get('/', getUsers);
-router.post('/', createUser);
+router.get('/', auth, getUsers);
+router.post('/', auth, createUser);
+
+// Admin-only employee management routes
+router.post('/create-employee', auth, createEmployee);
+router.get('/employees', auth, getEmployees);
 
 module.exports = router;

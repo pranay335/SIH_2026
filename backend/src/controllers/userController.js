@@ -3,6 +3,95 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 
+// @desc    Create employee (admin only)
+// @route   POST /api/users/create-employee
+// @access  Private (Admin)
+const createEmployee = async (req, res) => {
+  try {
+    // Check if user is admin
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Admin access required' });
+    }
+
+    const { name, email, password, department, municipalityCode, employeeId, designation } = req.body;
+
+    // Validate required fields
+    if (!name || !email || !password || !department) {
+      return res.status(400).json({
+        message: 'Missing required fields: name, email, password, department'
+      });
+    }
+
+    // Check if employee already exists
+    const existingEmployee = await User.findOne({ email });
+    if (existingEmployee) {
+      return res.status(400).json({ message: 'Employee already exists' });
+    }
+
+    // Hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // Create employee
+    const employee = new User({
+      name,
+      email,
+      password: hashedPassword,
+      role: 'employee',
+      department,
+      municipalityCode: municipalityCode || 'BMC',
+      employeeId: employeeId || `EMP${Date.now()}`,
+      designation: designation || 'Field Officer',
+      phone: '',
+      availabilityStatus: 'AVAILABLE',
+      maxConcurrentComplaints: 10,
+      currentWorkload: 0,
+      performance: {
+        avgResolutionTime: 0,
+        successRate: 0,
+        totalComplaintsHandled: 0
+      }
+    });
+
+    const savedEmployee = await employee.save();
+    console.log(`Employee created: ${email} (${savedEmployee.employeeId})`);
+
+    // Remove password from response
+    const employeeResponse = savedEmployee.toObject();
+    delete employeeResponse.password;
+
+    res.status(201).json({
+      message: 'Employee created successfully',
+      employee: employeeResponse
+    });
+
+  } catch (error) {
+    console.error('Error creating employee:', error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Get all employees (admin only)
+// @route   GET /api/users/employees
+// @access  Private (Admin)
+const getEmployees = async (req, res) => {
+  try {
+    // Check if user is admin
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Admin access required' });
+    }
+
+    const employees = await User.find({ role: 'employee' })
+      .select('-password -aadhaarHash -aadhaarOTP -aadhaarOTPExpires')
+      .sort({ createdAt: -1 });
+
+    res.json(employees);
+  } catch (error) {
+    console.error('Error fetching employees:', error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // @desc    Get all users
 // @route   GET /api/users
 // @access  Public
@@ -260,6 +349,8 @@ const resetPassword = async (req, res) => {
 };
 
 module.exports = { 
+  createEmployee,
+  getEmployees,
   getUsers, 
   registerUser, 
   loginUser, 

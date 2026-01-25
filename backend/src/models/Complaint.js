@@ -24,6 +24,11 @@ const complaintSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    municipalityCode: {
+      type: String,
+      required: true,
+      default: 'BMC'
+    },
     nlp_result: {
       predicted_sector: String,
       predicted_severity: String,
@@ -64,6 +69,18 @@ const complaintSchema = new mongoose.Schema(
     resolvedDate: {
       type: Date,
       default: null,
+    },
+    flagged: {
+      type: Boolean,
+      default: false,
+    },
+    flagReason: {
+      type: String,
+      default: '',
+    },
+    imageHash: {
+      type: String,
+      default: '',
     },
   },
   {
