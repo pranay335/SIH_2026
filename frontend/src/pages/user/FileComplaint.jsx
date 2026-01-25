@@ -140,13 +140,13 @@ const FileComplaint = () => {
 
             // Prepare complaint data to save in main backend
             const complaintData = {
-                complaint_id: predictionResponse.complaint.complaint_id,
+                complaint_id: predictionResponse.complaint_id || `CMP-${Date.now()}`,
                 description: formData.description,
                 location: formData.location,
                 image: imagePreview, // Store base64 image
-                nlp_result: predictionResponse.complaint.nlp_result,
-                cnn_result: predictionResponse.complaint.cnn_result,
-                status: predictionResponse.complaint.status,
+                nlp_result: predictionResponse.nlp_result,
+                cnn_result: predictionResponse.cnn_result,
+                status: 'Pending',
                 user_id: user.id // Add the current user's ID
             };
 
@@ -156,7 +156,11 @@ const FileComplaint = () => {
             // Set prediction result to display
             setPredictionResult({
                 message: savedComplaint.message,
-                complaint: savedComplaint.complaint,
+                complaint: {
+                    ...savedComplaint.complaint,
+                    nlp_result: predictionResponse.nlp_result,
+                    cnn_result: predictionResponse.cnn_result
+                },
             });
             
         } catch (err) {

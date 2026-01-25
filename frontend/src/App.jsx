@@ -19,12 +19,14 @@ import MyComplaints from './pages/user/MyComplaints';
 import UserNotices from './pages/user/UserNotices';
 import UserProfile from './pages/user/UserProfile';
 
-// Admin Pages
+// Employee Pages
+import EmployeeDashboard from './pages/employee_dashboard';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AllComplaints from './pages/admin/AllComplaints';
 import AssignedComplaints from './pages/admin/AssignedComplaints';
 import AdminNotices from './pages/admin/AdminNotices';
 import Employees from './pages/admin/Employees';
+import EmployeeManagement from './pages/admin/EmployeeManagement';
 
 // Legacy Components (for home page if needed)
 import Navbar from './components/Navbar';
@@ -87,6 +89,16 @@ function App() {
                         <Route path="profile" element={<UserProfile />} />
                     </Route>
 
+                    {/* Employee Routes */}
+                    <Route
+                        path="/employee-dashboard"
+                        element={
+                            <ProtectedRoute requiredRole="employee">
+                                <EmployeeDashboard />
+                            </ProtectedRoute>
+                        }
+                    />
+
                     {/* Admin Routes */}
                     <Route
                         path="/admin-dashboard"
@@ -110,6 +122,7 @@ function App() {
                         <Route path="assigned" element={<AssignedComplaints />} />
                         <Route path="notices" element={<AdminNotices />} />
                         <Route path="employees" element={<Employees />} />
+                        <Route path="employee-management" element={<EmployeeManagement />} />
                     </Route>
 
                     {/* Catch all - redirect to home */}

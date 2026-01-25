@@ -1,35 +1,34 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { userService } from '../../services/apiService';
+import { useAuth } from '../../context/AuthContext';
 
 const Employees = () => {
     const [selectedEmployee, setSelectedEmployee] = useState(null);
     const [showDetailsModal, setShowDetailsModal] = useState(false);
+    const [employees, setEmployees] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+    const { user } = useAuth();
 
-    const employees = [
-        {
-            id: 1,
-            name: 'John Smith',
-            department: 'Road & Infrastructure',
-            email: 'john.smith@municipal.gov',
-            phone: '+1234567890',
-            status: 'active'
-        },
-        {
-            id: 2,
-            name: 'Sarah Johnson',
-            department: 'Road & Infrastructure',
-            email: 'sarah.j@municipal.gov',
-            phone: '+1234567891',
-            status: 'active'
-        },
-        {
-            id: 3,
-            name: 'Emily Brown',
-            department: 'Water & Sanitation',
-            email: 'emily.b@municipal.gov',
-            phone: '+1234567892',
-            status: 'active'
+    useEffect(() => {
+        fetchEmployees();
+    }, []);
+
+    const fetchEmployees = async () => {
+        try {
+            const response = await userService.getEmployees();
+            // Filter employees by admin's municipality
+            const filteredEmployees = response.data.filter(employee => 
+                employee.municipalityCode === user.municipalityCode
+            );
+            setEmployees(filteredEmployees);
+        } catch (error) {
+            console.error('Error fetching employees:', error);
+            setError('Failed to fetch employees');
+        } finally {
+            setLoading(false);
         }
-    ];
+    };
 
     // Mock complaints data - in real app this would come from API
     const complaintsData = {
@@ -129,7 +128,31 @@ const Employees = () => {
         setShowDetailsModal(true);
     };
 
-    const employeeComplaints = selectedEmployee ? complaintsData[selectedEmployee.id] || [] : [];
+    if (loading) {
+        return (
+            <div className="p-4 sm:p-6 lg:p-8">
+                <div className="max-w-7xl mx-auto">
+                    <div className="text-center py-8">
+                        <p className="text-white/70">Loading employees...</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="p-4 sm:p-6 lg:p-8">
+                <div className="max-w-7xl mx-auto">
+                    <div className="text-center py-8">
+                        <p className="text-red-400">{error}</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    const employeeComplaints = selectedEmployee ? [] : []; // TODO: Fetch real complaints from API
 
     return (
         <div className="p-4 sm:p-6 lg:p-8">
@@ -140,7 +163,7 @@ const Employees = () => {
                         <span className="text-gradient">Management</span>
                     </h2>
                     <p className="text-white/70">
-                        View and manage municipal employees and their assigned complaints.
+                        View and manage municipal employees and their assigned complaints for {user?.municipalityCode?.toUpperCase() || 'your municipality'}.
                     </p>
                 </div>
 
@@ -158,30 +181,39 @@ const Employees = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {employees.map((employee) => (
-                                    <tr
-                                        key={employee.id}
-                                        className="border-b border-white/5 hover:bg-white/5 transition-colors duration-300"
-                                    >
-                                        <td className="py-4 px-4 text-white font-medium">{employee.name}</td>
-                                        <td className="py-4 px-4 text-white/70">{employee.department}</td>
-                                        <td className="py-4 px-4 text-white/60 text-sm hidden md:table-cell">{employee.email}</td>
-                                        <td className="py-4 px-4 text-white/60 text-sm hidden lg:table-cell">{employee.phone}</td>
-                                        <td className="py-4 px-4">
-                                            <span className="px-3 py-1 rounded-full text-xs font-medium bg-green-500/20 text-green-400 border border-green-500/30">
-                                                {employee.status}
-                                            </span>
-                                        </td>
-                                        <td className="py-4 px-4">
-                                            <button 
-                                                onClick={() => handleViewDetails(employee)}
-                                                className="text-[#60A5FA] hover:text-[#3B82F6] text-sm font-medium transition-colors"
-                                            >
-                                                View Details
-                                            </button>
+                                {employees.length === 0 ? (
+                                    <tr>
+                                        <td colSpan="6" className="text-center py-8">
+                                            <p className="text-white/50">No employees found for {user?.municipalityCode?.toUpperCase() || 'your municipality'}.</p>
+                                            <p className="text-white/30 text-sm mt-2">Add employees through the Employee Management page.</p>
                                         </td>
                                     </tr>
-                                ))}
+                                ) : (
+                                    employees.map((employee) => (
+                                        <tr
+                                            key={employee._id}
+                                            className="border-b border-white/5 hover:bg-white/5 transition-colors duration-300"
+                                        >
+                                            <td className="py-4 px-4 text-white font-medium">{employee.name}</td>
+                                            <td className="py-4 px-4 text-white/70">{employee.department}</td>
+                                            <td className="py-4 px-4 text-white/60 text-sm hidden md:table-cell">{employee.email}</td>
+                                            <td className="py-4 px-4 text-white/60 text-sm hidden lg:table-cell">{employee.phone}</td>
+                                            <td className="py-4 px-4">
+                                                <span className="px-3 py-1 rounded-full text-xs font-medium bg-green-500/20 text-green-400 border border-green-500/30">
+                                                    {employee.availabilityStatus || 'Active'}
+                                                </span>
+                                            </td>
+                                            <td className="py-4 px-4">
+                                                <button 
+                                                    onClick={() => handleViewDetails(employee)}
+                                                    className="text-[#60A5FA] hover:text-[#3B82F6] text-sm font-medium transition-colors"
+                                                >
+                                                    View Details
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
                             </tbody>
                         </table>
                     </div>
@@ -217,11 +249,35 @@ const Employees = () => {
                                     </div>
                                     <div className="bg-white/5 rounded-lg p-4">
                                         <p className="text-white/60 text-sm mb-1">Phone</p>
-                                        <p className="text-white font-medium">{selectedEmployee.phone}</p>
+                                        <p className="text-white font-medium">{selectedEmployee.phone || 'Not provided'}</p>
                                     </div>
                                     <div className="bg-white/5 rounded-lg p-4">
-                                        <p className="text-white/60 text-sm mb-1">Assigned Complaints</p>
-                                        <p className="text-white font-medium">{employeeComplaints.length}</p>
+                                        <p className="text-white/60 text-sm mb-1">Employee ID</p>
+                                        <p className="text-white font-medium">{selectedEmployee.employeeId || 'Not assigned'}</p>
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                                    <div className="bg-white/5 rounded-lg p-4">
+                                        <p className="text-white/60 text-sm mb-1">Department</p>
+                                        <p className="text-white font-medium">{selectedEmployee.department}</p>
+                                    </div>
+                                    <div className="bg-white/5 rounded-lg p-4">
+                                        <p className="text-white/60 text-sm mb-1">Designation</p>
+                                        <p className="text-white font-medium">{selectedEmployee.designation || 'Field Officer'}</p>
+                                    </div>
+                                    <div className="bg-white/5 rounded-lg p-4">
+                                        <p className="text-white/60 text-sm mb-1">Availability</p>
+                                        <p className="text-white font-medium">{selectedEmployee.availabilityStatus || 'AVAILABLE'}</p>
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                    <div className="bg-white/5 rounded-lg p-4">
+                                        <p className="text-white/60 text-sm mb-1">Current Workload</p>
+                                        <p className="text-white font-medium">{selectedEmployee.currentWorkload || 0}/{selectedEmployee.maxConcurrentComplaints || 10} complaints</p>
+                                    </div>
+                                    <div className="bg-white/5 rounded-lg p-4">
+                                        <p className="text-white/60 text-sm mb-1">Municipality</p>
+                                        <p className="text-white font-medium">{selectedEmployee.municipalityCode?.toUpperCase() || 'Not assigned'}</p>
                                     </div>
                                 </div>
 
@@ -231,67 +287,15 @@ const Employees = () => {
                                     
                                     {employeeComplaints.length === 0 ? (
                                         <div className="text-center py-8">
-                                            <p className="text-white/50">No complaints assigned to this employee.</p>
+                                            <p className="text-white/50">No complaints assigned to this employee yet.</p>
+                                            <p className="text-white/30 text-sm mt-2">Assigned complaints will appear here once complaints are filed and auto-assigned.</p>
                                         </div>
                                     ) : (
                                         <div className="space-y-4 max-h-[400px] overflow-y-auto">
-                                            {employeeComplaints.map((complaint) => (
-                                                <div key={complaint.id} className="bg-white/5 rounded-xl p-6 border border-white/10">
-                                                    <div className="flex justify-between items-start mb-4">
-                                                        <div>
-                                                            <h5 className="text-lg font-semibold text-white mb-1">{complaint.id}</h5>
-                                                            <p className="text-white/70 text-sm">Filed on {complaint.date}</p>
-                                                        </div>
-                                                        <div className="flex gap-2">
-                                                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${getUrgencyBadge(complaint.urgency)}`}>
-                                                                {complaint.urgency}
-                                                            </span>
-                                                            <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusBadge(complaint.status)}`}>
-                                                                {complaint.status.replace('-', ' ')}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-
-                                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                                        {/* Left Column - Details */}
-                                                        <div className="space-y-4">
-                                                            <div>
-                                                                <p className="text-white/60 text-sm mb-1">Sector</p>
-                                                                <p className="text-white font-medium">{complaint.sector}</p>
-                                                            </div>
-                                                            <div>
-                                                                <p className="text-white/60 text-sm mb-1">Location</p>
-                                                                <p className="text-white font-medium">{complaint.location}</p>
-                                                            </div>
-                                                            <div>
-                                                                <p className="text-white/60 text-sm mb-1">Description</p>
-                                                                <p className="text-white/80 text-sm">{complaint.description}</p>
-                                                            </div>
-                                                            <div>
-                                                                <p className="text-white/60 text-sm mb-1">Citizen Information</p>
-                                                                <p className="text-white font-medium">{complaint.citizenName}</p>
-                                                                <p className="text-white/80 text-sm">{complaint.citizenPhone}</p>
-                                                            </div>
-                                                        </div>
-
-                                                        {/* Right Column - Image */}
-                                                        <div>
-                                                            <p className="text-white/60 text-sm mb-2">Problem Image</p>
-                                                            <img 
-                                                                src={complaint.image} 
-                                                                alt="Complaint image"
-                                                                className="w-full h-48 object-cover rounded-lg border border-white/10"
-                                                            />
-                                                        </div>
-                                                    </div>
-
-                                                    <div className="mt-4 pt-4 border-t border-white/10">
-                                                        <p className="text-white/60 text-sm">
-                                                            Assigned on {complaint.assignedDate} • Handled by {selectedEmployee.name} ({selectedEmployee.phone})
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            ))}
+                                            {/* TODO: Replace with real complaints data from API */}
+                                            <div className="text-center py-8">
+                                                <p className="text-white/50">Complaints data will be loaded from API</p>
+                                            </div>
                                         </div>
                                     )}
                                 </div>
