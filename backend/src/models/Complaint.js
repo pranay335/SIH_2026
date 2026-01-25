@@ -4,88 +4,118 @@ const complaintSchema = new mongoose.Schema(
   {
     complaint_id: {
       type: String,
-      unique: true,
       required: true,
-      index: true,
+      unique: true
     },
+
     description: {
       type: String,
-      required: true,
+      required: true
     },
+
     image: {
-      type: String, // Store as base64 or URL
-      required: true,
-    },
-    location: {
       type: String,
-      required: true,
+      required: true
     },
+
+    // ✅ GEOJSON LOCATION (FIXED)
+    location: {
+      type: {
+        type: String,
+        enum: ['Point'],
+        default: 'Point'
+      },
+      coordinates: {
+        type: [Number], // [longitude, latitude]
+        required: true
+      }
+    },
+
+    // 📍 Human-readable address from reverse geocoding
+    address: {
+      fullAddress: { type: String, required: true },
+      area: { type: String },
+      locality: { type: String },
+      city: { type: String, required: true },
+      state: { type: String, default: 'Maharashtra' },
+      pincode: { type: String },
+      landmark: { type: String }
+    },
+
     sector: {
       type: String,
       required: true,
+      default: 'General'
     },
+
     municipalityCode: {
       type: String,
-      required: true,
       default: 'BMC'
     },
+
     nlp_result: {
-      predicted_sector: String,
-      predicted_severity: String,
-      sector_confidence: Number,
-      severity_confidence: Number,
+      type: Object
     },
+
     cnn_result: {
-      predicted_class: String,
-      confidence: Number,
+      type: Object
     },
+
     status: {
       type: String,
-      enum: ['Pending', 'Under Review', 'Resolved', 'Rejected'],
-      default: 'Pending',
+      default: 'Pending'
     },
+
+    priority: {
+      type: String,
+      default: 'Low'
+    },
+
     user_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
+      required: true
     },
+
     assigned_to: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
-      default: null,
+      default: null
     },
-    priority: {
-      type: String,
-      enum: ['Low', 'Medium', 'High'],
-      default: 'Medium',
-    },
+
     notes: {
       type: String,
-      default: '',
+      default: ''
     },
+
     estimatedResolution: {
       type: Date,
-      default: null,
+      default: null
     },
+
     resolvedDate: {
       type: Date,
-      default: null,
+      default: null
     },
+
     flagged: {
       type: Boolean,
-      default: false,
+      default: false
     },
+
     flagReason: {
       type: String,
-      default: '',
+      default: ''
     },
+
     imageHash: {
-      type: String,
-      default: '',
-    },
+      type: String
+    }
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
+
+// ✅ REQUIRED GEO INDEX
+complaintSchema.index({ location: '2dsphere' });
 
 module.exports = mongoose.model('Complaint', complaintSchema);
