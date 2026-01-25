@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['user', 'admin'],
+    enum: ['user', 'admin', 'employee'],
     default: 'user',
   },
   phone: {
@@ -27,6 +27,74 @@ const userSchema = new mongoose.Schema({
   municipalityId: {
     type: String,
     default: '',
+  },
+  municipalityCode: {
+    type: String,
+    ref: 'Municipality',
+    default: 'BMC'
+  },
+  isVerified: {
+    type: Boolean,
+    default: false,
+  },
+  aadhaarVerified: {
+    type: Boolean,
+    default: false,
+  },
+  aadhaarLast4: {
+    type: String,
+  },
+  aadhaarHash: {
+    type: String,
+  },
+  aadhaarOTP: {
+    type: String,
+  },
+  aadhaarOTPExpires: {
+    type: Date,
+  },
+  // Employee specific fields
+  employeeId: {
+    type: String,
+    sparse: true,
+    unique: true,
+  },
+  department: {
+    type: String,
+    enum: ['Water', 'Roads', 'Waste', 'Electricity', 'Health', 'General'],
+  },
+  designation: {
+    type: String,
+  },
+  workArea: {
+    type: {
+      type: String,
+      enum: ['Polygon'],
+    },
+    coordinates: [[[Number]]],
+  },
+  skills: [String],
+  maxConcurrentComplaints: {
+    type: Number,
+    default: 10,
+  },
+  currentWorkload: {
+    type: Number,
+    default: 0,
+  },
+  availabilityStatus: {
+    type: String,
+    enum: ['AVAILABLE', 'BUSY', 'OFF_DUTY', 'ON_LEAVE'],
+    default: 'AVAILABLE',
+  },
+  performance: {
+    avgResolutionTime: { type: Number }, // hours
+    successRate: { type: Number }, // percentage
+    totalComplaintsHandled: { type: Number, default: 0 }
+  },
+  workingHours: {
+    start: { type: String }, // "09:00"
+    end: { type: String } // "17:00"
   },
   resetPasswordToken: {
     type: String,

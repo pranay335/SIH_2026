@@ -1,41 +1,164 @@
 const Complaint = require('../models/Complaint');
+const { autoAssignComplaint } = require('./assignmentController');
+const crypto = require('crypto');
+const { reverseGeocode, getMunicipalityFromAddress } = require('../services/geocodingService');
 
-// @desc    File a new complaint
-// @route   POST /api/complaints
-// @access  Public
+/* ---------------------------------------------
+   Helper: Image authenticity & relevance
+---------------------------------------------- */
+const checkImageAuthenticity = ({ image, nlp_result, cnn_result }) => {
+  const flags = [];
+  let flagged = false;
+
+  const imageHash = crypto
+    .createHash('sha256')
+    .update(image)
+    .digest('hex');
+
+  if (cnn_result?.confidence < 0.6) {
+    flags.push('Low CNN confidence');
+    flagged = true;
+  }
+
+  if (nlp_result && cnn_result) {
+    const nlpSector = nlp_result.predicted_sector?.toLowerCase();
+    const cnnClass = cnn_result.predicted_class?.toLowerCase();
+
+    if (
+      nlpSector &&
+      cnnClass &&
+      !nlpSector.includes(cnnClass) &&
+      !cnnClass.includes(nlpSector)
+    ) {
+      flags.push('NLP sector vs CNN class mismatch');
+      flagged = true;
+    }
+  }
+
+  return {
+    flagged,
+    flagReason: flags.join(', '),
+    imageHash
+  };
+};
+
+/* ---------------------------------------------
+   Helper: Municipality Code
+---------------------------------------------- */
+const getMunicipalityCode = (locationText) => {
+  const map = {
+    mumbai: 'BMC',
+    thane: 'TMC',
+    kalyan: 'KDMC',
+    pune: 'PMC',
+    nagpur: 'NMC',
+    nashik: 'NMC',
+    aurangabad: 'AMC'
+  };
+
+  const lower = locationText.toLowerCase();
+  for (const city in map) {
+    if (lower.includes(city)) return map[city];
+  }
+
+  return 'BMC';
+};
+
+/* ---------------------------------------------
+   POST /api/complaints
+---------------------------------------------- */
 const fileComplaint = async (req, res) => {
   try {
-    const { complaint_id, description, image, nlp_result, cnn_result, user_id } = req.body;
+    const {
+      complaint_id,
+      description,
+      image,
+      location, // "lat, lng"
+      nlp_result,
+      cnn_result,
+      user_id
+    } = req.body;
 
-    // Validate required fields
-    if (!complaint_id || !description || !image || !nlp_result || !cnn_result) {
+    if (
+      !complaint_id ||
+      !description ||
+      !image ||
+      !location ||
+      !nlp_result ||
+      !cnn_result
+    ) {
       return res.status(400).json({
-        message: 'Missing required fields: complaint_id, description, image, nlp_result, cnn_result',
+        message: 'Missing required fields'
       });
     }
 
-    // Create new complaint
+    /* 🔥 CONVERT STRING LOCATION → GEOJSON */
+    const [lat, lng] = location.split(',').map(Number);
+
+    if (isNaN(lat) || isNaN(lng)) {
+      return res.status(400).json({
+        message: 'Invalid location format. Expected "lat, lng"'
+      });
+    }
+
+    const geoLocation = {
+      type: 'Point',
+      coordinates: [lng, lat] // Mongo expects [lng, lat]
+    };
+
+    const sector = nlp_result.predicted_sector || 'General';
+    const municipalityCode = getMunicipalityCode(location);
+
+    const imageCheck = checkImageAuthenticity({
+      image,
+      nlp_result,
+      cnn_result
+    });
+
     const complaint = new Complaint({
       complaint_id,
       description,
       image,
+      location: geoLocation, // ✅ FIXED
+      sector,
+      municipalityCode,
       nlp_result,
       cnn_result,
       user_id,
       status: 'Pending',
-      // Set priority based on predicted severity
       priority:
         nlp_result.predicted_severity === 'High'
           ? 'High'
           : nlp_result.predicted_severity === 'Medium'
-            ? 'Medium'
-            : 'Low',
+          ? 'Medium'
+          : 'Low',
+      flagged: imageCheck.flagged,
+      flagReason: imageCheck.flagReason,
+      imageHash: imageCheck.imageHash
     });
 
     const savedComplaint = await complaint.save();
+
+    // Auto assignment
+    try {
+      await autoAssignComplaint(
+        {
+          body: {
+            complaint_id: savedComplaint.complaint_id,
+            sector: savedComplaint.sector,
+            municipalityCode: savedComplaint.municipalityCode,
+            priority: savedComplaint.priority
+          }
+        },
+        { status: () => ({ json: () => {} }) }
+      );
+    } catch (err) {
+      console.error('Auto-assign failed:', err);
+    }
+
     res.status(201).json({
       message: 'Complaint filed successfully',
-      complaint: savedComplaint,
+      complaint: savedComplaint
     });
   } catch (error) {
     console.error('Error filing complaint:', error);
@@ -43,21 +166,24 @@ const fileComplaint = async (req, res) => {
   }
 };
 
-// @desc    Get all complaints
-// @route   GET /api/complaints
-// @access  Public
+/* ---------------------------------------------
+   GET /api/complaints
+---------------------------------------------- */
 const getComplaints = async (req, res) => {
   try {
-    const complaints = await Complaint.find().populate('user_id', 'name email').populate('assigned_to', 'name email');
+    const complaints = await Complaint.find()
+      .populate('user_id', 'name email')
+      .populate('assigned_to', 'name email');
+
     res.json(complaints);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// @desc    Get complaint by ID
-// @route   GET /api/complaints/:id
-// @access  Public
+/* ---------------------------------------------
+   GET /api/complaints/:id
+---------------------------------------------- */
 const getComplaintById = async (req, res) => {
   try {
     const complaint = await Complaint.findById(req.params.id)
@@ -74,21 +200,16 @@ const getComplaintById = async (req, res) => {
   }
 };
 
-// @desc    Update complaint status
-// @route   PUT /api/complaints/:id
-// @access  Public
+/* ---------------------------------------------
+   PUT /api/complaints/:id
+---------------------------------------------- */
 const updateComplaint = async (req, res) => {
   try {
     const { status, assigned_to, notes, priority } = req.body;
 
     const complaint = await Complaint.findByIdAndUpdate(
       req.params.id,
-      {
-        status,
-        assigned_to,
-        notes,
-        priority,
-      },
+      { status, assigned_to, notes, priority },
       { new: true }
     );
 
@@ -98,21 +219,21 @@ const updateComplaint = async (req, res) => {
 
     res.json({
       message: 'Complaint updated successfully',
-      complaint,
+      complaint
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// @desc    Get complaints by user
-// @route   GET /api/complaints/user/:userId
-// @access  Public
+/* ---------------------------------------------
+   GET /api/complaints/user/:userId
+---------------------------------------------- */
 const getComplaintsByUser = async (req, res) => {
   try {
-    const complaints = await Complaint.find({ user_id: req.params.userId })
-      .populate('assigned_to', 'name email')
-      .sort({ createdAt: -1 });
+    const complaints = await Complaint.find({
+      user_id: req.params.userId
+    }).sort({ createdAt: -1 });
 
     res.json(complaints);
   } catch (error) {
@@ -125,5 +246,5 @@ module.exports = {
   getComplaints,
   getComplaintById,
   updateComplaint,
-  getComplaintsByUser,
+  getComplaintsByUser
 };

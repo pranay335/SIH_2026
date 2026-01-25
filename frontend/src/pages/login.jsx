@@ -51,6 +51,8 @@ const Login = () => {
             // Redirect based on role
             if (data.user.role === 'user') {
                 navigate('/user-dashboard');
+            } else if (data.user.role === 'employee') {
+                navigate('/employee-dashboard');
             } else {
                 navigate('/admin-dashboard');
             }
@@ -146,6 +148,7 @@ const Login = () => {
                             >
                                 <option value="user" className="bg-gray-800">Citizen</option>
                                 <option value="admin" className="bg-gray-800">Administrator</option>
+                                <option value="employee" className="bg-gray-800">Employee</option>
                             </select>
                         </div>
 

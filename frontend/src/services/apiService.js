@@ -79,6 +79,17 @@ export const userService = {
       method: 'DELETE',
     });
   },
+
+  async createEmployee(employeeData) {
+    return apiRequest('/users/create-employee', {
+      method: 'POST',
+      body: JSON.stringify(employeeData),
+    });
+  },
+
+  async getEmployees() {
+    return apiRequest('/users/employees');
+  },
 };
 
 // Complaint-related API calls
@@ -141,4 +152,12 @@ export const authService = {
       method: 'POST',
     });
   },
+};
+
+// Default export for compatibility
+export default {
+  userService,
+  complaintService,
+  predictionService,
+  authService
 };

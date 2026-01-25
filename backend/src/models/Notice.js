@@ -21,10 +21,10 @@ const noticeSchema = new mongoose.Schema(
       enum: ['low', 'medium', 'high'],
       default: 'medium',
     },
-    municipalityId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
+    municipalityCode: {
+      type: String,
       required: true,
+      default: 'BMC'
     },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,

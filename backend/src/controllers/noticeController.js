@@ -5,7 +5,7 @@ const Notice = require('../models/Notice');
 // @access  Private (admin/municipal authority)
 const createNotice = async (req, res) => {
   try {
-    const { title, department, description, priority } = req.body;
+    const { title, department, description, priority, municipalityCode } = req.body;
 
     // Validate required fields
     if (!title || !department || !description) {
@@ -20,8 +20,8 @@ const createNotice = async (req, res) => {
       department,
       description,
       priority: priority || 'medium',
-      municipalityId: req.user.municipalityId || req.user.userId, // Use user's municipality or user ID as fallback
-      createdBy: req.user.userId,
+      municipalityCode: municipalityCode || req.user.municipalityCode || 'BMC',
+      createdBy: req.user._id,
     });
 
     const savedNotice = await notice.save();
@@ -42,13 +42,13 @@ const createNotice = async (req, res) => {
 // @access  Private
 const getNotices = async (req, res) => {
   try {
-    const municipalityId = req.user.municipalityId || req.user.userId;
+    const municipalityCode = req.user.municipalityCode || 'BMC';
     
-    const notices = await Notice.find({ municipalityId })
+    const notices = await Notice.find({ municipalityCode })
       .populate('createdBy', 'name email')
       .sort({ createdAt: -1 });
 
-    console.log(`Fetched ${notices.length} notices for municipality ${municipalityId}`);
+    console.log(`Fetched ${notices.length} notices for municipality ${municipalityCode}`);
     res.json(notices);
   } catch (error) {
     console.error('Error fetching notices:', error);

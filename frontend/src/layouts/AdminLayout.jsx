@@ -13,7 +13,8 @@ const AdminLayout = () => {
         { path: '/admin/complaints', label: 'All Complaints', icon: '📋' },
         { path: '/admin/assigned', label: 'Assigned Complaints', icon: '✅' },
         { path: '/admin/notices', label: 'Notices', icon: '📢' },
-        { path: '/admin/employees', label: 'Employees', icon: '👥' }
+        { path: '/admin/employees', label: 'Employees', icon: '👥' },
+        { path: '/admin/employee-management', label: 'Employee Management', icon: '➕' }
     ];
 
     const handleLogout = () => {
