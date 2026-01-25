@@ -19,6 +19,13 @@ dist-ssr
 .env.test.local
 .env.production.local
 
+# Virtual environments
+venv/
+env/
+.venv/
+.env/
+
+
 # Coverage
 coverage
 *.lcov
