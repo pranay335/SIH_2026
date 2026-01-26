@@ -83,6 +83,12 @@ const complaintSchema = new mongoose.Schema(
       default: null
     },
 
+    group_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'ComplaintGroup',
+      default: null
+    },
+
     notes: {
       type: String,
       default: ''
