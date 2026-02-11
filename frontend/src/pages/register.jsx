@@ -9,7 +9,9 @@ const Register = () => {
         email: '',
         phone: '',
         password: '',
-        confirmPassword: ''
+        confirmPassword: '',
+        municipalityCode: 'BMC',
+        // aadhaarXml: null
     });
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
@@ -21,6 +23,13 @@ const Register = () => {
         setFormData(prev => ({ ...prev, [name]: value }));
         setError('');
     };
+
+    /*
+        const handleFileChange = (e) => {
+            setFormData(prev => ({ ...prev, aadhaarXml: e.target.files[0] }));
+            setError('');
+        };
+    */
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -41,17 +50,21 @@ const Register = () => {
         }
 
         try {
+            const formDataToSend = new FormData();
+            formDataToSend.append('name', formData.name);
+            formDataToSend.append('email', formData.email);
+            formDataToSend.append('password', formData.password);
+            formDataToSend.append('phone', formData.phone);
+            formDataToSend.append('municipalityCode', formData.municipalityCode);
+            /*
+            if (formData.aadhaarXml) {
+                formDataToSend.append('aadhaarXml', formData.aadhaarXml);
+            }
+            */
+
             const response = await fetch('http://localhost:5000/api/users/register', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    name: formData.name,
-                    email: formData.email,
-                    password: formData.password,
-                    phone: formData.phone
-                })
+                body: formDataToSend
             });
 
             const data = await response.json();
@@ -63,7 +76,7 @@ const Register = () => {
             // Store token and user data
             localStorage.setItem('civicmind_token', data.token);
             login(data.user, data.user.role);
-            
+
             navigate('/user-dashboard');
         } catch (err) {
             setError(err.message || 'Registration failed. Please try again.');
@@ -84,8 +97,8 @@ const Register = () => {
                         </div>
                     </div>
                     <div className="flex items-center justify-between mb-4">
-                        <Link 
-                            to="/" 
+                        <Link
+                            to="/"
                             className="flex items-center text-gray-400 hover:text-white transition-colors duration-200 group"
                         >
                             <svg className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -158,6 +171,50 @@ const Register = () => {
                                 placeholder="+1 (555) 123-4567"
                             />
                         </div>
+
+                        {/* Municipality */}
+                        <div>
+                            <label htmlFor="municipalityCode" className="block text-sm font-medium text-gray-300 mb-2">
+                                Your Municipality
+                            </label>
+                            <select
+                                id="municipalityCode"
+                                name="municipalityCode"
+                                required
+                                value={formData.municipalityCode}
+                                onChange={handleInputChange}
+                                className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                            >
+                                <option value="BMC">Brihanmumbai (BMC)</option>
+                                <option value="TMC">Thane (TMC)</option>
+                                <option value="KDMC">Kalyan-Dombivli (KDMC)</option>
+                                <option value="PMC">Pune (PMC)</option>
+                                <option value="NMMC">Navi Mumbai (NMMC)</option>
+                                <option value="VVMC">Vasai-Virar (VVMC)</option>
+                            </select>
+                            <p className="text-[10px] text-gray-500 mt-1 italic">
+                                * This determines which municipal corporation will handle your complaints.
+                            </p>
+                        </div>
+
+                        {/* Aadhaar XML Upload - Hidden for now
+                        <div>
+                            <label htmlFor="aadhaarXml" className="block text-sm font-medium text-gray-300 mb-2">
+                                Aadhaar XML (Digilocker)
+                            </label>
+                            <input
+                                type="file"
+                                id="aadhaarXml"
+                                name="aadhaarXml"
+                                accept=".xml"
+                                onChange={handleFileChange}
+                                className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 transition-all duration-200"
+                            />
+                            <p className="text-[10px] text-gray-500 mt-1 italic">
+                                * Your data will be parsed and deleted immediately. No ID stored.
+                            </p>
+                        </div>
+                        */}
 
                         {/* Password */}
                         <div>

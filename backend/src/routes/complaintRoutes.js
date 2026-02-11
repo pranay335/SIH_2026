@@ -13,17 +13,30 @@ const {
   updateComplaintGroupStatus,
   getDeduplicationStats,
   reverseGeocode,
-  searchAddress
+  searchAddress,
+  getAssignedComplaintGroups,
+  acknowledgeComplaintGroup
 } = require('../controllers/complaintController');
 
 // File a new complaint (protected)
 router.post('/', auth, fileComplaint);
+
+// GEOCODING ROUTES
+
+// Reverse geocode lat/lng to address (public - no auth required)
+router.get('/geocode', reverseGeocode);
+
+// Search address by name (public - no auth required)
+router.get('/search-address', searchAddress);
 
 // Get all complaints (protected)
 router.get('/', auth, getComplaints);
 
 // Get complaints by user (protected)
 router.get('/user/:userId', auth, getComplaintsByUser);
+
+// Get assigned complaints (protected)
+router.get('/assigned/:employeeId', auth, getAssignedComplaintGroups);
 
 // Get complaint by ID (protected)
 router.get('/:id', auth, getComplaintById);
@@ -48,12 +61,8 @@ router.put('/groups/:groupId/assign', auth, assignComplaintGroup);
 // Update complaint group status (protected)
 router.put('/groups/:groupId/status', auth, updateComplaintGroupStatus);
 
-// GEOCODING ROUTES
+// Acknowledge complaint group (protected)
+router.put('/groups/:groupId/acknowledge', auth, acknowledgeComplaintGroup);
 
-// Reverse geocode lat/lng to address (public - no auth required)
-router.get('/geocode', reverseGeocode);
-
-// Search address by name (public - no auth required)
-router.get('/search-address', searchAddress);
 
 module.exports = router;

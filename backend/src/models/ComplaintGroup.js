@@ -143,7 +143,12 @@ const complaintGroupSchema = new mongoose.Schema({
     type: String,
     enum: ['location', 'semantic', 'hybrid'],
     default: 'hybrid'
-  }
+  },
+
+  // Proof of resolution images
+  resolution_images: [{
+    type: String
+  }]
 }, { timestamps: true });
 
 // Index for geospatial queries

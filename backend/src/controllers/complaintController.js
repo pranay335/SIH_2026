@@ -1,8 +1,20 @@
 const Complaint = require('../models/Complaint');
 const ComplaintGroup = require('../models/ComplaintGroup');
+const User = require('../models/User');
 const crypto = require('crypto');
+const nodemailer = require('nodemailer');
+const Message = require('../models/Message');
 const deduplicationService = require('../services/deduplicationService');
 const geocodingService = require('../services/geocodingService');
+
+// Configure Nodemailer
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_PASS
+  }
+});
 
 /* ---------------------------------------------
    Helper: Image authenticity & relevance
@@ -66,6 +78,20 @@ const getMunicipalityCode = (locationText) => {
 };
 
 /* ---------------------------------------------
+   Helper: Normalize sector to department
+---------------------------------------------- */
+const normalizeSectorToDepartment = (sector) => {
+  const s = sector.toLowerCase();
+  if (s.includes('water')) return 'Water';
+  if (s.includes('road')) return 'Roads';
+  if (s.includes('waste') || s.includes('garbage')) return 'Waste';
+  if (s.includes('electric')) return 'Electricity';
+  if (s.includes('health') || s.includes('medical')) return 'Health';
+  if (s.includes('drain') || s.includes('sewer')) return 'Drainage';
+  return 'General';
+};
+
+/* ---------------------------------------------
    POST /api/complaints
 ---------------------------------------------- */
 const fileComplaint = async (req, res) => {
@@ -122,7 +148,7 @@ const fileComplaint = async (req, res) => {
     const addressValidation = geocodingService.validateAddress(address);
     if (!addressValidation.isValid) {
       console.warn('⚠️ Address validation failed. Missing:', addressValidation.missing);
-      
+
       // Force create a valid address if validation fails
       address = {
         fullAddress: address.fullAddress || `Location (${lat.toFixed(6)}, ${lng.toFixed(6)})`,
@@ -133,7 +159,7 @@ const fileComplaint = async (req, res) => {
         pincode: address.pincode || '',
         landmark: address.landmark || ''
       };
-      
+
       console.log('🔧 Forced address creation:', address.fullAddress);
     }
 
@@ -148,6 +174,51 @@ const fileComplaint = async (req, res) => {
     const sector = nlp_result.predicted_sector || 'General';
     const municipalityCode = geocodingService.getMunicipalityCode(address);
 
+    /* 🛡️ JURISDICTION VALIDATION */
+    const user = await User.findById(user_id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Strictly enforce municipality match for regular users
+    if (user.role === 'user' && user.municipalityCode && user.municipalityCode !== municipalityCode) {
+      console.warn(`🚫 Jurisdiction mismatch: User (${user.municipalityCode}) vs Complaint (${municipalityCode})`);
+      return res.status(403).json({
+        message: `Jurisdiction mismatch. You can only file complaints for ${user.municipalityCode}. Detected location is in ${municipalityCode}.`,
+        detectedMunicipality: municipalityCode,
+        userMunicipality: user.municipalityCode
+      });
+    }
+
+    /* 🤖 AUTO-ASSIGNMENT LOGIC */
+    const normalizedDept = normalizeSectorToDepartment(sector);
+    console.log(`🤖 Attempting auto-assignment for sector: ${sector} (Normalized: ${normalizedDept}) in ${municipalityCode}`);
+
+    // Find eligible employees: same municipality, same department (normalized), available, sorted by lowest workload
+    const bestEmployee = await User.findOne({
+      role: 'employee',
+      municipalityCode: municipalityCode,
+      department: normalizedDept,
+      availabilityStatus: 'AVAILABLE',
+      currentWorkload: { $lt: 10 } // Use maxConcurrentComplaints if defined per user, but 10 is default
+    }).sort({ currentWorkload: 1 });
+
+    let assigned_to = null;
+    let status = 'Pending';
+    let assignmentNote = 'Awaiting manual assignment';
+
+    if (bestEmployee) {
+      assigned_to = bestEmployee._id;
+      status = 'Assigned';
+      assignmentNote = `Automatically assigned to ${bestEmployee.name}`;
+      console.log(`✅ Auto-assigned to: ${bestEmployee.name} (Workload: ${bestEmployee.currentWorkload})`);
+
+      // Increment employee workload
+      await User.findByIdAndUpdate(bestEmployee._id, { $inc: { currentWorkload: 1 } });
+    } else {
+      console.log('⚠️ No available employees found for auto-assignment. Defaulting to Pending.');
+    }
+
     const imageCheck = checkImageAuthenticity({
       image,
       nlp_result,
@@ -158,20 +229,22 @@ const fileComplaint = async (req, res) => {
       complaint_id,
       description,
       image,
-      location: geoLocation, // ✅ FIXED
-      address: address, // 🗺️ Use geocoded address
+      location: geoLocation,
+      address: address,
       sector,
       municipalityCode,
       nlp_result,
       cnn_result,
       user_id,
-      status: 'Pending',
+      assigned_to, // Set by auto-assignment
+      status,      // Set to 'Assigned' if auto-assigned
+      notes: assignmentNote,
       priority:
         nlp_result.predicted_severity === 'High'
           ? 'High'
           : nlp_result.predicted_severity === 'Medium'
-          ? 'Medium'
-          : 'Low',
+            ? 'Medium'
+            : 'Low',
       flagged: imageCheck.flagged,
       flagReason: imageCheck.flagReason,
       imageHash: imageCheck.imageHash
@@ -181,8 +254,9 @@ const fileComplaint = async (req, res) => {
     console.log('🔍 Complaint object before save:', {
       complaint_id: complaint.complaint_id,
       address_fullAddress: complaint.address.fullAddress,
-      address_city: complaint.address.city,
-      address_complete: !!complaint.address.fullAddress && !!complaint.address.city
+      municipalityCode: complaint.municipalityCode,
+      status: complaint.status,
+      assigned_to: complaint.assigned_to ? 'YES' : 'NO'
     });
 
     const savedComplaint = await complaint.save();
@@ -198,11 +272,13 @@ const fileComplaint = async (req, res) => {
         description,
         nlp_result,
         user_id,
-        image
+        image,
+        assigned_to, // Pass auto-assignment data
+        status       // Pass current status
       });
 
       console.log('🔄 Deduplication Result:', deduplicationResult.message);
-      
+
       // Return enhanced response with group information
       res.status(201).json({
         message: 'Complaint filed successfully',
@@ -295,7 +371,9 @@ const getComplaintsByUser = async (req, res) => {
   try {
     const complaints = await Complaint.find({
       user_id: req.params.userId
-    }).sort({ createdAt: -1 });
+    })
+      .populate('assigned_to', 'name email phone')
+      .sort({ createdAt: -1 });
 
     res.json(complaints);
   } catch (error) {
@@ -310,7 +388,7 @@ const getComplaintGroups = async (req, res) => {
   try {
     const { status, sector, municipalityCode } = req.query;
     const filter = {};
-    
+
     if (status) filter.status = status;
     if (sector) filter.sector = sector;
     if (municipalityCode) filter.municipalityCode = municipalityCode;
@@ -338,7 +416,7 @@ const getComplaintGroups = async (req, res) => {
 const getComplaintGroupById = async (req, res) => {
   try {
     const { groupId } = req.params;
-    
+
     const group = await ComplaintGroup.findOne({ group_id: groupId })
       .populate('assigned_to', 'name email phone')
       .populate('affected_users', 'name email phone')
@@ -389,7 +467,7 @@ const assignComplaintGroup = async (req, res) => {
     // Update all individual complaints in the group
     await Complaint.updateMany(
       { group_id: group._id },
-      { 
+      {
         assigned_to,
         status: 'Assigned',
         estimatedResolution: estimatedResolution ? new Date(estimatedResolution) : null
@@ -413,10 +491,58 @@ const assignComplaintGroup = async (req, res) => {
 /* ---------------------------------------------
    PUT /api/complaints/groups/:groupId/status - Update group status
 ---------------------------------------------- */
+const getAssignedComplaintGroups = async (req, res) => {
+  try {
+    const { employeeId } = req.params;
+    const groups = await ComplaintGroup.find({ assigned_to: employeeId })
+      .populate('complaints')
+      .sort({ last_updated: -1 });
+
+    res.json({
+      success: true,
+      count: groups.length,
+      groups
+    });
+  } catch (error) {
+    console.error('Error fetching assigned groups:', error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const acknowledgeComplaintGroup = async (req, res) => {
+  try {
+    const { groupId } = req.params;
+    const group = await ComplaintGroup.findOne({ group_id: groupId });
+
+    if (!group) {
+      return res.status(404).json({ message: 'Complaint group not found' });
+    }
+
+    group.status = 'In Progress';
+    group.last_updated = new Date();
+    await group.save();
+
+    // Update individual complaints
+    await Complaint.updateMany(
+      { group_id: group._id },
+      { status: 'In Progress' }
+    );
+
+    res.json({
+      success: true,
+      message: 'Complaint group acknowledged',
+      group
+    });
+  } catch (error) {
+    console.error('Error acknowledging group:', error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
 const updateComplaintGroupStatus = async (req, res) => {
   try {
     const { groupId } = req.params;
-    const { status, notes, resolvedDate } = req.body;
+    const { status, notes, resolvedDate, resolution_images } = req.body;
 
     const group = await ComplaintGroup.findOne({ group_id: groupId });
     if (!group) {
@@ -426,6 +552,8 @@ const updateComplaintGroupStatus = async (req, res) => {
     // Update group
     group.status = status;
     if (notes) group.notes = notes;
+    if (resolution_images) group.resolution_images = resolution_images;
+
     if (status === 'Resolved' && !group.resolvedDate) {
       group.resolvedDate = resolvedDate ? new Date(resolvedDate) : new Date();
     }
@@ -436,7 +564,7 @@ const updateComplaintGroupStatus = async (req, res) => {
     // Update all individual complaints in the group
     await Complaint.updateMany(
       { group_id: group._id },
-      { 
+      {
         status,
         notes: notes || '',
         resolvedDate: status === 'Resolved' ? (resolvedDate ? new Date(resolvedDate) : new Date()) : null
@@ -444,7 +572,34 @@ const updateComplaintGroupStatus = async (req, res) => {
     );
 
     const updatedGroup = await ComplaintGroup.findOne({ group_id: groupId })
-      .populate('assigned_to', 'name email phone');
+      .populate('assigned_to', 'name email phone')
+      .populate('affected_users', 'name email');
+
+    // 📩 NOTIFY AFFECTED USERS
+    if (updatedGroup.affected_users && updatedGroup.affected_users.length > 0) {
+      for (const u of updatedGroup.affected_users) {
+        // 1. In-App Notification
+        const notification = new Message({
+          sender: 'system',
+          receiverId: u._id,
+          title: `Update on Complaint Group: ${groupId}`,
+          message: `The status of your complaint group has been updated to: ${status}. Notes: ${notes || 'N/A'}`
+        });
+        await notification.save();
+
+        // 2. Email Notification
+        try {
+          await transporter.sendMail({
+            from: '"CivicMind Updates" <' + process.env.GMAIL_USER + '>',
+            to: u.email,
+            subject: `Update: Complaint ${groupId} is now ${status}`,
+            html: `<p>Hello ${u.name},</p><p>The status of your complaint group <b>${groupId}</b> has been updated to <b>${status}</b>.</p><p>Admin Notes: ${notes || 'No extra notes provided.'}</p>`
+          });
+        } catch (mailErr) {
+          console.error('Failed to send status update email:', mailErr);
+        }
+      }
+    }
 
     res.json({
       success: true,
@@ -463,7 +618,7 @@ const updateComplaintGroupStatus = async (req, res) => {
 const getDeduplicationStats = async (req, res) => {
   try {
     const stats = await deduplicationService.getDeduplicationStats();
-    
+
     res.json({
       success: true,
       stats
@@ -480,7 +635,7 @@ const getDeduplicationStats = async (req, res) => {
 const reverseGeocode = async (req, res) => {
   try {
     const { lat, lng } = req.query;
-    
+
     if (!lat || !lng) {
       return res.status(400).json({
         message: 'Missing required parameters: lat and lng'
@@ -497,10 +652,10 @@ const reverseGeocode = async (req, res) => {
     }
 
     console.log('🗺️ Reverse geocoding coordinates:', latitude, longitude);
-    
+
     const address = await geocodingService.reverseGeocodeWithRetry(latitude, longitude);
     const municipalityCode = geocodingService.getMunicipalityCode(address);
-    
+
     res.json({
       success: true,
       address: {
@@ -523,7 +678,7 @@ const reverseGeocode = async (req, res) => {
 const searchAddress = async (req, res) => {
   try {
     const { q } = req.query;
-    
+
     if (!q || q.trim().length < 3) {
       return res.status(400).json({
         message: 'Search query must be at least 3 characters long'
@@ -531,9 +686,9 @@ const searchAddress = async (req, res) => {
     }
 
     console.log('🔍 Searching address:', q);
-    
+
     const results = await geocodingService.searchAddress(q.trim());
-    
+
     res.json({
       success: true,
       results: results.map(result => ({
@@ -562,5 +717,7 @@ module.exports = {
   updateComplaintGroupStatus,
   getDeduplicationStats,
   reverseGeocode,
-  searchAddress
+  searchAddress,
+  getAssignedComplaintGroups,
+  acknowledgeComplaintGroup
 };

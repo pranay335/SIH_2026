@@ -46,7 +46,7 @@ const AdminLogin = () => {
             // Store token and user data
             localStorage.setItem('civicmind_token', data.token);
             login(data.user, data.user.role);
-            
+
             navigate('/admin-dashboard');
         } catch (err) {
             setError(err.message || 'Login failed. Please try again.');

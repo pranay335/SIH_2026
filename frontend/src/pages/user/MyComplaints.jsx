@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Button from '../../components/button.jsx';
+import { complaintService } from '../../services/apiService.js';
 
 /* 🔥 Helper to format GeoJSON location */
 const formatLocation = (location) => {
@@ -42,20 +43,7 @@ const MyComplaints = () => {
       }
 
       try {
-        const token = localStorage.getItem('civicmind_token');
-        const res = await fetch(
-          `http://localhost:5000/api/complaints/user/${user.id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              'Content-Type': 'application/json'
-            }
-          }
-        );
-
-        if (!res.ok) throw new Error('Failed to fetch complaints');
-
-        const data = await res.json();
+        const data = await complaintService.getComplaintsByUser(user._id);
         setComplaints(data);
       } catch (err) {
         setError(err.message);
@@ -110,6 +98,12 @@ const MyComplaints = () => {
             📍 {formatLocation(complaint.location)}
           </p>
 
+          {complaint.status === 'Assigned' && complaint.assigned_to && (
+            <p className="text-green-400 text-xs mt-2 font-medium">
+              👔 Assigned to: {complaint.assigned_to.name}
+            </p>
+          )}
+
           <Button
             label="View Details"
             variant="secondary"
@@ -137,6 +131,14 @@ const MyComplaints = () => {
             <p className="text-white/60 text-sm">
               📍 {formatLocation(selectedComplaint.location)}
             </p>
+
+            {selectedComplaint.status === 'Assigned' && selectedComplaint.assigned_to && (
+              <div className="mb-4 p-3 rounded bg-green-500/10 border border-green-500/20">
+                <p className="text-xs uppercase tracking-wider text-green-300 font-semibold mb-1">Assigned Representative</p>
+                <p className="text-white font-medium">{selectedComplaint.assigned_to.name}</p>
+                <p className="text-white/60 text-sm">{selectedComplaint.assigned_to.email}</p>
+              </div>
+            )}
 
             <Button
               label="Close"

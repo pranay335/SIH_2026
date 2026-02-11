@@ -6,7 +6,7 @@ const apiRequest = async (endpoint, options = {}) => {
   try {
     // Get token from localStorage
     const token = localStorage.getItem('civicmind_token');
-    
+
     const url = `${API_BASE_URL}${endpoint}`;
     const response = await fetch(url, {
       headers: {
@@ -118,6 +118,10 @@ export const complaintService = {
       method: 'PUT',
       body: JSON.stringify(complaintData),
     });
+  },
+
+  async reverseGeocode(lat, lng) {
+    return apiRequest(`/complaints/geocode?lat=${lat}&lng=${lng}`);
   },
 };
 

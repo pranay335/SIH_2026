@@ -11,13 +11,13 @@ class GeocodingService {
         timeout: 5000
       },
       {
-        name: 'Nominatim Alternative',
-        url: 'https://nominatim.openstreetmap.org/reverse',
-        searchUrl: 'https://nominatim.openstreetmap.org/search',
+        name: 'Photon (Komoot)',
+        url: 'https://photon.komoot.io/reverse',
+        searchUrl: 'https://photon.komoot.io/api',
         timeout: 8000
       }
     ];
-    
+
     this.currentServiceIndex = 0;
   }
 
@@ -41,28 +41,37 @@ class GeocodingService {
    */
   async reverseGeocode(lat, lng) {
     const service = this.getCurrentService();
-    
+
     try {
-      const response = await axios.get(service.url, {
-        params: {
+      const params = service.name === 'Photon (Komoot)'
+        ? { lat: lat, lon: lng }
+        : {
           format: 'json',
           lat: lat,
           lon: lng,
           addressdetails: 1,
           zoom: 18,
-          countrycodes: 'in' // India specific
-        },
+          countrycodes: 'in'
+        };
+
+      const response = await axios.get(service.url, {
+        params,
         headers: {
-          'User-Agent': 'CivicMind/1.0 (municipal-complaint-system@example.com)'
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          'Referer': 'http://localhost:3000'
         },
         timeout: service.timeout
       });
 
-      if (response.data && response.data.address) {
+      if (service.name === 'Photon (Komoot)') {
+        if (response.data && response.data.features && response.data.features.length > 0) {
+          return this.formatPhotonAddress(response.data.features[0]);
+        }
+      } else if (response.data && response.data.address) {
         return this.formatAddress(response.data);
-      } else {
-        throw new Error('No address found for coordinates');
       }
+
+      throw new Error('No address found for coordinates');
     } catch (error) {
       console.warn(`⚠️ ${service.name} failed:`, error.message);
       throw error;
@@ -74,26 +83,26 @@ class GeocodingService {
    */
   async reverseGeocodeWithRetry(lat, lng, maxRetries = 2) {
     let lastError;
-    
+
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       for (let serviceAttempt = 0; serviceAttempt < this.services.length; serviceAttempt++) {
         try {
           console.log(`🗺️ Geocoding attempt ${attempt}/${maxRetries} using ${this.getCurrentService().name} for coordinates: ${lat}, ${lng}`);
-          
+
           const address = await this.reverseGeocode(lat, lng);
-          
+
           const validation = this.validateAddress(address);
           if (!validation.isValid) {
             console.warn(`⚠️ Address validation failed. Missing: ${validation.missing.join(', ')}`);
           }
-          
+
           console.log('✅ Geocoding successful:', address.fullAddress);
           return address;
-          
+
         } catch (error) {
           lastError = error;
           console.error(`❌ ${this.getCurrentService().name} failed:`, error.message);
-          
+
           // Switch to next service
           if (serviceAttempt < this.services.length - 1) {
             this.switchService();
@@ -102,17 +111,17 @@ class GeocodingService {
           }
         }
       }
-      
+
       // Reset to first service for next attempt
       this.currentServiceIndex = 0;
-      
+
       if (attempt < maxRetries) {
         const delay = Math.pow(2, attempt) * 1000;
         console.log(`⏳ Retrying in ${delay}ms...`);
         await new Promise(resolve => setTimeout(resolve, delay));
       }
     }
-    
+
     // All attempts failed, return fallback
     console.error('🚨 All geocoding attempts failed, using fallback address');
     return this.getFallbackAddress(lat, lng);
@@ -123,7 +132,7 @@ class GeocodingService {
    */
   formatAddress(data) {
     const address = data.address;
-    
+
     return {
       fullAddress: data.display_name || this.createFallbackDisplayAddress(address),
       area: address.suburb || address.neighbourhood || address.district || '',
@@ -132,6 +141,31 @@ class GeocodingService {
       state: address.state || 'Maharashtra', // Default to Maharashtra
       pincode: address.postcode || '',
       landmark: address.amenity || address.shop || address.tourism || ''
+    };
+  }
+
+  /**
+   * Format the address data from Photon response
+   */
+  formatPhotonAddress(feature) {
+    const props = feature.properties;
+
+    // Photon structure: house_number, street, district, city, state, postcode, country
+    const parts = [];
+    if (props.street) parts.push(props.street);
+    if (props.district) parts.push(props.district);
+    if (props.city) parts.push(props.city);
+    if (props.state) parts.push(props.state);
+    if (props.postcode) parts.push(props.postcode);
+
+    return {
+      fullAddress: parts.join(', ') || 'Unknown Location',
+      area: props.district || props.suburb || '',
+      locality: props.district || props.suburb || '',
+      city: props.city || props.town || 'Unknown City',
+      state: props.state || 'Maharashtra',
+      pincode: props.postcode || '',
+      landmark: props.name || ''
     };
   }
 
@@ -145,7 +179,7 @@ class GeocodingService {
     if (address.city || address.town) parts.push(address.city || address.town);
     if (address.state) parts.push(address.state);
     if (address.postcode) parts.push(address.postcode);
-    
+
     return parts.length > 0 ? parts.join(', ') : 'Unknown Location';
   }
 
@@ -170,7 +204,7 @@ class GeocodingService {
   getMunicipalityCode(address) {
     const city = address.city?.toLowerCase() || '';
     const fullAddress = address.fullAddress?.toLowerCase() || '';
-    
+
     const map = {
       'mumbai': 'BMC',
       'thane': 'TMC',
@@ -201,7 +235,7 @@ class GeocodingService {
   validateAddress(address) {
     const required = ['fullAddress', 'city'];
     const missing = required.filter(field => !address[field] || address[field].trim() === '');
-    
+
     return {
       isValid: missing.length === 0,
       missing: missing
@@ -213,7 +247,7 @@ class GeocodingService {
    */
   async searchAddress(query) {
     const service = this.getCurrentService();
-    
+
     try {
       const response = await axios.get(service.searchUrl, {
         params: {
@@ -246,7 +280,7 @@ class GeocodingService {
    */
   async batchGeocode(coordinates) {
     const results = [];
-    
+
     for (const coord of coordinates) {
       try {
         const address = await this.reverseGeocodeWithRetry(coord.lat, coord.lng);
@@ -264,7 +298,7 @@ class GeocodingService {
         });
       }
     }
-    
+
     return results;
   }
 
@@ -284,7 +318,7 @@ class GeocodingService {
 
     const latKey = lat.toFixed(4);
     const city = mockAddresses[latKey] || 'Unknown City';
-    
+
     return {
       fullAddress: `Mock Address, ${city}, Maharashtra, India`,
       area: 'Mock Area',

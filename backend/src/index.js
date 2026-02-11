@@ -4,6 +4,7 @@ const connectDB = require('./config/database');
 const complaintRoutes = require('./routes/complaintRoutes');
 const userRoutes = require('./routes/userRoutes');
 const noticeRoutes = require('./routes/noticeRoutes');
+const messageRoutes = require('./routes/messageRoutes');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
@@ -18,6 +19,7 @@ app.get('/', (req, res) => {
 app.use('/api/complaints', complaintRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/notices', noticeRoutes);
+app.use('/api/messages', messageRoutes);
 
 app.use(errorHandler);
 
