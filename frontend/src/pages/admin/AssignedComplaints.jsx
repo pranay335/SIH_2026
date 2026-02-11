@@ -1,32 +1,53 @@
+import { useState, useEffect } from 'react';
+import { useAuth } from '../../context/AuthContext';
+
 const AssignedComplaints = () => {
-    const assignedComplaints = [
-        {
-            id: 'CM-2024-154',
-            citizenName: 'Bob Johnson',
-            sector: 'Garbage',
-            location: 'Market Street, Sector 1',
-            assignedTo: 'Jessica Lee',
-            department: 'Waste Management',
-            status: 'in-progress',
-            assignedDate: '2024-01-12'
-        },
-        {
-            id: 'CM-2024-152',
-            citizenName: 'Charlie Brown',
-            sector: 'Drainage',
-            location: 'Residential Area, Sector 2',
-            assignedTo: 'James White',
-            department: 'Drainage',
-            status: 'in-progress',
-            assignedDate: '2024-01-10'
+    const { getToken, user } = useAuth();
+    const [assignedComplaints, setAssignedComplaints] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+
+    // Fetch assigned complaint groups
+    useEffect(() => {
+        const fetchAssignedComplaints = async () => {
+            try {
+                const token = getToken();
+                const municipalityParam = user?.municipalityCode ? `?municipalityCode=${user.municipalityCode}&status=Assigned&status=In Progress` : '?status=Assigned&status=In Progress';
+
+                const response = await fetch(`http://localhost:5000/api/complaints/groups${municipalityParam}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    // Filter only assigned complaints
+                    const assigned = (data.groups || []).filter(c => c.assigned_to);
+                    setAssignedComplaints(assigned);
+                } else {
+                    throw new Error('Failed to fetch assigned complaints');
+                }
+            } catch (err) {
+                console.error('Failed to fetch assigned complaints:', err);
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (user) {
+            fetchAssignedComplaints();
         }
-    ];
+    }, [user, getToken]);
 
     const getStatusBadge = (status) => {
         const styles = {
-            'in-progress': 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
-            'resolved': 'bg-green-500/20 text-green-400 border-green-500/30',
-            'pending': 'bg-red-500/20 text-red-400 border-red-500/30'
+            'In Progress': 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
+            'Resolved': 'bg-green-500/20 text-green-400 border-green-500/30',
+            'Pending': 'bg-red-500/20 text-red-400 border-red-500/30',
+            'Assigned': 'bg-blue-500/20 text-blue-400 border-blue-500/30'
         };
         return styles[status] || 'bg-gray-500/20 text-gray-400 border-gray-500/30';
     };
@@ -59,33 +80,45 @@ const AssignedComplaints = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {assignedComplaints.map((complaint) => (
+                                {loading ? (
+                                    <tr>
+                                        <td colSpan="7" className="py-8 text-center text-white/60">
+                                            Loading assigned complaints...
+                                        </td>
+                                    </tr>
+                                ) : error ? (
+                                    <tr>
+                                        <td colSpan="7" className="py-8 text-center text-red-400">
+                                            Error: {error}
+                                        </td>
+                                    </tr>
+                                ) : assignedComplaints.length === 0 ? (
+                                    <tr>
+                                        <td colSpan="7" className="py-8 text-center text-white/60">
+                                            No assigned complaints found.
+                                        </td>
+                                    </tr>
+                                ) : assignedComplaints.map((complaint) => (
                                     <tr
-                                        key={complaint.id}
+                                        key={complaint._id}
                                         className="border-b border-white/5 hover:bg-white/5 transition-colors duration-300"
                                     >
-                                        <td className="py-4 px-4 text-white font-mono text-sm">{complaint.id}</td>
-                                        <td className="py-4 px-4 text-white/70">{complaint.citizenName}</td>
+                                        <td className="py-4 px-4 text-white font-mono text-sm">{complaint.group_id}</td>
+                                        <td className="py-4 px-4 text-white/70">{complaint.affected_users?.[0]?.name || 'Citizen'}</td>
                                         <td className="py-4 px-4 text-white/70">{complaint.sector}</td>
-                                        <td className="py-4 px-4 text-white/60 text-sm hidden md:table-cell">{complaint.department}</td>
-                                        <td className="py-4 px-4 text-white/70">{complaint.assignedTo}</td>
+                                        <td className="py-4 px-4 text-white/60 text-sm hidden md:table-cell">{complaint.sector}</td>
+                                        <td className="py-4 px-4 text-white/70">{complaint.assigned_to?.name || 'N/A'}</td>
                                         <td className="py-4 px-4">
                                             <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusBadge(complaint.status)}`}>
-                                                {complaint.status.replace('-', ' ')}
+                                                {complaint.status}
                                             </span>
                                         </td>
-                                        <td className="py-4 px-4 text-white/60 text-sm">{complaint.assignedDate}</td>
+                                        <td className="py-4 px-4 text-white/60 text-sm">{new Date(complaint.last_updated).toLocaleDateString()}</td>
                                     </tr>
                                 ))}
                             </tbody>
                         </table>
                     </div>
-
-                    {assignedComplaints.length === 0 && (
-                        <div className="text-center py-12">
-                            <p className="text-white/50 text-lg">No assigned complaints found.</p>
-                        </div>
-                    )}
                 </div>
             </div>
         </div>

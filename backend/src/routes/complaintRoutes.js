@@ -15,7 +15,8 @@ const {
   reverseGeocode,
   searchAddress,
   getAssignedComplaintGroups,
-  acknowledgeComplaintGroup
+  acknowledgeComplaintGroup,
+  getAdminStats
 } = require('../controllers/complaintController');
 
 // File a new complaint (protected)
@@ -38,16 +39,13 @@ router.get('/user/:userId', auth, getComplaintsByUser);
 // Get assigned complaints (protected)
 router.get('/assigned/:employeeId', auth, getAssignedComplaintGroups);
 
-// Get complaint by ID (protected)
-router.get('/:id', auth, getComplaintById);
-
-// Update complaint (protected)
-router.put('/:id', auth, updateComplaint);
-
-// COMPLAINT GROUPS ROUTES
+// COMPLAINT GROUPS ROUTES (must be before /:id route)
 
 // Get all complaint groups (protected)
 router.get('/groups', auth, getComplaintGroups);
+
+// Get admin dashboard statistics (protected)
+router.get('/admin-stats', auth, getAdminStats);
 
 // Get deduplication statistics (protected)
 router.get('/deduplication-stats', auth, getDeduplicationStats);
@@ -63,6 +61,12 @@ router.put('/groups/:groupId/status', auth, updateComplaintGroupStatus);
 
 // Acknowledge complaint group (protected)
 router.put('/groups/:groupId/acknowledge', auth, acknowledgeComplaintGroup);
+
+// Get complaint by ID (protected) - MUST BE LAST
+router.get('/:id', auth, getComplaintById);
+
+// Update complaint (protected)
+router.put('/:id', auth, updateComplaint);
 
 
 module.exports = router;

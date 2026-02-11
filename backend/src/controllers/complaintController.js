@@ -705,6 +705,74 @@ const searchAddress = async (req, res) => {
   }
 };
 
+/* ---------------------------------------------
+   GET /api/complaints/admin-stats - Get dashboard statistics for admins
+---------------------------------------------- */
+const getAdminStats = async (req, res) => {
+  try {
+    const { municipalityCode } = req.query;
+    const filter = municipalityCode ? { municipalityCode } : {};
+
+    // 1. Status Counts
+    const total = await ComplaintGroup.countDocuments(filter);
+    const pending = await ComplaintGroup.countDocuments({ ...filter, status: { $in: ['Pending', 'Assigned'] } });
+    const inProgress = await ComplaintGroup.countDocuments({ ...filter, status: 'In Progress' });
+    const resolved = await ComplaintGroup.countDocuments({ ...filter, status: 'Resolved' });
+    const urgent = await ComplaintGroup.countDocuments({ ...filter, priority: { $in: ['High', 'Critical'] } });
+
+    // 2. Sector Distribution (for bar charts)
+    const sectorStatsRaw = await ComplaintGroup.aggregate([
+      { $match: filter },
+      {
+        $group: {
+          _id: '$sector',
+          pending: { $sum: { $cond: [{ $in: ['$status', ['Pending', 'Assigned']] }, 1, 0] } },
+          inProgress: { $sum: { $cond: [{ $eq: ['$status', 'In Progress'] }, 1, 0] } },
+          resolved: { $sum: { $cond: [{ $eq: ['$status', 'Resolved'] }, 1, 0] } }
+        }
+      }
+    ]);
+
+    const sectorStats = sectorStatsRaw.map(s => ({
+      sector: s._id,
+      pending: s.pending,
+      inProgress: s.inProgress,
+      resolved: s.resolved
+    }));
+
+    // 3. Recent Complaints
+    const recent = await ComplaintGroup.find(filter)
+      .populate('affected_users', 'name')
+      .sort({ last_updated: -1 })
+      .limit(5);
+
+    const recentComplaints = recent.map(r => ({
+      id: r.group_id,
+      citizen: r.affected_users[0]?.name || 'Citizen',
+      sector: r.sector,
+      location: r.address.city,
+      urgency: r.priority.toLowerCase(),
+      status: r.status.toLowerCase().replace(' ', '-')
+    }));
+
+    res.json({
+      success: true,
+      stats: {
+        total,
+        pending,
+        inProgress,
+        resolved,
+        urgent
+      },
+      sectorStats,
+      recentComplaints
+    });
+  } catch (error) {
+    console.error('Error fetching admin dashboard stats:', error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   fileComplaint,
   getComplaints,
@@ -719,5 +787,6 @@ module.exports = {
   reverseGeocode,
   searchAddress,
   getAssignedComplaintGroups,
-  acknowledgeComplaintGroup
+  acknowledgeComplaintGroup,
+  getAdminStats
 };
