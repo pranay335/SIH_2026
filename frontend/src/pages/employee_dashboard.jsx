@@ -20,9 +20,28 @@ const EmployeeDashboard = () => {
   const videoRef = useRef(null);
   const [stream, setStream] = useState(null);
 
+  // Live user data (refreshes dynamically)
+  const [liveUser, setLiveUser] = useState(null);
+
+  const fetchLiveUser = async () => {
+    try {
+      const token = getToken();
+      const response = await fetch(`${API_BASE_URL}/users/me`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setLiveUser(data);
+      }
+    } catch (err) {
+      console.error('Error fetching live user data:', err);
+    }
+  };
+
   useEffect(() => {
     if (user && user._id) {
       fetchTasks();
+      fetchLiveUser();
     }
   }, [user]);
 
@@ -74,6 +93,7 @@ const EmployeeDashboard = () => {
         // Update local state
         setTasks(prev => prev.map(t => t.group_id === groupId ? data.group : t));
         setSelectedTask(data.group);
+        fetchLiveUser(); // Refresh workload data
       }
     } catch (err) {
       console.error('Acknowledgement failed:', err);
@@ -144,6 +164,7 @@ const EmployeeDashboard = () => {
         setTasks(prev => prev.map(t => t.group_id === groupId ? data.group : t));
         setSelectedTask(null);
         setUploadedImages([]);
+        fetchLiveUser(); // Refresh workload data
         alert('Task marked as resolved!');
       }
     } catch (err) {
@@ -254,8 +275,8 @@ const EmployeeDashboard = () => {
                           {['Pending', 'Assigned', 'In Progress', 'Resolved'].map((s, i) => (
                             <div key={s} className="flex flex-col items-center">
                               <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-300 ${(selectedTask.status === s || (i === 3 && selectedTask.status === 'Resolved'))
-                                  ? 'bg-white text-black shadow-lg'
-                                  : 'bg-white/20 border border-white/40 text-white'
+                                ? 'bg-white text-black shadow-lg'
+                                : 'bg-white/20 border border-white/40 text-white'
                                 }`}>
                                 {i + 1}
                               </div>
@@ -479,16 +500,34 @@ const EmployeeDashboard = () => {
                 </div>
                 <div>
                   <h4 className="text-white/40 text-xs font-bold uppercase mb-3">Workload</h4>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-white/60">Max Concurrent:</span>
-                      <span className="text-white">{user?.maxConcurrentComplaints}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-white/60">Status:</span>
-                      <span className="text-green-400">{user?.availabilityStatus}</span>
-                    </div>
-                  </div>
+                  {(() => {
+                    const profileUser = liveUser || user;
+                    const current = profileUser?.currentWorkload || 0;
+                    const max = profileUser?.maxConcurrentComplaints || 5;
+                    const remaining = Math.max(0, max - current);
+                    const pct = max > 0 ? (current / max) * 100 : 0;
+                    const barColor = pct >= 100 ? 'bg-red-500' : pct >= 50 ? 'bg-yellow-400' : 'bg-green-400';
+                    const textColor = pct >= 100 ? 'text-red-400' : pct >= 50 ? 'text-yellow-400' : 'text-green-400';
+                    return (
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center text-sm">
+                          <span className="text-white/60">Current Load:</span>
+                          <span className={`font-bold ${textColor}`}>{current}/{max} complaints</span>
+                        </div>
+                        <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+                          <div className={`h-full ${barColor} rounded-full transition-all duration-500`} style={{ width: `${Math.min(pct, 100)}%` }}></div>
+                        </div>
+                        <div className="flex justify-between items-center text-sm">
+                          <span className="text-white/60">Remaining Slots:</span>
+                          <span className={`font-bold ${textColor}`}>{remaining} available</span>
+                        </div>
+                        <div className="flex justify-between items-center text-sm">
+                          <span className="text-white/60">Status:</span>
+                          <span className={`font-bold ${textColor}`}>{profileUser?.availabilityStatus || 'AVAILABLE'}</span>
+                        </div>
+                      </div>
+                    );
+                  })()}
                 </div>
               </div>
             </div>

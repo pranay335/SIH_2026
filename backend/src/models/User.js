@@ -74,7 +74,7 @@ const userSchema = new mongoose.Schema({
   skills: [String],
   maxConcurrentComplaints: {
     type: Number,
-    default: 10,
+    default: 5,
   },
   currentWorkload: {
     type: Number,

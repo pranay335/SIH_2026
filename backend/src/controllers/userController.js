@@ -40,7 +40,7 @@ const createEmployee = async (req, res) => {
       employeeId: employeeId || `EMP-${Date.now()}`,
       designation: designation || 'Field Officer',
       phone: phone || '', isVerified: true,
-      availabilityStatus: 'AVAILABLE', maxConcurrentComplaints: 10, currentWorkload: 0,
+      availabilityStatus: 'AVAILABLE', maxConcurrentComplaints: 5, currentWorkload: 0,
       performance: { avgResolutionTime: 0, successRate: 0, totalComplaintsHandled: 0 }
     });
 

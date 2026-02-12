@@ -49,6 +49,16 @@ router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);
 
 // Protected routes
+router.get('/me', auth, async (req, res) => {
+    try {
+        const User = require('../models/User');
+        const user = await User.findById(req.user.userId).select('-password');
+        if (!user) return res.status(404).json({ message: 'User not found' });
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
 router.get('/', auth, getUsers);
 router.post('/', auth, createUser);
 router.put('/:id', auth, updateUser);

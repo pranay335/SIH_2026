@@ -191,32 +191,51 @@ const fileComplaint = async (req, res) => {
     }
 
     /* 🤖 AUTO-ASSIGNMENT LOGIC */
+    const MAX_COMPLAINTS_DEFAULT = 5;
     const normalizedDept = normalizeSectorToDepartment(sector);
     console.log(`🤖 Attempting auto-assignment for sector: ${sector} (Normalized: ${normalizedDept}) in ${municipalityCode}`);
 
-    // Find eligible employees: same municipality, same department (normalized), available, sorted by lowest workload
-    const bestEmployee = await User.findOne({
+    // Find all eligible employees: same municipality, same department (normalized), sorted by lowest workload
+    const eligibleEmployees = await User.find({
       role: 'employee',
       municipalityCode: municipalityCode,
       department: normalizedDept,
-      availabilityStatus: 'AVAILABLE',
-      currentWorkload: { $lt: 10 } // Use maxConcurrentComplaints if defined per user, but 10 is default
+      currentWorkload: { $lt: MAX_COMPLAINTS_DEFAULT } // Only consider employees below default max
     }).sort({ currentWorkload: 1 });
 
     let assigned_to = null;
     let status = 'Pending';
     let assignmentNote = 'Awaiting manual assignment';
 
-    if (bestEmployee) {
-      assigned_to = bestEmployee._id;
-      status = 'Assigned';
-      assignmentNote = `Automatically assigned to ${bestEmployee.name}`;
-      console.log(`✅ Auto-assigned to: ${bestEmployee.name} (Workload: ${bestEmployee.currentWorkload})`);
+    if (eligibleEmployees.length > 0) {
+      // Find the first employee who still has capacity based on their personal max
+      const bestEmployee = eligibleEmployees.find(emp => 
+        emp.currentWorkload < (emp.maxConcurrentComplaints || MAX_COMPLAINTS_DEFAULT)
+      ) || null;
 
-      // Increment employee workload
-      await User.findByIdAndUpdate(bestEmployee._id, { $inc: { currentWorkload: 1 } });
+      if (bestEmployee) {
+        const employeeMax = bestEmployee.maxConcurrentComplaints || MAX_COMPLAINTS_DEFAULT;
+        assigned_to = bestEmployee._id;
+        status = 'Assigned';
+        assignmentNote = `Automatically assigned to ${bestEmployee.name}`;
+        
+        // Increment employee workload
+        const newWorkload = bestEmployee.currentWorkload + 1;
+        await User.findByIdAndUpdate(bestEmployee._id, { 
+          $inc: { currentWorkload: 1 },
+          // Update availability status if they've reached their personal max capacity
+          ...(newWorkload >= employeeMax ? { availabilityStatus: 'UNAVAILABLE' } : {})
+        });
+        
+        console.log(`✅ Auto-assigned to: ${bestEmployee.name} (New workload: ${newWorkload}/${employeeMax})`);
+        if (newWorkload >= employeeMax) {
+          console.log(`🔒 Employee ${bestEmployee.name} is now UNAVAILABLE (max capacity ${employeeMax} reached)`);
+        }
+      } else {
+        console.log('⚠️ No available employees found for auto-assignment. All employees in this department are at maximum capacity.');
+      }
     } else {
-      console.log('⚠️ No available employees found for auto-assignment. Defaulting to Pending.');
+      console.log('⚠️ No available employees found for auto-assignment. All employees in this department are at maximum capacity.');
     }
 
     const imageCheck = checkImageAuthenticity({
@@ -345,15 +364,35 @@ const updateComplaint = async (req, res) => {
   try {
     const { status, assigned_to, notes, priority } = req.body;
 
+    // Get the original complaint to check status change
+    const originalComplaint = await Complaint.findById(req.params.id);
+    if (!originalComplaint) {
+      return res.status(404).json({ message: 'Complaint not found' });
+    }
+
+    // Handle workload decrement when complaint is resolved
+    if (originalComplaint.status !== 'Resolved' && status === 'Resolved' && originalComplaint.assigned_to) {
+      const employee = await User.findById(originalComplaint.assigned_to);
+      if (employee) {
+        const employeeMax = employee.maxConcurrentComplaints || 5;
+        const newWorkload = Math.max(0, employee.currentWorkload - 1);
+        await User.findByIdAndUpdate(originalComplaint.assigned_to, { 
+          currentWorkload: newWorkload,
+          // Update availability status if they're now below their personal max capacity
+          ...(newWorkload < employeeMax ? { availabilityStatus: 'AVAILABLE' } : {})
+        });
+        console.log(`📉 Workload decreased for ${employee.name}: ${employee.currentWorkload} → ${newWorkload}/${employeeMax}`);
+        if (newWorkload < employeeMax && employee.availabilityStatus === 'UNAVAILABLE') {
+          console.log(`✅ Employee ${employee.name} is now AVAILABLE`);
+        }
+      }
+    }
+
     const complaint = await Complaint.findByIdAndUpdate(
       req.params.id,
       { status, assigned_to, notes, priority },
       { new: true }
     );
-
-    if (!complaint) {
-      return res.status(404).json({ message: 'Complaint not found' });
-    }
 
     res.json({
       message: 'Complaint updated successfully',
@@ -547,6 +586,27 @@ const updateComplaintGroupStatus = async (req, res) => {
     const group = await ComplaintGroup.findOne({ group_id: groupId });
     if (!group) {
       return res.status(404).json({ message: 'Complaint group not found' });
+    }
+
+    // Handle workload decrement when complaint group is resolved
+    if (group.status !== 'Resolved' && status === 'Resolved' && group.assigned_to) {
+      const employee = await User.findById(group.assigned_to);
+      if (employee) {
+        const employeeMax = employee.maxConcurrentComplaints || 5;
+        // Count how many complaints are in this group to decrement by that amount
+        const complaintsInGroup = await Complaint.countDocuments({ group_id: group._id });
+        const newWorkload = Math.max(0, employee.currentWorkload - complaintsInGroup);
+        
+        await User.findByIdAndUpdate(group.assigned_to, { 
+          currentWorkload: newWorkload,
+          // Update availability status if they're now below their personal max capacity
+          ...(newWorkload < employeeMax ? { availabilityStatus: 'AVAILABLE' } : {})
+        });
+        console.log(`📉 Workload decreased for ${employee.name}: ${employee.currentWorkload} → ${newWorkload}/${employeeMax} (${complaintsInGroup} complaints resolved)`);
+        if (newWorkload < employeeMax && employee.availabilityStatus === 'UNAVAILABLE') {
+          console.log(`✅ Employee ${employee.name} is now AVAILABLE`);
+        }
+      }
     }
 
     // Update group
