@@ -27,6 +27,8 @@ import AssignedComplaints from './pages/admin/AssignedComplaints';
 import AdminNotices from './pages/admin/AdminNotices';
 import Employees from './pages/admin/Employees';
 import EmployeeManagement from './pages/admin/EmployeeManagement';
+import FeedbackReview from './pages/admin/FeedbackReview';
+import ReassignmentManagement from './pages/admin/ReassignmentManagement';
 
 // Legacy Components (for home page if needed)
 import Navbar from './components/Navbar';
@@ -123,6 +125,8 @@ function App() {
                         <Route path="notices" element={<AdminNotices />} />
                         <Route path="employees" element={<Employees />} />
                         <Route path="employee-management" element={<EmployeeManagement />} />
+                        <Route path="feedback" element={<FeedbackReview />} />
+                        <Route path="reassignment" element={<ReassignmentManagement />} />
                     </Route>
 
                     {/* Catch all - redirect to home */}

@@ -209,7 +209,7 @@ const fileComplaint = async (req, res) => {
 
     if (eligibleEmployees.length > 0) {
       // Find the first employee who still has capacity based on their personal max
-      const bestEmployee = eligibleEmployees.find(emp => 
+      const bestEmployee = eligibleEmployees.find(emp =>
         emp.currentWorkload < (emp.maxConcurrentComplaints || MAX_COMPLAINTS_DEFAULT)
       ) || null;
 
@@ -218,15 +218,15 @@ const fileComplaint = async (req, res) => {
         assigned_to = bestEmployee._id;
         status = 'Assigned';
         assignmentNote = `Automatically assigned to ${bestEmployee.name}`;
-        
+
         // Increment employee workload
         const newWorkload = bestEmployee.currentWorkload + 1;
-        await User.findByIdAndUpdate(bestEmployee._id, { 
+        await User.findByIdAndUpdate(bestEmployee._id, {
           $inc: { currentWorkload: 1 },
           // Update availability status if they've reached their personal max capacity
           ...(newWorkload >= employeeMax ? { availabilityStatus: 'UNAVAILABLE' } : {})
         });
-        
+
         console.log(`✅ Auto-assigned to: ${bestEmployee.name} (New workload: ${newWorkload}/${employeeMax})`);
         if (newWorkload >= employeeMax) {
           console.log(`🔒 Employee ${bestEmployee.name} is now UNAVAILABLE (max capacity ${employeeMax} reached)`);
@@ -376,7 +376,7 @@ const updateComplaint = async (req, res) => {
       if (employee) {
         const employeeMax = employee.maxConcurrentComplaints || 5;
         const newWorkload = Math.max(0, employee.currentWorkload - 1);
-        await User.findByIdAndUpdate(originalComplaint.assigned_to, { 
+        await User.findByIdAndUpdate(originalComplaint.assigned_to, {
           currentWorkload: newWorkload,
           // Update availability status if they're now below their personal max capacity
           ...(newWorkload < employeeMax ? { availabilityStatus: 'AVAILABLE' } : {})
@@ -433,7 +433,7 @@ const getComplaintGroups = async (req, res) => {
     if (municipalityCode) filter.municipalityCode = municipalityCode;
 
     const groups = await ComplaintGroup.find(filter)
-      .populate('assigned_to', 'name email')
+      .populate('assigned_to', 'name email department currentWorkload maxConcurrentComplaints availabilityStatus')
       .populate('affected_users', 'name email')
       .populate('complaints', 'complaint_id description status created_at')
       .sort({ last_updated: -1 });
@@ -487,43 +487,25 @@ const getComplaintGroupById = async (req, res) => {
 const assignComplaintGroup = async (req, res) => {
   try {
     const { groupId } = req.params;
-    const { assigned_to, notes, estimatedResolution } = req.body;
+    const { assigned_to, notes } = req.body;
 
-    const group = await ComplaintGroup.findOne({ group_id: groupId });
-    if (!group) {
-      return res.status(404).json({ message: 'Complaint group not found' });
+    if (!assigned_to) {
+      return res.status(400).json({ success: false, message: 'Employee ID (assigned_to) is required' });
     }
 
-    // Update group
-    group.assigned_to = assigned_to;
-    group.status = 'Assigned';
-    if (notes) group.notes = notes;
-    if (estimatedResolution) group.estimatedResolution = new Date(estimatedResolution);
-    group.last_updated = new Date();
-
-    await group.save();
-
-    // Update all individual complaints in the group
-    await Complaint.updateMany(
-      { group_id: group._id },
-      {
-        assigned_to,
-        status: 'Assigned',
-        estimatedResolution: estimatedResolution ? new Date(estimatedResolution) : null
-      }
-    );
-
-    const updatedGroup = await ComplaintGroup.findOne({ group_id: groupId })
-      .populate('assigned_to', 'name email phone');
+    const assignmentService = require('../services/assignmentService');
+    const result = await assignmentService.reassignComplaintGroup(groupId, assigned_to, notes || '');
 
     res.json({
       success: true,
-      message: `Complaint group assigned to employee`,
-      group: updatedGroup
+      message: 'Complaint group reassigned successfully',
+      group: result.group
     });
   } catch (error) {
     console.error('Error assigning complaint group:', error);
-    res.status(500).json({ message: error.message });
+    const status = error.status || 500;
+    const message = error.message || 'Internal server error';
+    res.status(status).json({ success: false, message });
   }
 };
 
@@ -596,8 +578,8 @@ const updateComplaintGroupStatus = async (req, res) => {
         // Count how many complaints are in this group to decrement by that amount
         const complaintsInGroup = await Complaint.countDocuments({ group_id: group._id });
         const newWorkload = Math.max(0, employee.currentWorkload - complaintsInGroup);
-        
-        await User.findByIdAndUpdate(group.assigned_to, { 
+
+        await User.findByIdAndUpdate(group.assigned_to, {
           currentWorkload: newWorkload,
           // Update availability status if they're now below their personal max capacity
           ...(newWorkload < employeeMax ? { availabilityStatus: 'AVAILABLE' } : {})
@@ -616,6 +598,10 @@ const updateComplaintGroupStatus = async (req, res) => {
 
     if (status === 'Resolved' && !group.resolvedDate) {
       group.resolvedDate = resolvedDate ? new Date(resolvedDate) : new Date();
+    }
+    // Set feedback status to PENDING when resolved (triggers citizen feedback flow)
+    if (status === 'Resolved') {
+      group.feedbackStatus = 'PENDING';
     }
     group.last_updated = new Date();
 

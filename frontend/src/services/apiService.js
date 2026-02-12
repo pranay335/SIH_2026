@@ -158,10 +158,30 @@ export const authService = {
   },
 };
 
+// Feedback service
+export const feedbackService = {
+  async submitFeedback(groupId, feedbackData) {
+    return apiRequest(`/feedback/${groupId}`, {
+      method: 'PUT',
+      body: JSON.stringify(feedbackData),
+    });
+  },
+
+  async getFeedbackStatus(groupId) {
+    return apiRequest(`/feedback/${groupId}`);
+  },
+
+  async getAllFeedback(filter = '') {
+    const query = filter ? `?filter=${filter}` : '';
+    return apiRequest(`/feedback${query}`);
+  },
+};
+
 // Default export for compatibility
 export default {
   userService,
   complaintService,
   predictionService,
-  authService
+  authService,
+  feedbackService
 };

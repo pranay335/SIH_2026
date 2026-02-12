@@ -1,7 +1,8 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import Button from '../components/button.jsx';
+import StatusProgressBar from '../components/StatusProgressBar.jsx';
 
 const API_BASE_URL = 'http://localhost:5000/api';
 
@@ -14,11 +15,20 @@ const EmployeeDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // UI state for resolution
   const [uploadedImages, setUploadedImages] = useState([]);
   const [isCapturing, setIsCapturing] = useState(false);
-  const videoRef = useRef(null);
   const [stream, setStream] = useState(null);
+  const videoRef = useRef(null);
+  const fileInputRef = useRef(null);
+
+  // Callback ref: fires immediately when the <video> DOM node mounts
+  const setVideoRef = useCallback((node) => {
+    videoRef.current = node;
+    if (node && stream) {
+      node.srcObject = stream;
+      node.play().catch(err => console.warn('Video play failed:', err));
+    }
+  }, [stream]);
 
   // Live user data (refreshes dynamically)
   const [liveUser, setLiveUser] = useState(null);
@@ -108,9 +118,7 @@ const EmployeeDashboard = () => {
       });
       setStream(mediaStream);
       setIsCapturing(true);
-      if (videoRef.current) {
-        videoRef.current.srcObject = mediaStream;
-      }
+      // srcObject is now assigned by the useEffect above
     } catch (err) {
       console.error('Camera access denied:', err);
       alert('Camera access is required to capture images.');
@@ -127,6 +135,10 @@ const EmployeeDashboard = () => {
 
   const capturePhoto = () => {
     const video = videoRef.current;
+    if (!video || !video.videoWidth) {
+      alert('Camera is not ready yet. Please wait a moment.');
+      return;
+    }
     const canvas = document.createElement('canvas');
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
@@ -141,6 +153,24 @@ const EmployeeDashboard = () => {
     };
 
     setUploadedImages(prev => [...prev, image]);
+  };
+
+  const handleFileUpload = (e) => {
+    const files = Array.from(e.target.files);
+    files.forEach(file => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const image = {
+          id: Date.now() + Math.random(),
+          preview: reader.result,
+          capturedAt: new Date().toISOString()
+        };
+        setUploadedImages(prev => [...prev, image]);
+      };
+      reader.readAsDataURL(file);
+    });
+    // Reset file input so same file can be re-selected
+    e.target.value = '';
   };
 
   const handleMarkResolved = async (groupId) => {
@@ -258,39 +288,7 @@ const EmployeeDashboard = () => {
                 </div>
 
                 {selectedTask.status !== 'Closed' && (
-                  <div className="mb-6">
-                    <h4 className="text-lg font-medium text-white mb-4">Status Tracking</h4>
-                    <div className="relative">
-                      <div className="relative h-8 bg-white/10 rounded-full overflow-hidden">
-                        <div
-                          className="absolute left-0 top-0 h-full bg-gradient-to-r from-yellow-400 via-blue-400 to-green-400 transition-all duration-500 rounded-full"
-                          style={{
-                            width: selectedTask.status === 'Pending' ? '10%' :
-                              selectedTask.status === 'Assigned' ? '30%' :
-                                selectedTask.status === 'In Progress' ? '60%' : '100%'
-                          }}
-                        ></div>
-
-                        <div className="absolute inset-0 flex items-center justify-between px-6">
-                          {['Pending', 'Assigned', 'In Progress', 'Resolved'].map((s, i) => (
-                            <div key={s} className="flex flex-col items-center">
-                              <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-300 ${(selectedTask.status === s || (i === 3 && selectedTask.status === 'Resolved'))
-                                ? 'bg-white text-black shadow-lg'
-                                : 'bg-white/20 border border-white/40 text-white'
-                                }`}>
-                                {i + 1}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                      <div className="mt-4 text-center">
-                        <span className="px-4 py-2 rounded-full text-sm font-medium bg-white/10 text-white">
-                          Current Status: {selectedTask.status}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
+                  <StatusProgressBar status={selectedTask.status} />
                 )}
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -321,22 +319,40 @@ const EmployeeDashboard = () => {
                 {selectedTask.status === 'In Progress' && (
                   <div className="space-y-6">
                     <div className="glass rounded-xl p-6">
-                      <h4 className="text-white font-medium mb-4">📷 Capture Resolution Images</h4>
+                      <h4 className="text-white font-medium mb-4">📷 Add Resolution Images</h4>
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        accept="image/*"
+                        multiple
+                        onChange={handleFileUpload}
+                        className="hidden"
+                      />
                       {!isCapturing ? (
-                        <Button
-                          label="Open Camera"
-                          variant="primary"
-                          size="large"
-                          className="w-full"
-                          onClick={startCamera}
-                        />
+                        <div className="flex gap-3">
+                          <Button
+                            label="📸 Open Camera"
+                            variant="primary"
+                            size="large"
+                            className="flex-1"
+                            onClick={startCamera}
+                          />
+                          <Button
+                            label="📁 Upload Image"
+                            variant="outline"
+                            size="large"
+                            className="flex-1"
+                            onClick={() => fileInputRef.current?.click()}
+                          />
+                        </div>
                       ) : (
                         <div className="space-y-4">
                           <div className="relative rounded-lg overflow-hidden bg-black aspect-video">
                             <video
-                              ref={videoRef}
+                              ref={setVideoRef}
                               autoPlay
                               playsInline
+                              muted
                               className="w-full h-full object-cover"
                             />
                           </div>
@@ -394,7 +410,7 @@ const EmployeeDashboard = () => {
                   />
                 )}
 
-                {selectedTask.status === 'Resolved' && (
+                {(selectedTask.status === 'Resolved' || selectedTask.status === 'Closed') && (
                   <div className="glass rounded-xl p-6">
                     <h4 className="text-white font-medium mb-4">Resolution Evidence</h4>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -408,7 +424,49 @@ const EmployeeDashboard = () => {
                       ))}
                     </div>
                     <div className="mt-4 p-4 bg-green-500/10 rounded-lg border border-green-500/20 text-green-400 text-sm">
-                      ✅ This task has been resolved and is awaiting admin review for final closure.
+                      ✅ This task has been resolved and is awaiting citizen feedback.
+                    </div>
+                  </div>
+                )}
+
+                {/* Citizen Feedback Section */}
+                {selectedTask.feedbackStatus && (
+                  <div className="glass rounded-xl p-6 mt-4">
+                    <h4 className="text-white font-medium mb-4">📋 Citizen Feedback</h4>
+                    <div className="flex items-center gap-3 mb-3">
+                      <span className="text-white/60 text-sm">Status:</span>
+                      <span className={`px-3 py-1 text-xs rounded-full border font-medium ${selectedTask.feedbackStatus === 'SATISFIED'
+                        ? 'bg-green-500/20 text-green-400 border-green-500/30'
+                        : selectedTask.feedbackStatus === 'NOT_SATISFIED'
+                          ? 'bg-red-500/20 text-red-400 border-red-500/30'
+                          : 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30'
+                        }`}>
+                        {selectedTask.feedbackStatus === 'SATISFIED' ? '✅ Satisfied'
+                          : selectedTask.feedbackStatus === 'NOT_SATISFIED' ? '❌ Not Satisfied'
+                            : '⏳ Awaiting Feedback'}
+                      </span>
+                    </div>
+                    {selectedTask.feedbackMessage && (
+                      <div className="p-3 bg-white/5 rounded-lg border border-white/10">
+                        <p className="text-white/40 text-xs font-medium mb-1">Citizen's Comment:</p>
+                        <p className="text-white/70 text-sm italic">"{selectedTask.feedbackMessage}"</p>
+                      </div>
+                    )}
+                    {selectedTask.feedbackStatus === 'NOT_SATISFIED' && (
+                      <div className="mt-3 p-3 bg-red-500/10 rounded-lg border border-red-500/20">
+                        <p className="text-red-400 text-sm font-medium">⚠️ The citizen was not satisfied. Please review and address their concerns.</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Reopened Badge */}
+                {selectedTask.reopened && (
+                  <div className="mt-4 p-4 bg-red-500/10 rounded-xl border border-red-500/20 flex items-center gap-3">
+                    <span className="text-2xl">🔄</span>
+                    <div>
+                      <p className="text-red-400 font-semibold">Reopened by Citizen</p>
+                      <p className="text-white/50 text-sm">This task was reopened because the citizen was not satisfied with the resolution. {selectedTask.reopenCount > 1 ? `(Reopened ${selectedTask.reopenCount} times)` : ''}</p>
                     </div>
                   </div>
                 )}
@@ -426,7 +484,12 @@ const EmployeeDashboard = () => {
                       >
                         <div className="flex items-start justify-between">
                           <div>
-                            <h4 className="text-white font-medium">{task.issue_title}</h4>
+                            <div className="flex items-center gap-2">
+                              <h4 className="text-white font-medium">{task.issue_title}</h4>
+                              {task.reopened && (
+                                <span className="px-2 py-0.5 text-[9px] rounded-full bg-red-500/20 text-red-400 border border-red-500/30 font-bold">🔄 REOPENED</span>
+                              )}
+                            </div>
                             <p className="text-white/60 text-xs mt-1">Status: {task.status}</p>
                             <p className="text-white/40 text-[10px] mt-1">📍 {task.address?.area}</p>
                           </div>

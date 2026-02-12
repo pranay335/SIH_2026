@@ -82,7 +82,7 @@ const userSchema = new mongoose.Schema({
   },
   availabilityStatus: {
     type: String,
-    enum: ['AVAILABLE', 'BUSY', 'OFF_DUTY', 'ON_LEAVE'],
+    enum: ['AVAILABLE', 'BUSY', 'OFF_DUTY', 'ON_LEAVE', 'UNAVAILABLE'],
     default: 'AVAILABLE',
   },
   performance: {
