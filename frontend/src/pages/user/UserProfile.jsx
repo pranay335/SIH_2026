@@ -61,6 +61,17 @@ const UserProfile = () => {
                                 className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white/70"
                             />
                         </div>
+                        <div>
+                            <label className="block text-sm font-medium text-white/90 mb-2">
+                                Assigned Municipality
+                            </label>
+                            <input
+                                type="text"
+                                value={user?.municipalityCode || 'Not Set'}
+                                readOnly
+                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white/70"
+                            />
+                        </div>
                     </div>
                 </div>
             </div>

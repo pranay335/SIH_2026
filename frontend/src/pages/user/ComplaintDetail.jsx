@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Button from '../../components/button.jsx';
+import { complaintService } from '../../services/apiService.js';
 
 /* 🔥 Helper */
 const formatLocation = (location) => {
@@ -19,7 +20,7 @@ const formatLocation = (location) => {
 
 const ComplaintDetail = () => {
   const { id } = useParams();
-  const { token } = useAuth();
+  const { getToken } = useAuth();
   const [complaint, setComplaint] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -27,16 +28,7 @@ const ComplaintDetail = () => {
   useEffect(() => {
     const fetchComplaint = async () => {
       try {
-        const res = await fetch(
-          `http://localhost:5000/api/complaints/${id}`,
-          {
-            headers: { Authorization: `Bearer ${token}` }
-          }
-        );
-
-        if (!res.ok) throw new Error('Failed to fetch complaint');
-
-        const data = await res.json();
+        const data = await complaintService.getComplaintById(id);
         setComplaint(data);
       } catch (err) {
         setError(err.message);
@@ -46,7 +38,7 @@ const ComplaintDetail = () => {
     };
 
     fetchComplaint();
-  }, [id, token]);
+  }, [id]);
 
   if (loading) return <div className="text-white p-8">Loading...</div>;
   if (error || !complaint)

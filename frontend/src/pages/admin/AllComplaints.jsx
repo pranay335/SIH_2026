@@ -1,85 +1,111 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../../context/AuthContext';
 import AssignComplaintModal from '../../components/AssignComplaintModal.jsx';
 
 const AllComplaints = () => {
+    const { getToken, user } = useAuth();
     const [selectedComplaint, setSelectedComplaint] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [complaints, setComplaints] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
 
-    const complaints = [
-        {
-            id: 'CM-2024-156',
-            citizenName: 'John Doe',
-            sector: 'Road',
-            location: 'Main Street, Sector 5',
-            urgency: 'high',
-            status: 'pending',
-            date: '2024-01-15'
-        },
-        {
-            id: 'CM-2024-155',
-            citizenName: 'Jane Smith',
-            sector: 'Water',
-            location: 'Park Road, Sector 3',
-            urgency: 'medium',
-            status: 'pending',
-            date: '2024-01-14'
-        },
-        {
-            id: 'CM-2024-154',
-            citizenName: 'Bob Johnson',
-            sector: 'Garbage',
-            location: 'Market Street, Sector 1',
-            urgency: 'low',
-            status: 'in-progress',
-            date: '2024-01-12'
-        },
-        {
-            id: 'CM-2024-153',
-            citizenName: 'Alice Williams',
-            sector: 'Electricity',
-            location: 'School Road, Sector 4',
-            urgency: 'high',
-            status: 'pending',
-            date: '2024-01-11'
-        },
-        {
-            id: 'CM-2024-152',
-            citizenName: 'Charlie Brown',
-            sector: 'Drainage',
-            location: 'Residential Area, Sector 2',
-            urgency: 'medium',
-            status: 'in-progress',
-            date: '2024-01-10'
+    // Fetch all complaint groups
+    useEffect(() => {
+        const fetchComplaints = async () => {
+            try {
+                const token = getToken();
+                const municipalityParam = user?.municipalityCode ? `?municipalityCode=${user.municipalityCode}` : '';
+
+                const response = await fetch(`http://localhost:5000/api/complaints/groups${municipalityParam}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setComplaints(data.groups || []);
+                } else {
+                    throw new Error('Failed to fetch complaints');
+                }
+            } catch (err) {
+                console.error('Failed to fetch complaints:', err);
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (user) {
+            fetchComplaints();
         }
-    ];
+    }, [user, getToken]);
 
     const getStatusBadge = (status) => {
         const styles = {
-            'in-progress': 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
-            'resolved': 'bg-green-500/20 text-green-400 border-green-500/30',
-            'pending': 'bg-red-500/20 text-red-400 border-red-500/30'
+            'In Progress': 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
+            'Resolved': 'bg-green-500/20 text-green-400 border-green-500/30',
+            'Pending': 'bg-red-500/20 text-red-400 border-red-500/30',
+            'Assigned': 'bg-blue-500/20 text-blue-400 border-blue-500/30'
         };
         return styles[status] || 'bg-gray-500/20 text-gray-400 border-gray-500/30';
     };
 
-    const getUrgencyBadge = (urgency) => {
+    const getUrgencyBadge = (priority) => {
         const styles = {
-            'high': 'bg-red-500/20 text-red-400',
-            'medium': 'bg-yellow-500/20 text-yellow-400',
-            'low': 'bg-blue-500/20 text-blue-400'
+            'High': 'bg-red-500/20 text-red-400',
+            'Critical': 'bg-red-600/20 text-red-500',
+            'Medium': 'bg-yellow-500/20 text-yellow-400',
+            'Low': 'bg-blue-500/20 text-blue-400'
         };
-        return styles[urgency] || 'bg-gray-500/20 text-gray-400';
+        return styles[priority] || 'bg-gray-500/20 text-gray-400';
     };
 
-    const handleAssignClick = (complaintId) => {
-        setSelectedComplaint(complaintId);
+    const handleAssignClick = (complaint) => {
+        setSelectedComplaint(complaint);
         setIsModalOpen(true);
     };
 
-    const handleAssign = (complaintId, assignmentData) => {
-        console.log('Assigning complaint:', complaintId, assignmentData);
-        // In real app, this would make an API call
-        alert(`Complaint ${complaintId} assigned to ${assignmentData.employee} in ${assignmentData.department}`);
+    const handleAssign = async (groupId, assignmentData) => {
+        try {
+            const token = getToken();
+            const response = await fetch(`http://localhost:5000/api/complaints/groups/${groupId}/assign`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    employeeId: assignmentData.employee
+                })
+            });
+
+            if (response.ok) {
+                // Refresh complaints list
+                const municipalityParam = user?.municipalityCode ? `?municipalityCode=${user.municipalityCode}` : '';
+                const refreshResponse = await fetch(`http://localhost:5000/api/complaints/groups${municipalityParam}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (refreshResponse.ok) {
+                    const data = await refreshResponse.json();
+                    setComplaints(data.groups || []);
+                }
+
+                setIsModalOpen(false);
+                setSelectedComplaint(null);
+            } else {
+                throw new Error('Failed to assign complaint');
+            }
+        } catch (err) {
+            console.error('Failed to assign complaint:', err);
+            alert('Failed to assign complaint: ' + err.message);
+        }
     };
 
     return (
@@ -110,31 +136,50 @@ const AllComplaints = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {complaints.map((complaint) => (
+                                {loading ? (
+                                    <tr>
+                                        <td colSpan="7" className="py-8 text-center text-white/60">
+                                            Loading complaints...
+                                        </td>
+                                    </tr>
+                                ) : error ? (
+                                    <tr>
+                                        <td colSpan="7" className="py-8 text-center text-red-400">
+                                            Error: {error}
+                                        </td>
+                                    </tr>
+                                ) : complaints.length === 0 ? (
+                                    <tr>
+                                        <td colSpan="7" className="py-8 text-center text-white/60">
+                                            No complaints found
+                                        </td>
+                                    </tr>
+                                ) : complaints.map((complaint) => (
                                     <tr
-                                        key={complaint.id}
+                                        key={complaint._id}
                                         className="border-b border-white/5 hover:bg-white/5 transition-colors duration-300"
                                     >
-                                        <td className="py-4 px-4 text-white font-mono text-sm">{complaint.id}</td>
-                                        <td className="py-4 px-4 text-white/70">{complaint.citizenName}</td>
+                                        <td className="py-4 px-4 text-white font-mono text-sm">{complaint.group_id}</td>
+                                        <td className="py-4 px-4 text-white/70">{complaint.affected_users?.[0]?.name || 'Citizen'}</td>
                                         <td className="py-4 px-4 text-white/70">{complaint.sector}</td>
-                                        <td className="py-4 px-4 text-white/60 text-sm hidden md:table-cell">{complaint.location}</td>
+                                        <td className="py-4 px-4 text-white/60 text-sm hidden md:table-cell">{complaint.address?.city || complaint.address?.area || 'N/A'}</td>
                                         <td className="py-4 px-4">
-                                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${getUrgencyBadge(complaint.urgency)}`}>
-                                                {complaint.urgency}
+                                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${getUrgencyBadge(complaint.priority)}`}>
+                                                {complaint.priority}
                                             </span>
                                         </td>
                                         <td className="py-4 px-4">
                                             <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusBadge(complaint.status)}`}>
-                                                {complaint.status.replace('-', ' ')}
+                                                {complaint.status}
                                             </span>
                                         </td>
                                         <td className="py-4 px-4">
                                             <button
-                                                onClick={() => handleAssignClick(complaint.id)}
+                                                onClick={() => handleAssignClick(complaint)}
                                                 className="px-4 py-2 bg-[#3B82F6]/20 text-[#60A5FA] rounded-lg hover:bg-[#3B82F6]/30 transition-colors text-sm font-medium"
+                                                disabled={complaint.status === 'Resolved'}
                                             >
-                                                Assign
+                                                {complaint.assigned_to ? 'Reassign' : 'Assign'}
                                             </button>
                                         </td>
                                     </tr>
@@ -150,7 +195,7 @@ const AllComplaints = () => {
                         setIsModalOpen(false);
                         setSelectedComplaint(null);
                     }}
-                    complaintId={selectedComplaint}
+                    complaintId={selectedComplaint?._id}
                     onAssign={handleAssign}
                 />
             </div>

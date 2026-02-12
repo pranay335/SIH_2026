@@ -11,6 +11,8 @@ const FileComplaint = () => {
         location: ''
     });
 
+    const [readableAddress, setReadableAddress] = useState('');
+    const [isFetchingLocation, setIsFetchingLocation] = useState(false);
     const [imagePreview, setImagePreview] = useState(null);
     const [predictionResult, setPredictionResult] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -43,15 +45,34 @@ const FileComplaint = () => {
             return;
         }
 
+        setIsFetchingLocation(true);
+        setError(null);
+
         navigator.geolocation.getCurrentPosition(
-            (pos) => {
+            async (pos) => {
                 const { latitude, longitude } = pos.coords;
                 setFormData(prev => ({
                     ...prev,
                     location: `${latitude}, ${longitude}`
                 }));
+
+                try {
+                    const response = await complaintService.reverseGeocode(latitude, longitude);
+                    if (response.success && response.address) {
+                        const { area, city, pincode } = response.address;
+                        setReadableAddress(`${area || ''}, ${city}${pincode ? ' - ' + pincode : ''}`);
+                    }
+                } catch (err) {
+                    console.error('Failed to geocode:', err);
+                    setReadableAddress('Coordinates obtained, but address look-up failed');
+                } finally {
+                    setIsFetchingLocation(false);
+                }
             },
-            () => setError('Failed to fetch location')
+            () => {
+                setError('Failed to fetch location');
+                setIsFetchingLocation(false);
+            }
         );
     };
 
@@ -98,7 +119,7 @@ const FileComplaint = () => {
                 status: 'Pending',
                 nlp_result: mlComplaint?.nlp_result || {},
                 cnn_result: mlComplaint?.cnn_result || {},
-                user_id: user.id
+                user_id: user._id
             };
 
             console.log('Final Payload:', complaintPayload);
@@ -125,6 +146,7 @@ const FileComplaint = () => {
         setImagePreview(null);
         setPredictionResult(null);
         setError(null);
+        setReadableAddress('');
     };
 
     /* -------------------- UI -------------------- */
@@ -149,21 +171,33 @@ const FileComplaint = () => {
                 />
 
                 {/* Location */}
-                <div className="flex gap-2">
-                    <input
-                        name="location"
-                        value={formData.location}
-                        onChange={handleInputChange}
-                        placeholder="Location"
-                        className="flex-1 p-3 rounded bg-white/5 text-white"
-                        required
-                    />
-                    <Button
-                        type="button"
-                        label="📍 Auto"
-                        variant="secondary"
-                        onClick={handleGetLocation}
-                    />
+                <div className="space-y-2">
+                    <div className="flex gap-2">
+                        <input
+                            name="location"
+                            value={formData.location}
+                            onChange={handleInputChange}
+                            placeholder="Location (Coordinates)"
+                            className="flex-1 p-3 rounded bg-white/5 text-white"
+                            required
+                        />
+                        <Button
+                            type="button"
+                            label={isFetchingLocation ? '⌛...' : '📍 Auto'}
+                            variant="secondary"
+                            onClick={handleGetLocation}
+                            disabled={isFetchingLocation}
+                        />
+                    </div>
+                    {readableAddress && (
+                        <div className="p-3 rounded bg-blue-500/10 border border-blue-500/20 text-blue-100 flex items-start gap-2">
+                            <span className="text-lg">📍</span>
+                            <div>
+                                <p className="text-xs uppercase tracking-wider text-blue-300 font-semibold mb-1">Detected Address</p>
+                                <p className="text-sm font-medium">{readableAddress}</p>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* Image */}
