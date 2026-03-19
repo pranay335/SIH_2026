@@ -1,5 +1,19 @@
 // API service for communicating with backend
-import { API_BASE_URL, ML_API_BASE_URL } from '../config/config.js';
+import { API_BASE_URL, ML_API_BASE_URL, TIMEOUTS } from '../config/config.js';
+
+const fetchWithTimeout = async (url, options = {}, timeoutMs = TIMEOUTS.API_CALL) => {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    return await fetch(url, {
+      ...options,
+      signal: options.signal || controller.signal,
+    });
+  } finally {
+    clearTimeout(timeoutId);
+  }
+};
 
 // Generic fetch wrapper
 const apiRequest = async (endpoint, options = {}) => {
@@ -8,14 +22,14 @@ const apiRequest = async (endpoint, options = {}) => {
     const token = localStorage.getItem('civicmind_token');
 
     const url = `${API_BASE_URL}${endpoint}`;
-    const response = await fetch(url, {
+    const response = await fetchWithTimeout(url, {
       headers: {
         'Content-Type': 'application/json',
         ...(token && { 'Authorization': `Bearer ${token}` }),
         ...options.headers,
       },
       ...options,
-    });
+    }, TIMEOUTS.API_CALL);
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({ detail: 'Unknown error' }));
@@ -24,6 +38,9 @@ const apiRequest = async (endpoint, options = {}) => {
 
     return await response.json();
   } catch (error) {
+    if (error.name === 'AbortError') {
+      throw new Error('Backend request timed out. Please try again.');
+    }
     console.error('API request failed:', error);
     throw error;
   }
@@ -33,10 +50,10 @@ const apiRequest = async (endpoint, options = {}) => {
 const mlApiRequest = async (endpoint, formData) => {
   try {
     const url = `${ML_API_BASE_URL}${endpoint}`;
-    const response = await fetch(url, {
+    const response = await fetchWithTimeout(url, {
       method: 'POST',
       body: formData, // Use FormData directly, don't set Content-Type
-    });
+    }, TIMEOUTS.ML_PREDICTION);
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({ detail: 'Unknown error' }));
@@ -45,6 +62,9 @@ const mlApiRequest = async (endpoint, formData) => {
 
     return await response.json();
   } catch (error) {
+    if (error.name === 'AbortError') {
+      throw new Error('ML prediction timed out. Check ML backend and try again.');
+    }
     console.error('ML API request failed:', error);
     throw error;
   }

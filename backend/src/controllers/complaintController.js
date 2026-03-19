@@ -6,6 +6,7 @@ const nodemailer = require('nodemailer');
 const Message = require('../models/Message');
 const deduplicationService = require('../services/deduplicationService');
 const geocodingService = require('../services/geocodingService');
+const axios = require('axios');
 
 // Configure Nodemailer
 const transporter = nodemailer.createTransport({
@@ -280,6 +281,27 @@ const fileComplaint = async (req, res) => {
 
     const savedComplaint = await complaint.save();
 
+    // --- START: n8n Webhook Integrations (Fire and Forget) ---
+    // Trigger Complaint Acknowledgment
+    axios.post('https://pranayhackaton1.app.n8n.cloud/webhook/complaint-ack', {
+      event: 'complaint_created',
+      complaint_id: savedComplaint.complaint_id,
+      status: savedComplaint.status,
+      user_id: savedComplaint.user_id,
+      municipality: savedComplaint.municipalityCode
+    }).catch(err => console.warn('n8n Webhook warning (complaint-ack):', err.message));
+
+    // Trigger Employee Assignment (if auto-assigned upon creation)
+    if (savedComplaint.assigned_to) {
+      axios.post('https://pranayhackaton1.app.n8n.cloud/webhook/employee-assign', {
+        event: 'employee_assigned',
+        complaint_id: savedComplaint.complaint_id,
+        assigned_employee_id: savedComplaint.assigned_to,
+        status: savedComplaint.status
+      }).catch(err => console.warn('n8n Webhook warning (employee-assign):', err.message));
+    }
+    // --- END: n8n Webhook Integrations ---
+
     // 🔄 DEDUPLICATION LOGIC
     try {
       const deduplicationResult = await deduplicationService.processComplaint({
@@ -393,6 +415,18 @@ const updateComplaint = async (req, res) => {
       { status, assigned_to, notes, priority },
       { new: true }
     );
+
+    // --- START: n8n Webhook Integration (Fire and Forget) ---
+    // Trigger if a new employee is assigned or assignment changed manually
+    if (assigned_to && originalComplaint.assigned_to?.toString() !== assigned_to.toString()) {
+      axios.post('https://pranayhackaton1.app.n8n.cloud/webhook/employee-assign', {
+        event: 'employee_assigned',
+        complaint_id: complaint.complaint_id,
+        assigned_employee_id: complaint.assigned_to,
+        status: complaint.status
+      }).catch(err => console.warn('n8n Webhook warning (employee-reassign):', err.message));
+    }
+    // --- END: n8n Webhook Integration ---
 
     res.json({
       message: 'Complaint updated successfully',
