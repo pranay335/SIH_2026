@@ -9,7 +9,7 @@ These webhooks are called asynchronously ("fire-and-forget") from `complaintCont
 
 * **Complaint Acknowledgment (`/webhook/complaint-ack`)**
   * **When it fires:** Immediately after a new complaint is filed and saved successfully.
-  * **Payload:** `event`, `complaint_id`, `status`, `user_id`, `municipality`
+  * **Payload:** `event`, `email`, `complaint_id`, `subject`, `message`, `status`, `user_id`, `municipality`
   * **Purpose:** Triggers n8n to send a confirmation/acknowledgment message to the user who reported the issue.
 
 * **Employee Assignment (`/webhook/employee-assign`)**

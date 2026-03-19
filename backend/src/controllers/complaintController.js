@@ -92,6 +92,20 @@ const normalizeSectorToDepartment = (sector) => {
   return 'General';
 };
 
+const getDepartmentAliases = (department) => {
+  const map = {
+    Water: ['Water', 'water'],
+    Roads: ['Roads', 'Road', 'roads', 'road', 'Road & Infrastructure', 'Road and Infrastructure'],
+    Waste: ['Waste', 'waste', 'Garbage', 'garbage'],
+    Electricity: ['Electricity', 'electricity', 'Electrical', 'electrical'],
+    Health: ['Health', 'health', 'Medical', 'medical'],
+    Drainage: ['Drainage', 'drainage', 'Sewer', 'sewer'],
+    General: ['General', 'general']
+  };
+
+  return map[department] || [department];
+};
+
 /* ---------------------------------------------
    POST /api/complaints
 ---------------------------------------------- */
@@ -196,12 +210,13 @@ const fileComplaint = async (req, res) => {
     const normalizedDept = normalizeSectorToDepartment(sector);
     console.log(`🤖 Attempting auto-assignment for sector: ${sector} (Normalized: ${normalizedDept}) in ${municipalityCode}`);
 
-    // Find all eligible employees: same municipality, same department (normalized), sorted by lowest workload
+    const deptAliases = getDepartmentAliases(normalizedDept);
+
+    // Find all eligible employees: same municipality and department (including legacy aliases), sorted by lowest workload
     const eligibleEmployees = await User.find({
       role: 'employee',
       municipalityCode: municipalityCode,
-      department: normalizedDept,
-      currentWorkload: { $lt: MAX_COMPLAINTS_DEFAULT } // Only consider employees below default max
+      department: { $in: deptAliases }
     }).sort({ currentWorkload: 1 });
 
     let assigned_to = null;
@@ -210,9 +225,13 @@ const fileComplaint = async (req, res) => {
 
     if (eligibleEmployees.length > 0) {
       // Find the first employee who still has capacity based on their personal max
-      const bestEmployee = eligibleEmployees.find(emp =>
-        emp.currentWorkload < (emp.maxConcurrentComplaints || MAX_COMPLAINTS_DEFAULT)
-      ) || null;
+      const bestEmployee = eligibleEmployees.find((emp) => {
+        const employeeMax = emp.maxConcurrentComplaints || MAX_COMPLAINTS_DEFAULT;
+        const employeeStatus = (emp.availabilityStatus || 'AVAILABLE').toUpperCase();
+        const canTakeWork = emp.currentWorkload < employeeMax;
+        const isBlocked = ['OFF_DUTY', 'ON_LEAVE', 'UNAVAILABLE'].includes(employeeStatus);
+        return canTakeWork && !isBlocked;
+      }) || null;
 
       if (bestEmployee) {
         const employeeMax = bestEmployee.maxConcurrentComplaints || MAX_COMPLAINTS_DEFAULT;
@@ -285,7 +304,10 @@ const fileComplaint = async (req, res) => {
     // Trigger Complaint Acknowledgment
     axios.post('https://pranayhackaton1.app.n8n.cloud/webhook/complaint-ack', {
       event: 'complaint_created',
+      email: user.email,
       complaint_id: savedComplaint.complaint_id,
+      subject: `✅ Complaint ${savedComplaint.complaint_id} Received – CivicMind`,
+      message: `✅ Complaint ${savedComplaint.complaint_id} Received – CivicMind`,
       status: savedComplaint.status,
       user_id: savedComplaint.user_id,
       municipality: savedComplaint.municipalityCode
