@@ -2,6 +2,18 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
+const normalizeStatus = (status = '') => status.toString().trim().toLowerCase();
+
+const isInProgressStatus = (status = '') => {
+    const normalized = normalizeStatus(status);
+    return ['assigned', 'in progress', 'under review'].includes(normalized);
+};
+
+const isResolvedStatus = (status = '') => {
+    const normalized = normalizeStatus(status);
+    return ['resolved', 'closed'].includes(normalized);
+};
+
 const UserDashboard = () => {
     const [complaints, setComplaints] = useState([]);
     const [messages, setMessages] = useState([]);
@@ -11,8 +23,10 @@ const UserDashboard = () => {
     const { user, getToken } = useAuth();
 
     useEffect(() => {
-        fetchData();
-    }, []);
+        if (user?._id || user?.id) {
+            fetchData();
+        }
+    }, [user]);
 
     const fetchData = async () => {
         setLoading(true);
@@ -27,7 +41,12 @@ const UserDashboard = () => {
                 throw new Error('Authentication required');
             }
 
-            const response = await fetch(`http://localhost:5000/api/complaints/user/${user.id}`, {
+            const userId = user?._id || user?.id;
+            if (!userId) {
+                throw new Error('User information is missing. Please login again.');
+            }
+
+            const response = await fetch(`http://localhost:5000/api/complaints/user/${userId}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -82,8 +101,8 @@ const UserDashboard = () => {
 
     // Calculate stats from real data
     const totalComplaints = complaints.length;
-    const inProgressComplaints = complaints.filter(c => c.status === 'Under Review').length;
-    const resolvedComplaints = complaints.filter(c => c.status === 'Resolved').length;
+    const inProgressComplaints = complaints.filter(c => isInProgressStatus(c.status)).length;
+    const resolvedComplaints = complaints.filter(c => isResolvedStatus(c.status)).length;
 
     const stats = [
         { label: 'Total Complaints', value: totalComplaints.toString(), icon: '📋', color: 'from-blue-500 to-cyan-500', link: '/user/my-complaints' },
@@ -92,7 +111,7 @@ const UserDashboard = () => {
     ];
 
     // Get recent complaints (last 4)
-    const recentComplaints = complaints
+    const recentComplaints = [...complaints]
         .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
         .slice(0, 4);
 
