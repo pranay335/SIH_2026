@@ -6,11 +6,11 @@ const User = require('../models/User');
 
 const SECTOR_CLASS_MAP = {
   water:       ['water', 'leak', 'pipe', 'flood'],
-  road:        ['pothole', 'road', 'crack', 'footpath'],
-  waste:       ['garbage', 'trash', 'sanitation'],
-  electricity: ['electric', 'pole', 'wire'],
+  road:        ['pothole', 'road', 'crack', 'footpath', 'street'],
+  waste:       ['garbage', 'trash', 'sanitation', 'waste'],
+  electricity: ['electric', 'pole', 'wire', 'light'],
   health:      ['health', 'medical'],
-  drainage:    ['drain', 'sewer'],
+  drainage:    ['drain', 'sewer', 'block'],
   parks:       ['tree', 'park'],
   general:     [] 
 };
@@ -122,7 +122,7 @@ class FraudService {
 
     // 4. CNN Confidence Score Check
     let cnnFail = false;
-    if (cnn_result?.confidence < 0.6) {
+    if (cnn_result?.confidence < 0.3) {
       fraudScore += 2;
       flags.push('Low CNN confidence');
       cnnFail = true;
@@ -138,9 +138,9 @@ class FraudService {
       if (nlpSector.includes('water')) matchedNormalizedSector = 'water';
       else if (nlpSector.includes('road')) matchedNormalizedSector = 'road';
       else if (nlpSector.includes('waste') || nlpSector.includes('garbage')) matchedNormalizedSector = 'waste';
-      else if (nlpSector.includes('electric')) matchedNormalizedSector = 'electricity';
+      else if (nlpSector.includes('electric') || nlpSector.includes('light')) matchedNormalizedSector = 'electricity';
       else if (nlpSector.includes('health')) matchedNormalizedSector = 'health';
-      else if (nlpSector.includes('drain')) matchedNormalizedSector = 'drainage';
+      else if (nlpSector.includes('drain') || nlpSector.includes('sewer')) matchedNormalizedSector = 'drainage';
       else if (nlpSector.includes('park')) matchedNormalizedSector = 'parks';
 
       const validKeywords = SECTOR_CLASS_MAP[matchedNormalizedSector] || [];
@@ -160,7 +160,7 @@ class FraudService {
     if (cnnFail && mismatchFail) {
       finalAction = 'Rejected';
       flags.push('CRITICAL: Both CNN confidence and NLP classification failed. Suspicious and discarded, likely fake.');
-    } else if (cnnFail || mismatchFail || fraudScore >= 5) {
+    } else if (cnnFail || mismatchFail || fraudScore >= 6) {
       finalAction = 'Flagged';
     }
 
