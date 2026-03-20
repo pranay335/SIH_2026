@@ -310,7 +310,10 @@ const fileComplaint = async (req, res) => {
       message: `✅ Complaint ${savedComplaint.complaint_id} Received – CivicMind`,
       status: savedComplaint.status,
       user_id: savedComplaint.user_id,
-      municipality: savedComplaint.municipalityCode
+      municipality: savedComplaint.municipalityCode,
+      sector: savedComplaint.sector,
+      severity: savedComplaint.priority,
+      description: savedComplaint.description
     }).catch(err => console.warn('n8n Webhook warning (complaint-ack):', err.message));
 
     // Trigger Employee Assignment (if auto-assigned upon creation)
