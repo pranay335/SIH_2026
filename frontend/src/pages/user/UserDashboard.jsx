@@ -6,7 +6,7 @@ const normalizeStatus = (status = '') => status.toString().trim().toLowerCase();
 
 const isInProgressStatus = (status = '') => {
     const normalized = normalizeStatus(status);
-    return ['assigned', 'in progress', 'under review'].includes(normalized);
+    return ['assigned', 'in progress', 'under review', 'flagged'].includes(normalized);
 };
 
 const isResolvedStatus = (status = '') => {
@@ -117,6 +117,8 @@ const UserDashboard = () => {
 
     const getStatusBadge = (status) => {
         const styles = {
+            'Rejected': 'bg-red-600/20 text-red-500 border-red-600/30',
+            'Flagged': 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
             'Under Review': 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
             'Resolved': 'bg-green-500/20 text-green-400 border-green-500/30',
             'Pending': 'bg-red-500/20 text-red-400 border-red-500/30'
@@ -242,8 +244,13 @@ const UserDashboard = () => {
                                                     <td className="py-4 px-4 text-white/60 text-sm">{new Date(complaint.createdAt).toLocaleDateString()}</td>
                                                     <td className="py-4 px-4">
                                                         <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusBadge(complaint.status)}`}>
-                                                            {complaint.status}
+                                                            {complaint.status === 'Flagged' ? '⚠️ Under Review' : complaint.status === 'Rejected' ? '❌ Discarded (Fake)' : complaint.status}
                                                         </span>
+                                                        {(complaint.status === 'Flagged' || complaint.status === 'Rejected') && (
+                                                            <div className={`mt-2 text-xs p-2 rounded ${complaint.status === 'Rejected' ? 'text-red-300 bg-red-500/10' : 'text-yellow-500/80 bg-yellow-500/10'}`}>
+                                                                <b>Reason:</b> {complaint.flagReason || 'System flagged content.'}
+                                                            </div>
+                                                        )}
                                                     </td>
                                                     <td className="py-4 px-4">
                                                         <Link

@@ -16,7 +16,8 @@ const {
   searchAddress,
   getAssignedComplaintGroups,
   acknowledgeComplaintGroup,
-  getAdminStats
+  getAdminStats,
+  getFlaggedComplaints
 } = require('../controllers/complaintController');
 
 // File a new complaint (protected)
@@ -61,6 +62,9 @@ router.put('/groups/:groupId/status', auth, updateComplaintGroupStatus);
 
 // Acknowledge complaint group (protected)
 router.put('/groups/:groupId/acknowledge', auth, acknowledgeComplaintGroup);
+
+// Get flagged complaints (protected)
+router.get('/flagged', auth, getFlaggedComplaints);
 
 // Get complaint by ID (protected) - MUST BE LAST
 router.get('/:id', auth, getComplaintById);

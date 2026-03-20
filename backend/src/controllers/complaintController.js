@@ -6,6 +6,7 @@ const nodemailer = require('nodemailer');
 const Message = require('../models/Message');
 const deduplicationService = require('../services/deduplicationService');
 const geocodingService = require('../services/geocodingService');
+const fraudService = require('../services/fraudService');
 const axios = require('axios');
 
 // Configure Nodemailer
@@ -16,45 +17,6 @@ const transporter = nodemailer.createTransport({
     pass: process.env.GMAIL_PASS
   }
 });
-
-/* ---------------------------------------------
-   Helper: Image authenticity & relevance
----------------------------------------------- */
-const checkImageAuthenticity = ({ image, nlp_result, cnn_result }) => {
-  const flags = [];
-  let flagged = false;
-
-  const imageHash = crypto
-    .createHash('sha256')
-    .update(image)
-    .digest('hex');
-
-  if (cnn_result?.confidence < 0.6) {
-    flags.push('Low CNN confidence');
-    flagged = true;
-  }
-
-  if (nlp_result && cnn_result) {
-    const nlpSector = nlp_result.predicted_sector?.toLowerCase();
-    const cnnClass = cnn_result.predicted_class?.toLowerCase();
-
-    if (
-      nlpSector &&
-      cnnClass &&
-      !nlpSector.includes(cnnClass) &&
-      !cnnClass.includes(nlpSector)
-    ) {
-      flags.push('NLP sector vs CNN class mismatch');
-      flagged = true;
-    }
-  }
-
-  return {
-    flagged,
-    flagReason: flags.join(', '),
-    imageHash
-  };
-};
 
 /* ---------------------------------------------
    Helper: Municipality Code
@@ -118,7 +80,8 @@ const fileComplaint = async (req, res) => {
       location, // "lat, lng"
       nlp_result,
       cnn_result,
-      user_id
+      user_id,
+      sector
     } = req.body;
 
     if (
@@ -186,7 +149,6 @@ const fileComplaint = async (req, res) => {
       console.log('🔧 Emergency fix applied:', { fullAddress: address.fullAddress, city: address.city });
     }
 
-    const sector = nlp_result.predicted_sector || 'General';
     const municipalityCode = geocodingService.getMunicipalityCode(address);
 
     /* 🛡️ JURISDICTION VALIDATION */
@@ -205,64 +167,114 @@ const fileComplaint = async (req, res) => {
       });
     }
 
-    /* 🤖 AUTO-ASSIGNMENT LOGIC */
-    const MAX_COMPLAINTS_DEFAULT = 5;
-    const normalizedDept = normalizeSectorToDepartment(sector);
-    console.log(`🤖 Attempting auto-assignment for sector: ${sector} (Normalized: ${normalizedDept}) in ${municipalityCode}`);
-
-    const deptAliases = getDepartmentAliases(normalizedDept);
-
-    // Find all eligible employees: same municipality and department (including legacy aliases), sorted by lowest workload
-    const eligibleEmployees = await User.find({
-      role: 'employee',
-      municipalityCode: municipalityCode,
-      department: { $in: deptAliases }
-    }).sort({ currentWorkload: 1 });
+    /* 🕵️ FRAUD GATE - NEW LOCATION BEFORE AUTO-ASSIGNMENT */
+    console.log('🕵️ Running fraud detection...');
+    const fraudResult = await fraudService.evaluateFraud({
+      image,
+      nlp_result,
+      cnn_result,
+      user_id,
+      description,
+      sector,
+      location: geoLocation
+    });
 
     let assigned_to = null;
     let status = 'Pending';
     let assignmentNote = 'Awaiting manual assignment';
 
-    if (eligibleEmployees.length > 0) {
-      // Find the first employee who still has capacity based on their personal max
-      const bestEmployee = eligibleEmployees.find((emp) => {
-        const employeeMax = emp.maxConcurrentComplaints || MAX_COMPLAINTS_DEFAULT;
-        const employeeStatus = (emp.availabilityStatus || 'AVAILABLE').toUpperCase();
-        const canTakeWork = emp.currentWorkload < employeeMax;
-        const isBlocked = ['OFF_DUTY', 'ON_LEAVE', 'UNAVAILABLE'].includes(employeeStatus);
-        return canTakeWork && !isBlocked;
-      }) || null;
+    if (fraudResult.finalAction === 'Rejected') {
+      console.log(`❌ Complaint REJECTED! Score: ${fraudResult.fraudScore}. Reason: ${fraudResult.flagReason}`);
+      status = 'Rejected';
+      assignmentNote = 'System automatically discarded this complaint as suspicious and likely fake.';
 
-      if (bestEmployee) {
-        const employeeMax = bestEmployee.maxConcurrentComplaints || MAX_COMPLAINTS_DEFAULT;
-        assigned_to = bestEmployee._id;
-        status = 'Assigned';
-        assignmentNote = `Automatically assigned to ${bestEmployee.name}`;
+      // Send Email to Citizen
+      transporter.sendMail({
+        from: '"CivicMind Alerts" <' + process.env.GMAIL_USER + '>',
+        to: user.email,
+        subject: `❌ Your CivicMind Complaint Was Discarded — ${complaint_id}`,
+        html: `<p>Hello ${user.name},</p>
+               <p>Your recent complaint (ID: <b>${complaint_id}</b>) has been identified as highly suspicious by our verification systems and was <b>discarded</b>.</p>
+               <p><b>Reason:</b> Both text classification and visual verification failed. This usually indicates a fake or irrelevant submission.</p>
+               <p>If you believe this is an error, please ensure your image clearly matches your description and try submitting again.</p>`
+      }).catch(err => console.error('Failed to send citizen rejection email:', err));
 
-        // Increment employee workload
-        const newWorkload = bestEmployee.currentWorkload + 1;
-        await User.findByIdAndUpdate(bestEmployee._id, {
-          $inc: { currentWorkload: 1 },
-          // Update availability status if they've reached their personal max capacity
-          ...(newWorkload >= employeeMax ? { availabilityStatus: 'UNAVAILABLE' } : {})
-        });
+    } else if (fraudResult.finalAction === 'Flagged') {
+      console.log(`🚨 Complaint FLAGGED for fraud! Score: ${fraudResult.fraudScore}. Reason: ${fraudResult.flagReason}`);
+      status = 'Flagged';
+      assignmentNote = 'Flagged for admin review due to suspicious content';
+      
+      // Send Email to Citizen
+      transporter.sendMail({
+        from: '"CivicMind Alerts" <' + process.env.GMAIL_USER + '>',
+        to: user.email,
+        subject: `⚠️ Your CivicMind Complaint Needs Review — ${complaint_id}`,
+        html: `<p>Hello ${user.name},</p>
+               <p>Your recent complaint (ID: <b>${complaint_id}</b>) has been flagged by our automated system for manual review.</p>
+               <p><b>Reason:</b> ${fraudResult.flagReason}</p>
+               <p>An administrator will review your submission within 24 hours. If found legitimate, it will be assigned. Otherwise, it may be dismissed. We recommend you ensure images match descriptions.</p>`
+      }).catch(err => console.error('Failed to send citizen flag email:', err));
 
-        console.log(`✅ Auto-assigned to: ${bestEmployee.name} (New workload: ${newWorkload}/${employeeMax})`);
-        if (newWorkload >= employeeMax) {
-          console.log(`🔒 Employee ${bestEmployee.name} is now UNAVAILABLE (max capacity ${employeeMax} reached)`);
+      // Send Email to Admin
+      transporter.sendMail({
+        from: '"CivicMind System" <' + process.env.GMAIL_USER + '>',
+        to: process.env.GMAIL_USER, // or ADMIN_EMAIL
+        subject: `🚨 Action Required: Complaint ${complaint_id} Flagged as Suspicious`,
+        html: `<p>A new complaint was submitted and flagged due to a high fraud score.</p>
+               <p><b>ID:</b> ${complaint_id}<br/>
+               <b>Citizen:</b> ${user.name} (${user.email})<br/>
+               <b>Trust Score:</b> ${user.trustScore}<br/>
+               <b>Fraud Score:</b> ${fraudResult.fraudScore}<br/>
+               <b>Reason:</b> ${fraudResult.flagReason}</p>
+               <p>Please review it in the Admin Dashboard.</p>`
+      }).catch(err => console.error('Failed to send admin flag notice email:', err));
+
+    } else {
+      /* 🤖 AUTO-ASSIGNMENT LOGIC (Only runs if not flagged) */
+      const MAX_COMPLAINTS_DEFAULT = 5;
+      const normalizedDept = normalizeSectorToDepartment(sector);
+      console.log(`🤖 Attempting auto-assignment for sector: ${sector} (Normalized: ${normalizedDept}) in ${municipalityCode}`);
+
+      const deptAliases = getDepartmentAliases(normalizedDept);
+
+      const eligibleEmployees = await User.find({
+        role: 'employee',
+        municipalityCode: municipalityCode,
+        department: { $in: deptAliases }
+      }).sort({ currentWorkload: 1 });
+
+      if (eligibleEmployees.length > 0) {
+        const bestEmployee = eligibleEmployees.find((emp) => {
+          const employeeMax = emp.maxConcurrentComplaints || MAX_COMPLAINTS_DEFAULT;
+          const employeeStatus = (emp.availabilityStatus || 'AVAILABLE').toUpperCase();
+          const canTakeWork = emp.currentWorkload < employeeMax;
+          const isBlocked = ['OFF_DUTY', 'ON_LEAVE', 'UNAVAILABLE'].includes(employeeStatus);
+          return canTakeWork && !isBlocked;
+        }) || null;
+
+        if (bestEmployee) {
+          const employeeMax = bestEmployee.maxConcurrentComplaints || MAX_COMPLAINTS_DEFAULT;
+          assigned_to = bestEmployee._id;
+          status = 'Assigned';
+          assignmentNote = `Automatically assigned to ${bestEmployee.name}`;
+
+          const newWorkload = bestEmployee.currentWorkload + 1;
+          await User.findByIdAndUpdate(bestEmployee._id, {
+            $inc: { currentWorkload: 1 },
+            ...(newWorkload >= employeeMax ? { availabilityStatus: 'UNAVAILABLE' } : {})
+          });
+
+          console.log(`✅ Auto-assigned to: ${bestEmployee.name} (New workload: ${newWorkload}/${employeeMax})`);
+          if (newWorkload >= employeeMax) {
+            console.log(`🔒 Employee ${bestEmployee.name} is now UNAVAILABLE`);
+          }
+        } else {
+          console.log('⚠️ No available employees found for auto-assignment.');
         }
       } else {
-        console.log('⚠️ No available employees found for auto-assignment. All employees in this department are at maximum capacity.');
+        console.log('⚠️ No available employees found for auto-assignment.');
       }
-    } else {
-      console.log('⚠️ No available employees found for auto-assignment. All employees in this department are at maximum capacity.');
     }
-
-    const imageCheck = checkImageAuthenticity({
-      image,
-      nlp_result,
-      cnn_result
-    });
 
     const complaint = new Complaint({
       complaint_id,
@@ -284,9 +296,11 @@ const fileComplaint = async (req, res) => {
           : nlp_result.predicted_severity === 'Medium'
             ? 'Medium'
             : 'Low',
-      flagged: imageCheck.flagged,
-      flagReason: imageCheck.flagReason,
-      imageHash: imageCheck.imageHash
+      flagged: fraudResult.flagged,
+      fraudScore: fraudResult.fraudScore,
+      flagReason: fraudResult.flagReason,
+      imageHash: fraudResult.imageHash,
+      duplicateOf: fraudResult.duplicateOf
     });
 
     // Debug: Log the complaint object before saving
@@ -878,6 +892,26 @@ const getAdminStats = async (req, res) => {
   }
 };
 
+/* ---------------------------------------------
+   GET /api/complaints/flagged - Get flagged complaints for admins
+---------------------------------------------- */
+const getFlaggedComplaints = async (req, res) => {
+  try {
+    const { municipalityCode } = req.query;
+    const filter = { status: 'Flagged' };
+    if (municipalityCode) filter.municipalityCode = municipalityCode;
+
+    const complaints = await Complaint.find(filter)
+      .populate('user_id', 'name email trustScore')
+      .populate('duplicateOf', 'complaint_id location sector')
+      .sort({ createdAt: -1 });
+
+    res.json({ success: true, complaints });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   fileComplaint,
   getComplaints,
@@ -893,5 +927,6 @@ module.exports = {
   searchAddress,
   getAssignedComplaintGroups,
   acknowledgeComplaintGroup,
-  getAdminStats
+  getAdminStats,
+  getFlaggedComplaints
 };

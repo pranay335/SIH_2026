@@ -243,10 +243,16 @@ const FileComplaint = () => {
                 </div>
             </form>
 
-            {/* Success */}
+            {/* Result Message */}
             {predictionResult && (
-                <div className="mt-6 bg-green-500/20 text-green-300 p-4 rounded">
-                    ✅ {predictionResult.message}
+                <div className={`mt-6 p-4 rounded ${predictionResult.complaint?.status === 'Rejected' ? 'bg-red-500/20 text-red-300' : predictionResult.complaint?.status === 'Flagged' ? 'bg-yellow-500/20 text-yellow-300' : 'bg-green-500/20 text-green-300'}`}>
+                    {predictionResult.complaint?.status === 'Rejected' ? '❌ ' : predictionResult.complaint?.status === 'Flagged' ? '⚠️ ' : '✅ '}
+                    {predictionResult.complaint?.status === 'Rejected' ? 'Complaint Discarded: Suspicious Content' : predictionResult.message}
+                    {(predictionResult.complaint?.status === 'Flagged' || predictionResult.complaint?.status === 'Rejected') && (
+                       <p className={`mt-2 text-sm ${predictionResult.complaint?.status === 'Rejected' ? 'text-red-100/70' : 'text-yellow-100/70'}`}>
+                         {predictionResult.complaint.flagReason}
+                       </p>
+                    )}
                 </div>
             )}
         </div>

@@ -116,6 +116,17 @@ const complaintSchema = new mongoose.Schema(
 
     imageHash: {
       type: String
+    },
+
+    fraudScore: {
+      type: Number,
+      default: 0
+    },
+
+    duplicateOf: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Complaint',
+      default: null
     }
   },
   { timestamps: true }
@@ -123,5 +134,6 @@ const complaintSchema = new mongoose.Schema(
 
 // ✅ REQUIRED GEO INDEX
 complaintSchema.index({ location: '2dsphere' });
+complaintSchema.index({ imageHash: 1 });
 
 module.exports = mongoose.model('Complaint', complaintSchema);

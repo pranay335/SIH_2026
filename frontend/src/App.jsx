@@ -24,6 +24,7 @@ import EmployeeDashboard from './pages/employee_dashboard';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AllComplaints from './pages/admin/AllComplaints';
 import AssignedComplaints from './pages/admin/AssignedComplaints';
+import FlaggedComplaints from './pages/admin/FlaggedComplaints';
 import AdminNotices from './pages/admin/AdminNotices';
 import Employees from './pages/admin/Employees';
 import EmployeeManagement from './pages/admin/EmployeeManagement';
@@ -122,6 +123,7 @@ function App() {
                     >
                         <Route path="complaints" element={<AllComplaints />} />
                         <Route path="assigned" element={<AssignedComplaints />} />
+                        <Route path="flagged" element={<FlaggedComplaints />} />
                         <Route path="notices" element={<AdminNotices />} />
                         <Route path="employees" element={<Employees />} />
                         <Route path="employee-management" element={<EmployeeManagement />} />

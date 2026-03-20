@@ -35,6 +35,7 @@ const AdminLayout = () => {
         { path: '/admin-dashboard', label: 'Dashboard', icon: '📊' },
         { path: '/admin/reassignment', label: 'Management', icon: '🔄' },
         { path: '/admin/complaints', label: 'All Complaints', icon: '📋' },
+        { path: '/admin/flagged', label: 'Flagged Complaints', icon: '🚩' },
         { path: '/admin/notices', label: 'Notices', icon: '📢' },
         { path: '/admin/employee-management', label: 'Employee Management', icon: '➕' },
         { path: '/admin/feedback', label: 'Feedback Review', icon: '📝' }

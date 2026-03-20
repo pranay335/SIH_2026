@@ -152,6 +152,8 @@ const MyComplaints = () => {
     'Pending': 'bg-red-500/20 text-red-400 border-red-500/30',
     'Assigned': 'bg-blue-500/20 text-blue-400 border-blue-500/30',
     'In Progress': 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
+    'Flagged': 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
+    'Rejected': 'bg-red-600/20 text-red-500 border-red-600/30',
     'Under Review': 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
     'Resolved': 'bg-green-500/20 text-green-400 border-green-500/30',
     'Closed': 'bg-gray-500/20 text-gray-400 border-gray-500/30'
@@ -211,11 +213,17 @@ const MyComplaints = () => {
               {complaint.complaint_id}
             </h3>
             <span className={`px-3 py-1 text-xs rounded-full border ${getStatusBadge(complaint.status)}`}>
-              {complaint.status}
+              {complaint.status === 'Flagged' ? '⚠️ Under Review' : complaint.status === 'Rejected' ? '❌ Discarded' : complaint.status}
             </span>
           </div>
 
           <p className="text-white/70 mt-2">{complaint.description}</p>
+
+          {(complaint.status === 'Flagged' || complaint.status === 'Rejected') && (
+              <div className={`mt-3 border p-3 rounded-lg text-sm ${complaint.status === 'Rejected' ? 'bg-red-500/10 border-red-500/20 text-red-500/80' : 'bg-yellow-500/10 border-yellow-500/20 text-yellow-500/80'}`}>
+                  <b>{complaint.status === 'Rejected' ? 'Suspicious Rejection:' : 'Review Reason:'}</b> {complaint.flagReason || 'Pending manual verification'}
+              </div>
+          )}
 
           <p className="text-white/50 text-sm mt-2">
             📍 {formatLocation(complaint.location)}
@@ -262,12 +270,18 @@ const MyComplaints = () => {
             </h3>
 
             <span className={`inline-block px-3 py-1 text-xs rounded-full border mb-3 ${getStatusBadge(selectedComplaint.status)}`}>
-              {selectedComplaint.status}
+              {selectedComplaint.status === 'Flagged' ? '⚠️ Under Review' : selectedComplaint.status === 'Rejected' ? '❌ Discarded' : selectedComplaint.status}
             </span>
 
             <p className="text-white/70 mb-2">
               {selectedComplaint.description}
             </p>
+
+            {(selectedComplaint.status === 'Flagged' || selectedComplaint.status === 'Rejected') && (
+              <div className={`mb-3 border p-3 rounded-lg text-sm ${selectedComplaint.status === 'Rejected' ? 'bg-red-500/10 border-red-500/20 text-red-500/80' : 'bg-yellow-500/10 border-yellow-500/20 text-yellow-500/80'}`}>
+                  <b>{selectedComplaint.status === 'Rejected' ? 'Suspicious Rejection:' : 'Review Reason:'}</b> {selectedComplaint.flagReason || 'Pending manual verification'}
+              </div>
+            )}
 
             <p className="text-white/60 text-sm">
               📍 {formatLocation(selectedComplaint.location)}
