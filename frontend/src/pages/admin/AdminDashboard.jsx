@@ -1,46 +1,102 @@
+import { useState, useEffect } from 'react';
+import { useAuth } from '../../context/AuthContext';
+
 const AdminDashboard = () => {
-    const stats = [
-        { label: 'Total Complaints', value: '156', icon: '📋', color: 'from-blue-500 to-cyan-500' },
-        { label: 'Pending', value: '42', icon: '⏸️', color: 'from-red-500 to-pink-500' },
-        { label: 'In Progress', value: '68', icon: '⏳', color: 'from-yellow-500 to-orange-500' },
-        { label: 'Resolved', value: '46', icon: '✅', color: 'from-green-500 to-emerald-500' },
-        { label: 'Urgent', value: '12', icon: '🚨', color: 'from-red-600 to-red-500' }
-    ];
+    const { getToken, user } = useAuth();
+    const [broadcastTitle, setBroadcastTitle] = useState('');
+    const [broadcastMessage, setBroadcastMessage] = useState('');
+    const [isSending, setIsSending] = useState(false);
+    const [feedback, setFeedback] = useState({ type: '', msg: '' });
 
-    // Mock data for chart visualization (using Tailwind bars)
-    const chartData = [
-        { sector: 'Road', pending: 15, inProgress: 20, resolved: 25 },
-        { sector: 'Water', pending: 10, inProgress: 15, resolved: 18 },
-        { sector: 'Electricity', pending: 8, inProgress: 12, resolved: 15 },
-        { sector: 'Garbage', pending: 6, inProgress: 10, resolved: 12 },
-        { sector: 'Drainage', pending: 3, inProgress: 11, resolved: 8 }
-    ];
+    // Real data states
+    const [stats, setStats] = useState({
+        total: 0,
+        pending: 0,
+        inProgress: 0,
+        resolved: 0,
+        urgent: 0
+    });
+    const [sectorStats, setSectorStats] = useState([]);
+    const [recentComplaints, setRecentComplaints] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    const recentComplaints = [
-        {
-            id: 'CM-2024-156',
-            citizen: 'John Doe',
-            sector: 'Road',
-            location: 'Main Street',
-            urgency: 'high',
-            status: 'pending'
-        },
-        {
-            id: 'CM-2024-155',
-            citizen: 'Jane Smith',
-            sector: 'Water',
-            location: 'Park Road',
-            urgency: 'medium',
-            status: 'in-progress'
-        },
-        {
-            id: 'CM-2024-154',
-            citizen: 'Bob Johnson',
-            sector: 'Garbage',
-            location: 'Market Street',
-            urgency: 'low',
-            status: 'resolved'
+    // Fetch dashboard data
+    useEffect(() => {
+        const fetchDashboardData = async () => {
+            try {
+                const token = getToken();
+                const municipalityParam = user?.municipalityCode ? `?municipalityCode=${user.municipalityCode}` : '';
+
+                const response = await fetch(`http://localhost:5000/api/complaints/admin-stats${municipalityParam}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setStats(data.stats);
+                    setSectorStats(data.sectorStats);
+                    setRecentComplaints(data.recentComplaints);
+                }
+            } catch (err) {
+                console.error('Failed to fetch dashboard data:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (user) {
+            fetchDashboardData();
         }
+    }, [user, getToken]);
+
+    const handleSendBroadcast = async () => {
+        if (!broadcastTitle || !broadcastMessage) {
+            setFeedback({ type: 'error', msg: 'Please fill in both fields' });
+            return;
+        }
+
+        setIsSending(true);
+        setFeedback({ type: '', msg: '' });
+
+        try {
+            const token = getToken();
+            const response = await fetch('http://localhost:5000/api/messages', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    title: broadcastTitle,
+                    message: broadcastMessage,
+                    isBroadcast: true,
+                    municipality: user.municipalityCode
+                })
+            });
+
+            if (response.ok) {
+                setFeedback({ type: 'success', msg: 'Broadcast sent successfully!' });
+                setBroadcastTitle('');
+                setBroadcastMessage('');
+            } else {
+                throw new Error('Failed to send broadcast');
+            }
+        } catch (err) {
+            setFeedback({ type: 'error', msg: err.message });
+        } finally {
+            setIsSending(false);
+        }
+    };
+
+    const statsCards = [
+        { label: 'Total Complaints', value: stats.total, icon: '📋', color: 'from-blue-500 to-cyan-500' },
+        { label: 'Pending', value: stats.pending, icon: '⏸️', color: 'from-red-500 to-pink-500' },
+        { label: 'In Progress', value: stats.inProgress, icon: '⏳', color: 'from-yellow-500 to-orange-500' },
+        { label: 'Resolved', value: stats.resolved, icon: '✅', color: 'from-green-500 to-emerald-500' },
+        { label: 'Urgent', value: stats.urgent, icon: '🚨', color: 'from-red-600 to-red-500' }
     ];
 
     const getStatusBadge = (status) => {
@@ -76,7 +132,7 @@ const AdminDashboard = () => {
 
                 {/* Stats Cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
-                    {stats.map((stat, index) => (
+                    {statsCards.map((stat, index) => (
                         <div
                             key={index}
                             className="glass glass-hover rounded-xl p-6 transform transition-all duration-300 ease-in-out hover:scale-105"
@@ -100,7 +156,7 @@ const AdminDashboard = () => {
                     <div className="glass rounded-xl p-6">
                         <h3 className="text-xl font-semibold text-white mb-6">Complaints by Sector</h3>
                         <div className="space-y-4">
-                            {chartData.map((item, index) => {
+                            {sectorStats.length > 0 ? sectorStats.map((item, index) => {
                                 const total = item.pending + item.inProgress + item.resolved;
                                 return (
                                     <div key={index} className="space-y-2">
@@ -129,7 +185,9 @@ const AdminDashboard = () => {
                                         </div>
                                     </div>
                                 );
-                            })}
+                            }) : (
+                                <p className="text-white/60 text-sm">No sector data available</p>
+                            )}
                         </div>
                     </div>
 
@@ -140,29 +198,90 @@ const AdminDashboard = () => {
                             <div className="space-y-2">
                                 <div className="flex justify-between text-sm">
                                     <span className="text-white/80">Pending</span>
-                                    <span className="text-white/60">42 (27%)</span>
+                                    <span className="text-white/60">{stats.pending} ({stats.total > 0 ? Math.round((stats.pending / stats.total) * 100) : 0}%)</span>
                                 </div>
                                 <div className="h-4 bg-white/5 rounded-full overflow-hidden">
-                                    <div className="h-full bg-red-500/50" style={{ width: '27%' }} />
+                                    <div className="h-full bg-red-500/50" style={{ width: `${stats.total > 0 ? (stats.pending / stats.total) * 100 : 0}%` }} />
                                 </div>
                             </div>
                             <div className="space-y-2">
                                 <div className="flex justify-between text-sm">
                                     <span className="text-white/80">In Progress</span>
-                                    <span className="text-white/60">68 (44%)</span>
+                                    <span className="text-white/60">{stats.inProgress} ({stats.total > 0 ? Math.round((stats.inProgress / stats.total) * 100) : 0}%)</span>
                                 </div>
                                 <div className="h-4 bg-white/5 rounded-full overflow-hidden">
-                                    <div className="h-full bg-yellow-500/50" style={{ width: '44%' }} />
+                                    <div className="h-full bg-yellow-500/50" style={{ width: `${stats.total > 0 ? (stats.inProgress / stats.total) * 100 : 0}%` }} />
                                 </div>
                             </div>
                             <div className="space-y-2">
                                 <div className="flex justify-between text-sm">
                                     <span className="text-white/80">Resolved</span>
-                                    <span className="text-white/60">46 (29%)</span>
+                                    <span className="text-white/60">{stats.resolved} ({stats.total > 0 ? Math.round((stats.resolved / stats.total) * 100) : 0}%)</span>
                                 </div>
                                 <div className="h-4 bg-white/5 rounded-full overflow-hidden">
-                                    <div className="h-full bg-green-500/50" style={{ width: '29%' }} />
+                                    <div className="h-full bg-green-500/50" style={{ width: `${stats.total > 0 ? (stats.resolved / stats.total) * 100 : 0}%` }} />
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Messaging Panel */}
+                <div className="glass rounded-xl p-6 mb-8">
+                    <h3 className="text-xl font-semibold text-white mb-6">Messaging Center ✉️</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {/* Send Broadcast */}
+                        <div className="space-y-4">
+                            <h4 className="text-sm font-medium text-white/60 uppercase tracking-wider">Broadcast Alert</h4>
+                            <div className="space-y-3">
+                                {feedback.msg && (
+                                    <div className={`p-2 rounded text-xs ${feedback.type === 'success' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+                                        {feedback.msg}
+                                    </div>
+                                )}
+                                <input
+                                    type="text"
+                                    placeholder="Alert Title (e.g., Water Supply Update)"
+                                    value={broadcastTitle}
+                                    onChange={(e) => setBroadcastTitle(e.target.value)}
+                                    className="w-full px-4 py-2 glass border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                                />
+                                <textarea
+                                    placeholder="Enter message for all citizens in BMC..."
+                                    rows="3"
+                                    value={broadcastMessage}
+                                    onChange={(e) => setBroadcastMessage(e.target.value)}
+                                    className="w-full px-4 py-2 glass border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                                ></textarea>
+                                <button
+                                    onClick={handleSendBroadcast}
+                                    disabled={isSending}
+                                    className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-all shadow-lg shadow-blue-500/20 active:scale-95 disabled:opacity-50"
+                                >
+                                    {isSending ? 'Sending...' : 'Send Broadcast'}
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Direct Message (Recent Users) */}
+                        <div className="space-y-4">
+                            <h4 className="text-sm font-medium text-white/60 uppercase tracking-wider">Direct Message</h4>
+                            <div className="space-y-2 max-h-[200px] overflow-y-auto pr-2 custom-scrollbar">
+                                {[
+                                    { name: 'John Doe', sector: 'Road' },
+                                    { name: 'Jane Smith', sector: 'Water' },
+                                    { name: 'Bob Johnson', sector: 'Waste' }
+                                ].map((u, i) => (
+                                    <div key={i} className="flex items-center justify-between p-3 glass glass-hover rounded-lg group">
+                                        <div>
+                                            <div className="text-white text-sm font-medium">{u.name}</div>
+                                            <div className="text-white/40 text-[10px]">{u.sector} Complaint</div>
+                                        </div>
+                                        <button className="px-3 py-1 bg-white/5 hover:bg-white/10 text-blue-400 text-xs rounded-full border border-white/10 transition-colors">
+                                            Message
+                                        </button>
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     </div>

@@ -18,7 +18,7 @@ const Employees = () => {
         try {
             const response = await userService.getEmployees();
             // Filter employees by admin's municipality
-            const filteredEmployees = response.data.filter(employee => 
+            const filteredEmployees = response.data.filter(employee =>
                 employee.municipalityCode === user.municipalityCode
             );
             setEmployees(filteredEmployees);
@@ -199,12 +199,20 @@ const Employees = () => {
                                             <td className="py-4 px-4 text-white/60 text-sm hidden md:table-cell">{employee.email}</td>
                                             <td className="py-4 px-4 text-white/60 text-sm hidden lg:table-cell">{employee.phone}</td>
                                             <td className="py-4 px-4">
-                                                <span className="px-3 py-1 rounded-full text-xs font-medium bg-green-500/20 text-green-400 border border-green-500/30">
-                                                    {employee.availabilityStatus || 'Active'}
-                                                </span>
+                                                {(() => {
+                                                    const current = employee.currentWorkload || 0;
+                                                    const max = employee.maxConcurrentComplaints || 5;
+                                                    const pct = max > 0 ? (current / max) * 100 : 0;
+                                                    const badgeColor = pct >= 100 ? 'bg-red-500/20 text-red-400 border-red-500/30' : pct >= 50 ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' : 'bg-green-500/20 text-green-400 border-green-500/30';
+                                                    return (
+                                                        <span className={`px-3 py-1 rounded-full text-xs font-medium border ${badgeColor}`}>
+                                                            {employee.availabilityStatus || 'AVAILABLE'} ({current}/{max})
+                                                        </span>
+                                                    );
+                                                })()}
                                             </td>
                                             <td className="py-4 px-4">
-                                                <button 
+                                                <button
                                                     onClick={() => handleViewDetails(employee)}
                                                     className="text-[#60A5FA] hover:text-[#3B82F6] text-sm font-medium transition-colors"
                                                 >
@@ -239,7 +247,7 @@ const Employees = () => {
                                     </button>
                                 </div>
                             </div>
-                            
+
                             <div className="p-6">
                                 {/* Employee Info */}
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -272,8 +280,24 @@ const Employees = () => {
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                                     <div className="bg-white/5 rounded-lg p-4">
-                                        <p className="text-white/60 text-sm mb-1">Current Workload</p>
-                                        <p className="text-white font-medium">{selectedEmployee.currentWorkload || 0}/{selectedEmployee.maxConcurrentComplaints || 10} complaints</p>
+                                        <p className="text-white/60 text-sm mb-2">Current Workload</p>
+                                        {(() => {
+                                            const current = selectedEmployee.currentWorkload || 0;
+                                            const max = selectedEmployee.maxConcurrentComplaints || 5;
+                                            const remaining = Math.max(0, max - current);
+                                            const pct = max > 0 ? (current / max) * 100 : 0;
+                                            const barColor = pct >= 100 ? 'bg-red-500' : pct >= 50 ? 'bg-yellow-400' : 'bg-green-400';
+                                            const textColor = pct >= 100 ? 'text-red-400' : pct >= 50 ? 'text-yellow-400' : 'text-green-400';
+                                            return (
+                                                <div className="space-y-2">
+                                                    <p className={`font-bold ${textColor}`}>{current}/{max} complaints</p>
+                                                    <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+                                                        <div className={`h-full ${barColor} rounded-full transition-all duration-500`} style={{ width: `${Math.min(pct, 100)}%` }}></div>
+                                                    </div>
+                                                    <p className={`text-xs ${textColor}`}>{remaining} slot{remaining !== 1 ? 's' : ''} remaining</p>
+                                                </div>
+                                            );
+                                        })()}
                                     </div>
                                     <div className="bg-white/5 rounded-lg p-4">
                                         <p className="text-white/60 text-sm mb-1">Municipality</p>
@@ -284,7 +308,7 @@ const Employees = () => {
                                 {/* Complaints List */}
                                 <div className="space-y-4">
                                     <h4 className="text-xl font-semibold text-white">Assigned Complaints</h4>
-                                    
+
                                     {employeeComplaints.length === 0 ? (
                                         <div className="text-center py-8">
                                             <p className="text-white/50">No complaints assigned to this employee yet.</p>

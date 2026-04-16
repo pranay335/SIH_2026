@@ -143,6 +143,39 @@ const complaintGroupSchema = new mongoose.Schema({
     type: String,
     enum: ['location', 'semantic', 'hybrid'],
     default: 'hybrid'
+  },
+
+  // Proof of resolution images
+  resolution_images: [{
+    type: String
+  }],
+
+  // Resolution Feedback
+  feedbackStatus: {
+    type: String,
+    enum: ['PENDING', 'SATISFIED', 'NOT_SATISFIED'],
+    default: null
+  },
+  feedbackMessage: {
+    type: String,
+    default: ''
+  },
+  feedbackGivenBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    default: null
+  },
+  feedbackGivenAt: {
+    type: Date,
+    default: null
+  },
+  reopened: {
+    type: Boolean,
+    default: false
+  },
+  reopenCount: {
+    type: Number,
+    default: 0
   }
 }, { timestamps: true });
 

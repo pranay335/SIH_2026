@@ -1,47 +1,22 @@
 const Complaint = require('../models/Complaint');
 const ComplaintGroup = require('../models/ComplaintGroup');
+const User = require('../models/User');
 const crypto = require('crypto');
+const nodemailer = require('nodemailer');
+const Message = require('../models/Message');
 const deduplicationService = require('../services/deduplicationService');
 const geocodingService = require('../services/geocodingService');
+const fraudService = require('../services/fraudService');
+const axios = require('axios');
 
-/* ---------------------------------------------
-   Helper: Image authenticity & relevance
----------------------------------------------- */
-const checkImageAuthenticity = ({ image, nlp_result, cnn_result }) => {
-  const flags = [];
-  let flagged = false;
-
-  const imageHash = crypto
-    .createHash('sha256')
-    .update(image)
-    .digest('hex');
-
-  if (cnn_result?.confidence < 0.6) {
-    flags.push('Low CNN confidence');
-    flagged = true;
+// Configure Nodemailer
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_PASS
   }
-
-  if (nlp_result && cnn_result) {
-    const nlpSector = nlp_result.predicted_sector?.toLowerCase();
-    const cnnClass = cnn_result.predicted_class?.toLowerCase();
-
-    if (
-      nlpSector &&
-      cnnClass &&
-      !nlpSector.includes(cnnClass) &&
-      !cnnClass.includes(nlpSector)
-    ) {
-      flags.push('NLP sector vs CNN class mismatch');
-      flagged = true;
-    }
-  }
-
-  return {
-    flagged,
-    flagReason: flags.join(', '),
-    imageHash
-  };
-};
+});
 
 /* ---------------------------------------------
    Helper: Municipality Code
@@ -66,6 +41,34 @@ const getMunicipalityCode = (locationText) => {
 };
 
 /* ---------------------------------------------
+   Helper: Normalize sector to department
+---------------------------------------------- */
+const normalizeSectorToDepartment = (sector) => {
+  const s = sector.toLowerCase();
+  if (s.includes('water')) return 'Water';
+  if (s.includes('road')) return 'Roads';
+  if (s.includes('waste') || s.includes('garbage')) return 'Waste';
+  if (s.includes('electric')) return 'Electricity';
+  if (s.includes('health') || s.includes('medical')) return 'Health';
+  if (s.includes('drain') || s.includes('sewer')) return 'Drainage';
+  return 'General';
+};
+
+const getDepartmentAliases = (department) => {
+  const map = {
+    Water: ['Water', 'water'],
+    Roads: ['Roads', 'Road', 'roads', 'road', 'Road & Infrastructure', 'Road and Infrastructure'],
+    Waste: ['Waste', 'waste', 'Garbage', 'garbage'],
+    Electricity: ['Electricity', 'electricity', 'Electrical', 'electrical'],
+    Health: ['Health', 'health', 'Medical', 'medical'],
+    Drainage: ['Drainage', 'drainage', 'Sewer', 'sewer'],
+    General: ['General', 'general']
+  };
+
+  return map[department] || [department];
+};
+
+/* ---------------------------------------------
    POST /api/complaints
 ---------------------------------------------- */
 const fileComplaint = async (req, res) => {
@@ -77,7 +80,8 @@ const fileComplaint = async (req, res) => {
       location, // "lat, lng"
       nlp_result,
       cnn_result,
-      user_id
+      user_id,
+      sector
     } = req.body;
 
     if (
@@ -122,7 +126,7 @@ const fileComplaint = async (req, res) => {
     const addressValidation = geocodingService.validateAddress(address);
     if (!addressValidation.isValid) {
       console.warn('⚠️ Address validation failed. Missing:', addressValidation.missing);
-      
+
       // Force create a valid address if validation fails
       address = {
         fullAddress: address.fullAddress || `Location (${lat.toFixed(6)}, ${lng.toFixed(6)})`,
@@ -133,7 +137,7 @@ const fileComplaint = async (req, res) => {
         pincode: address.pincode || '',
         landmark: address.landmark || ''
       };
-      
+
       console.log('🔧 Forced address creation:', address.fullAddress);
     }
 
@@ -145,47 +149,197 @@ const fileComplaint = async (req, res) => {
       console.log('🔧 Emergency fix applied:', { fullAddress: address.fullAddress, city: address.city });
     }
 
-    const sector = nlp_result.predicted_sector || 'General';
     const municipalityCode = geocodingService.getMunicipalityCode(address);
 
-    const imageCheck = checkImageAuthenticity({
+    /* 🛡️ JURISDICTION VALIDATION */
+    const user = await User.findById(user_id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Strictly enforce municipality match for regular users
+    if (user.role === 'user' && user.municipalityCode && user.municipalityCode !== municipalityCode) {
+      console.warn(`🚫 Jurisdiction mismatch: User (${user.municipalityCode}) vs Complaint (${municipalityCode})`);
+      return res.status(403).json({
+        message: `Jurisdiction mismatch. You can only file complaints for ${user.municipalityCode}. Detected location is in ${municipalityCode}.`,
+        detectedMunicipality: municipalityCode,
+        userMunicipality: user.municipalityCode
+      });
+    }
+
+    /* 🕵️ FRAUD GATE - NEW LOCATION BEFORE AUTO-ASSIGNMENT */
+    console.log('🕵️ Running fraud detection...');
+    const fraudResult = await fraudService.evaluateFraud({
       image,
       nlp_result,
-      cnn_result
+      cnn_result,
+      user_id,
+      description,
+      sector,
+      location: geoLocation
     });
+
+    let assigned_to = null;
+    let status = 'Pending';
+    let assignmentNote = 'Awaiting manual assignment';
+
+    if (fraudResult.finalAction === 'Rejected') {
+      console.log(`❌ Complaint REJECTED! Score: ${fraudResult.fraudScore}. Reason: ${fraudResult.flagReason}`);
+      status = 'Rejected';
+      assignmentNote = 'System automatically discarded this complaint as suspicious and likely fake.';
+
+      // Send Email to Citizen
+      transporter.sendMail({
+        from: '"CivicMind Alerts" <' + process.env.GMAIL_USER + '>',
+        to: user.email,
+        subject: `❌ Your CivicMind Complaint Was Discarded — ${complaint_id}`,
+        html: `<p>Hello ${user.name},</p>
+               <p>Your recent complaint (ID: <b>${complaint_id}</b>) has been identified as highly suspicious by our verification systems and was <b>discarded</b>.</p>
+               <p><b>Reason:</b> Both text classification and visual verification failed. This usually indicates a fake or irrelevant submission.</p>
+               <p>If you believe this is an error, please ensure your image clearly matches your description and try submitting again.</p>`
+      }).catch(err => console.error('Failed to send citizen rejection email:', err));
+
+    } else if (fraudResult.finalAction === 'Flagged') {
+      console.log(`🚨 Complaint FLAGGED for fraud! Score: ${fraudResult.fraudScore}. Reason: ${fraudResult.flagReason}`);
+      status = 'Flagged';
+      assignmentNote = 'Flagged for admin review due to suspicious content';
+      
+      // Send Email to Citizen
+      transporter.sendMail({
+        from: '"CivicMind Alerts" <' + process.env.GMAIL_USER + '>',
+        to: user.email,
+        subject: `⚠️ Your CivicMind Complaint Needs Review — ${complaint_id}`,
+        html: `<p>Hello ${user.name},</p>
+               <p>Your recent complaint (ID: <b>${complaint_id}</b>) has been flagged by our automated system for manual review.</p>
+               <p><b>Reason:</b> ${fraudResult.flagReason}</p>
+               <p>An administrator will review your submission within 24 hours. If found legitimate, it will be assigned. Otherwise, it may be dismissed. We recommend you ensure images match descriptions.</p>`
+      }).catch(err => console.error('Failed to send citizen flag email:', err));
+
+      // Send Email to Admin
+      transporter.sendMail({
+        from: '"CivicMind System" <' + process.env.GMAIL_USER + '>',
+        to: process.env.GMAIL_USER, // or ADMIN_EMAIL
+        subject: `🚨 Action Required: Complaint ${complaint_id} Flagged as Suspicious`,
+        html: `<p>A new complaint was submitted and flagged due to a high fraud score.</p>
+               <p><b>ID:</b> ${complaint_id}<br/>
+               <b>Citizen:</b> ${user.name} (${user.email})<br/>
+               <b>Trust Score:</b> ${user.trustScore}<br/>
+               <b>Fraud Score:</b> ${fraudResult.fraudScore}<br/>
+               <b>Reason:</b> ${fraudResult.flagReason}</p>
+               <p>Please review it in the Admin Dashboard.</p>`
+      }).catch(err => console.error('Failed to send admin flag notice email:', err));
+
+    } else {
+      /* 🤖 AUTO-ASSIGNMENT LOGIC (Only runs if not flagged) */
+      const MAX_COMPLAINTS_DEFAULT = 5;
+      const normalizedDept = normalizeSectorToDepartment(sector);
+      console.log(`🤖 Attempting auto-assignment for sector: ${sector} (Normalized: ${normalizedDept}) in ${municipalityCode}`);
+
+      const deptAliases = getDepartmentAliases(normalizedDept);
+
+      const eligibleEmployees = await User.find({
+        role: 'employee',
+        municipalityCode: municipalityCode,
+        department: { $in: deptAliases }
+      }).sort({ currentWorkload: 1 });
+
+      if (eligibleEmployees.length > 0) {
+        const bestEmployee = eligibleEmployees.find((emp) => {
+          const employeeMax = emp.maxConcurrentComplaints || MAX_COMPLAINTS_DEFAULT;
+          const employeeStatus = (emp.availabilityStatus || 'AVAILABLE').toUpperCase();
+          const canTakeWork = emp.currentWorkload < employeeMax;
+          const isBlocked = ['OFF_DUTY', 'ON_LEAVE', 'UNAVAILABLE'].includes(employeeStatus);
+          return canTakeWork && !isBlocked;
+        }) || null;
+
+        if (bestEmployee) {
+          const employeeMax = bestEmployee.maxConcurrentComplaints || MAX_COMPLAINTS_DEFAULT;
+          assigned_to = bestEmployee._id;
+          status = 'Assigned';
+          assignmentNote = `Automatically assigned to ${bestEmployee.name}`;
+
+          const newWorkload = bestEmployee.currentWorkload + 1;
+          await User.findByIdAndUpdate(bestEmployee._id, {
+            $inc: { currentWorkload: 1 },
+            ...(newWorkload >= employeeMax ? { availabilityStatus: 'UNAVAILABLE' } : {})
+          });
+
+          console.log(`✅ Auto-assigned to: ${bestEmployee.name} (New workload: ${newWorkload}/${employeeMax})`);
+          if (newWorkload >= employeeMax) {
+            console.log(`🔒 Employee ${bestEmployee.name} is now UNAVAILABLE`);
+          }
+        } else {
+          console.log('⚠️ No available employees found for auto-assignment.');
+        }
+      } else {
+        console.log('⚠️ No available employees found for auto-assignment.');
+      }
+    }
 
     const complaint = new Complaint({
       complaint_id,
       description,
       image,
-      location: geoLocation, // ✅ FIXED
-      address: address, // 🗺️ Use geocoded address
+      location: geoLocation,
+      address: address,
       sector,
       municipalityCode,
       nlp_result,
       cnn_result,
       user_id,
-      status: 'Pending',
+      assigned_to, // Set by auto-assignment
+      status,      // Set to 'Assigned' if auto-assigned
+      notes: assignmentNote,
       priority:
         nlp_result.predicted_severity === 'High'
           ? 'High'
           : nlp_result.predicted_severity === 'Medium'
-          ? 'Medium'
-          : 'Low',
-      flagged: imageCheck.flagged,
-      flagReason: imageCheck.flagReason,
-      imageHash: imageCheck.imageHash
+            ? 'Medium'
+            : 'Low',
+      flagged: fraudResult.flagged,
+      fraudScore: fraudResult.fraudScore,
+      flagReason: fraudResult.flagReason,
+      imageHash: fraudResult.imageHash,
+      duplicateOf: fraudResult.duplicateOf
     });
 
     // Debug: Log the complaint object before saving
     console.log('🔍 Complaint object before save:', {
       complaint_id: complaint.complaint_id,
       address_fullAddress: complaint.address.fullAddress,
-      address_city: complaint.address.city,
-      address_complete: !!complaint.address.fullAddress && !!complaint.address.city
+      municipalityCode: complaint.municipalityCode,
+      status: complaint.status,
+      assigned_to: complaint.assigned_to ? 'YES' : 'NO'
     });
 
     const savedComplaint = await complaint.save();
+
+    // --- START: n8n Webhook Integrations (Fire and Forget) ---
+    // Trigger Complaint Acknowledgment
+    axios.post('https://pranayhackaton1.app.n8n.cloud/webhook/complaint-ack', {
+      event: 'complaint_created',
+      email: user.email,
+      complaint_id: savedComplaint.complaint_id,
+      subject: `✅ Complaint ${savedComplaint.complaint_id} Received – CivicMind`,
+      message: `✅ Complaint ${savedComplaint.complaint_id} Received – CivicMind`,
+      status: savedComplaint.status,
+      user_id: savedComplaint.user_id,
+      municipality: savedComplaint.municipalityCode,
+      sector: savedComplaint.sector,
+      severity: savedComplaint.priority,
+      description: savedComplaint.description
+    }).catch(err => console.warn('n8n Webhook warning (complaint-ack):', err.message));
+
+    // Trigger Employee Assignment (if auto-assigned upon creation)
+    if (savedComplaint.assigned_to) {
+      axios.post('https://pranayhackaton1.app.n8n.cloud/webhook/employee-assign', {
+        event: 'employee_assigned',
+        complaint_id: savedComplaint.complaint_id,
+        assigned_employee_id: savedComplaint.assigned_to,
+        status: savedComplaint.status
+      }).catch(err => console.warn('n8n Webhook warning (employee-assign):', err.message));
+    }
+    // --- END: n8n Webhook Integrations ---
 
     // 🔄 DEDUPLICATION LOGIC
     try {
@@ -198,11 +352,13 @@ const fileComplaint = async (req, res) => {
         description,
         nlp_result,
         user_id,
-        image
+        image,
+        assigned_to, // Pass auto-assignment data
+        status       // Pass current status
       });
 
       console.log('🔄 Deduplication Result:', deduplicationResult.message);
-      
+
       // Return enhanced response with group information
       res.status(201).json({
         message: 'Complaint filed successfully',
@@ -269,15 +425,47 @@ const updateComplaint = async (req, res) => {
   try {
     const { status, assigned_to, notes, priority } = req.body;
 
+    // Get the original complaint to check status change
+    const originalComplaint = await Complaint.findById(req.params.id);
+    if (!originalComplaint) {
+      return res.status(404).json({ message: 'Complaint not found' });
+    }
+
+    // Handle workload decrement when complaint is resolved
+    if (originalComplaint.status !== 'Resolved' && status === 'Resolved' && originalComplaint.assigned_to) {
+      const employee = await User.findById(originalComplaint.assigned_to);
+      if (employee) {
+        const employeeMax = employee.maxConcurrentComplaints || 5;
+        const newWorkload = Math.max(0, employee.currentWorkload - 1);
+        await User.findByIdAndUpdate(originalComplaint.assigned_to, {
+          currentWorkload: newWorkload,
+          // Update availability status if they're now below their personal max capacity
+          ...(newWorkload < employeeMax ? { availabilityStatus: 'AVAILABLE' } : {})
+        });
+        console.log(`📉 Workload decreased for ${employee.name}: ${employee.currentWorkload} → ${newWorkload}/${employeeMax}`);
+        if (newWorkload < employeeMax && employee.availabilityStatus === 'UNAVAILABLE') {
+          console.log(`✅ Employee ${employee.name} is now AVAILABLE`);
+        }
+      }
+    }
+
     const complaint = await Complaint.findByIdAndUpdate(
       req.params.id,
       { status, assigned_to, notes, priority },
       { new: true }
     );
 
-    if (!complaint) {
-      return res.status(404).json({ message: 'Complaint not found' });
+    // --- START: n8n Webhook Integration (Fire and Forget) ---
+    // Trigger if a new employee is assigned or assignment changed manually
+    if (assigned_to && originalComplaint.assigned_to?.toString() !== assigned_to.toString()) {
+      axios.post('https://pranayhackaton1.app.n8n.cloud/webhook/employee-assign', {
+        event: 'employee_assigned',
+        complaint_id: complaint.complaint_id,
+        assigned_employee_id: complaint.assigned_to,
+        status: complaint.status
+      }).catch(err => console.warn('n8n Webhook warning (employee-reassign):', err.message));
     }
+    // --- END: n8n Webhook Integration ---
 
     res.json({
       message: 'Complaint updated successfully',
@@ -295,7 +483,9 @@ const getComplaintsByUser = async (req, res) => {
   try {
     const complaints = await Complaint.find({
       user_id: req.params.userId
-    }).sort({ createdAt: -1 });
+    })
+      .populate('assigned_to', 'name email phone')
+      .sort({ createdAt: -1 });
 
     res.json(complaints);
   } catch (error) {
@@ -310,13 +500,13 @@ const getComplaintGroups = async (req, res) => {
   try {
     const { status, sector, municipalityCode } = req.query;
     const filter = {};
-    
+
     if (status) filter.status = status;
     if (sector) filter.sector = sector;
     if (municipalityCode) filter.municipalityCode = municipalityCode;
 
     const groups = await ComplaintGroup.find(filter)
-      .populate('assigned_to', 'name email')
+      .populate('assigned_to', 'name email department currentWorkload maxConcurrentComplaints availabilityStatus')
       .populate('affected_users', 'name email')
       .populate('complaints', 'complaint_id description status created_at')
       .sort({ last_updated: -1 });
@@ -338,7 +528,7 @@ const getComplaintGroups = async (req, res) => {
 const getComplaintGroupById = async (req, res) => {
   try {
     const { groupId } = req.params;
-    
+
     const group = await ComplaintGroup.findOne({ group_id: groupId })
       .populate('assigned_to', 'name email phone')
       .populate('affected_users', 'name email phone')
@@ -370,64 +560,121 @@ const getComplaintGroupById = async (req, res) => {
 const assignComplaintGroup = async (req, res) => {
   try {
     const { groupId } = req.params;
-    const { assigned_to, notes, estimatedResolution } = req.body;
+    const { assigned_to, notes } = req.body;
 
-    const group = await ComplaintGroup.findOne({ group_id: groupId });
-    if (!group) {
-      return res.status(404).json({ message: 'Complaint group not found' });
+    if (!assigned_to) {
+      return res.status(400).json({ success: false, message: 'Employee ID (assigned_to) is required' });
     }
 
-    // Update group
-    group.assigned_to = assigned_to;
-    group.status = 'Assigned';
-    if (notes) group.notes = notes;
-    if (estimatedResolution) group.estimatedResolution = new Date(estimatedResolution);
-    group.last_updated = new Date();
-
-    await group.save();
-
-    // Update all individual complaints in the group
-    await Complaint.updateMany(
-      { group_id: group._id },
-      { 
-        assigned_to,
-        status: 'Assigned',
-        estimatedResolution: estimatedResolution ? new Date(estimatedResolution) : null
-      }
-    );
-
-    const updatedGroup = await ComplaintGroup.findOne({ group_id: groupId })
-      .populate('assigned_to', 'name email phone');
+    const assignmentService = require('../services/assignmentService');
+    const result = await assignmentService.reassignComplaintGroup(groupId, assigned_to, notes || '');
 
     res.json({
       success: true,
-      message: `Complaint group assigned to employee`,
-      group: updatedGroup
+      message: 'Complaint group reassigned successfully',
+      group: result.group
     });
   } catch (error) {
     console.error('Error assigning complaint group:', error);
-    res.status(500).json({ message: error.message });
+    const status = error.status || 500;
+    const message = error.message || 'Internal server error';
+    res.status(status).json({ success: false, message });
   }
 };
 
 /* ---------------------------------------------
    PUT /api/complaints/groups/:groupId/status - Update group status
 ---------------------------------------------- */
+const getAssignedComplaintGroups = async (req, res) => {
+  try {
+    const { employeeId } = req.params;
+    const groups = await ComplaintGroup.find({ assigned_to: employeeId })
+      .populate('complaints')
+      .sort({ last_updated: -1 });
+
+    res.json({
+      success: true,
+      count: groups.length,
+      groups
+    });
+  } catch (error) {
+    console.error('Error fetching assigned groups:', error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const acknowledgeComplaintGroup = async (req, res) => {
+  try {
+    const { groupId } = req.params;
+    const group = await ComplaintGroup.findOne({ group_id: groupId });
+
+    if (!group) {
+      return res.status(404).json({ message: 'Complaint group not found' });
+    }
+
+    group.status = 'In Progress';
+    group.last_updated = new Date();
+    await group.save();
+
+    // Update individual complaints
+    await Complaint.updateMany(
+      { group_id: group._id },
+      { status: 'In Progress' }
+    );
+
+    res.json({
+      success: true,
+      message: 'Complaint group acknowledged',
+      group
+    });
+  } catch (error) {
+    console.error('Error acknowledging group:', error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
 const updateComplaintGroupStatus = async (req, res) => {
   try {
     const { groupId } = req.params;
-    const { status, notes, resolvedDate } = req.body;
+    const { status, notes, resolvedDate, resolution_images } = req.body;
 
     const group = await ComplaintGroup.findOne({ group_id: groupId });
     if (!group) {
       return res.status(404).json({ message: 'Complaint group not found' });
     }
 
+    // Handle workload decrement when complaint group is resolved
+    if (group.status !== 'Resolved' && status === 'Resolved' && group.assigned_to) {
+      const employee = await User.findById(group.assigned_to);
+      if (employee) {
+        const employeeMax = employee.maxConcurrentComplaints || 5;
+        // Count how many complaints are in this group to decrement by that amount
+        const complaintsInGroup = await Complaint.countDocuments({ group_id: group._id });
+        const newWorkload = Math.max(0, employee.currentWorkload - complaintsInGroup);
+
+        await User.findByIdAndUpdate(group.assigned_to, {
+          currentWorkload: newWorkload,
+          // Update availability status if they're now below their personal max capacity
+          ...(newWorkload < employeeMax ? { availabilityStatus: 'AVAILABLE' } : {})
+        });
+        console.log(`📉 Workload decreased for ${employee.name}: ${employee.currentWorkload} → ${newWorkload}/${employeeMax} (${complaintsInGroup} complaints resolved)`);
+        if (newWorkload < employeeMax && employee.availabilityStatus === 'UNAVAILABLE') {
+          console.log(`✅ Employee ${employee.name} is now AVAILABLE`);
+        }
+      }
+    }
+
     // Update group
     group.status = status;
     if (notes) group.notes = notes;
+    if (resolution_images) group.resolution_images = resolution_images;
+
     if (status === 'Resolved' && !group.resolvedDate) {
       group.resolvedDate = resolvedDate ? new Date(resolvedDate) : new Date();
+    }
+    // Set feedback status to PENDING when resolved (triggers citizen feedback flow)
+    if (status === 'Resolved') {
+      group.feedbackStatus = 'PENDING';
     }
     group.last_updated = new Date();
 
@@ -436,7 +683,7 @@ const updateComplaintGroupStatus = async (req, res) => {
     // Update all individual complaints in the group
     await Complaint.updateMany(
       { group_id: group._id },
-      { 
+      {
         status,
         notes: notes || '',
         resolvedDate: status === 'Resolved' ? (resolvedDate ? new Date(resolvedDate) : new Date()) : null
@@ -444,7 +691,34 @@ const updateComplaintGroupStatus = async (req, res) => {
     );
 
     const updatedGroup = await ComplaintGroup.findOne({ group_id: groupId })
-      .populate('assigned_to', 'name email phone');
+      .populate('assigned_to', 'name email phone')
+      .populate('affected_users', 'name email');
+
+    // 📩 NOTIFY AFFECTED USERS
+    if (updatedGroup.affected_users && updatedGroup.affected_users.length > 0) {
+      for (const u of updatedGroup.affected_users) {
+        // 1. In-App Notification
+        const notification = new Message({
+          sender: 'system',
+          receiverId: u._id,
+          title: `Update on Complaint Group: ${groupId}`,
+          message: `The status of your complaint group has been updated to: ${status}. Notes: ${notes || 'N/A'}`
+        });
+        await notification.save();
+
+        // 2. Email Notification
+        try {
+          await transporter.sendMail({
+            from: '"CivicMind Updates" <' + process.env.GMAIL_USER + '>',
+            to: u.email,
+            subject: `Update: Complaint ${groupId} is now ${status}`,
+            html: `<p>Hello ${u.name},</p><p>The status of your complaint group <b>${groupId}</b> has been updated to <b>${status}</b>.</p><p>Admin Notes: ${notes || 'No extra notes provided.'}</p>`
+          });
+        } catch (mailErr) {
+          console.error('Failed to send status update email:', mailErr);
+        }
+      }
+    }
 
     res.json({
       success: true,
@@ -463,7 +737,7 @@ const updateComplaintGroupStatus = async (req, res) => {
 const getDeduplicationStats = async (req, res) => {
   try {
     const stats = await deduplicationService.getDeduplicationStats();
-    
+
     res.json({
       success: true,
       stats
@@ -480,7 +754,7 @@ const getDeduplicationStats = async (req, res) => {
 const reverseGeocode = async (req, res) => {
   try {
     const { lat, lng } = req.query;
-    
+
     if (!lat || !lng) {
       return res.status(400).json({
         message: 'Missing required parameters: lat and lng'
@@ -497,10 +771,10 @@ const reverseGeocode = async (req, res) => {
     }
 
     console.log('🗺️ Reverse geocoding coordinates:', latitude, longitude);
-    
+
     const address = await geocodingService.reverseGeocodeWithRetry(latitude, longitude);
     const municipalityCode = geocodingService.getMunicipalityCode(address);
-    
+
     res.json({
       success: true,
       address: {
@@ -523,7 +797,7 @@ const reverseGeocode = async (req, res) => {
 const searchAddress = async (req, res) => {
   try {
     const { q } = req.query;
-    
+
     if (!q || q.trim().length < 3) {
       return res.status(400).json({
         message: 'Search query must be at least 3 characters long'
@@ -531,9 +805,9 @@ const searchAddress = async (req, res) => {
     }
 
     console.log('🔍 Searching address:', q);
-    
+
     const results = await geocodingService.searchAddress(q.trim());
-    
+
     res.json({
       success: true,
       results: results.map(result => ({
@@ -550,6 +824,94 @@ const searchAddress = async (req, res) => {
   }
 };
 
+/* ---------------------------------------------
+   GET /api/complaints/admin-stats - Get dashboard statistics for admins
+---------------------------------------------- */
+const getAdminStats = async (req, res) => {
+  try {
+    const { municipalityCode } = req.query;
+    const filter = municipalityCode ? { municipalityCode } : {};
+
+    // 1. Status Counts
+    const total = await ComplaintGroup.countDocuments(filter);
+    const pending = await ComplaintGroup.countDocuments({ ...filter, status: { $in: ['Pending', 'Assigned'] } });
+    const inProgress = await ComplaintGroup.countDocuments({ ...filter, status: 'In Progress' });
+    const resolved = await ComplaintGroup.countDocuments({ ...filter, status: 'Resolved' });
+    const urgent = await ComplaintGroup.countDocuments({ ...filter, priority: { $in: ['High', 'Critical'] } });
+
+    // 2. Sector Distribution (for bar charts)
+    const sectorStatsRaw = await ComplaintGroup.aggregate([
+      { $match: filter },
+      {
+        $group: {
+          _id: '$sector',
+          pending: { $sum: { $cond: [{ $in: ['$status', ['Pending', 'Assigned']] }, 1, 0] } },
+          inProgress: { $sum: { $cond: [{ $eq: ['$status', 'In Progress'] }, 1, 0] } },
+          resolved: { $sum: { $cond: [{ $eq: ['$status', 'Resolved'] }, 1, 0] } }
+        }
+      }
+    ]);
+
+    const sectorStats = sectorStatsRaw.map(s => ({
+      sector: s._id,
+      pending: s.pending,
+      inProgress: s.inProgress,
+      resolved: s.resolved
+    }));
+
+    // 3. Recent Complaints
+    const recent = await ComplaintGroup.find(filter)
+      .populate('affected_users', 'name')
+      .sort({ last_updated: -1 })
+      .limit(5);
+
+    const recentComplaints = recent.map(r => ({
+      id: r.group_id,
+      citizen: r.affected_users[0]?.name || 'Citizen',
+      sector: r.sector,
+      location: r.address.city,
+      urgency: r.priority.toLowerCase(),
+      status: r.status.toLowerCase().replace(' ', '-')
+    }));
+
+    res.json({
+      success: true,
+      stats: {
+        total,
+        pending,
+        inProgress,
+        resolved,
+        urgent
+      },
+      sectorStats,
+      recentComplaints
+    });
+  } catch (error) {
+    console.error('Error fetching admin dashboard stats:', error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+/* ---------------------------------------------
+   GET /api/complaints/flagged - Get flagged complaints for admins
+---------------------------------------------- */
+const getFlaggedComplaints = async (req, res) => {
+  try {
+    const { municipalityCode } = req.query;
+    const filter = { status: 'Flagged' };
+    if (municipalityCode) filter.municipalityCode = municipalityCode;
+
+    const complaints = await Complaint.find(filter)
+      .populate('user_id', 'name email trustScore')
+      .populate('duplicateOf', 'complaint_id location sector')
+      .sort({ createdAt: -1 });
+
+    res.json({ success: true, complaints });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   fileComplaint,
   getComplaints,
@@ -562,5 +924,9 @@ module.exports = {
   updateComplaintGroupStatus,
   getDeduplicationStats,
   reverseGeocode,
-  searchAddress
+  searchAddress,
+  getAssignedComplaintGroups,
+  acknowledgeComplaintGroup,
+  getAdminStats,
+  getFlaggedComplaints
 };

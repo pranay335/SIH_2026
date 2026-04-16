@@ -13,7 +13,10 @@ const EmployeeManagement = () => {
     email: '',
     phone: '',
     department: '',
-    role: 'employee'
+    municipalityCode: 'BMC',
+    employeeId: '',
+    role: 'employee',
+    password: 'password123' // Default password for new employees
   });
 
   useEffect(() => {
@@ -22,7 +25,7 @@ const EmployeeManagement = () => {
 
   const fetchEmployees = async () => {
     try {
-      const response = await fetch('/api/users?role=employee', {
+      const response = await fetch('/api/users/employees', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('civicmind_token')}`
         }
@@ -39,12 +42,12 @@ const EmployeeManagement = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const url = editingEmployee 
+      const url = editingEmployee
         ? `/api/users/${editingEmployee._id}`
-        : '/api/users';
-      
+        : '/api/users/create-employee';
+
       const method = editingEmployee ? 'PUT' : 'POST';
-      
+
       const response = await fetch(url, {
         method,
         headers: {
@@ -63,7 +66,10 @@ const EmployeeManagement = () => {
           email: '',
           phone: '',
           department: '',
-          role: 'employee'
+          municipalityCode: 'BMC',
+          employeeId: '',
+          role: 'employee',
+          password: 'password123'
         });
       }
     } catch (error) {
@@ -78,6 +84,8 @@ const EmployeeManagement = () => {
       email: employee.email,
       phone: employee.phone,
       department: employee.department || '',
+      municipalityCode: employee.municipalityCode || 'BMC',
+      employeeId: employee.employeeId || '',
       role: employee.role
     });
     setShowAddModal(true);
@@ -113,8 +121,10 @@ const EmployeeManagement = () => {
         {/* Header */}
         <div className="mb-8 flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Employee Management</h1>
-            <p className="text-gray-600 mt-2">Manage municipal employees and their accounts</p>
+            <h1 className="text-3xl font-bold text-gray-900">
+              {user?.municipalityCode} Employee Management
+            </h1>
+            <p className="text-gray-600 mt-2">Manage municipal employees for {user?.municipalityCode}</p>
           </div>
           <button
             onClick={() => setShowAddModal(true)}
@@ -139,7 +149,10 @@ const EmployeeManagement = () => {
                   Phone
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Department
+                  Employee ID
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Dept / Council
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Status
@@ -162,7 +175,11 @@ const EmployeeManagement = () => {
                     <div className="text-sm text-gray-900">{employee.phone || 'N/A'}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-900 font-mono">{employee.employeeId || 'N/A'}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-900">{employee.department || 'N/A'}</div>
+                    <div className="text-xs text-gray-500">{employee.municipalityCode}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
@@ -187,7 +204,7 @@ const EmployeeManagement = () => {
               ))}
             </tbody>
           </table>
-          
+
           {employees.length === 0 && (
             <div className="text-center py-8 text-gray-500">
               <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -207,7 +224,7 @@ const EmployeeManagement = () => {
                 <h3 className="text-lg font-medium text-gray-900 mb-4">
                   {editingEmployee ? 'Edit Employee' : 'Add New Employee'}
                 </h3>
-                
+
                 <form onSubmit={handleSubmit}>
                   <div className="mb-4">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -217,11 +234,11 @@ const EmployeeManagement = () => {
                       type="text"
                       required
                       value={formData.name}
-                      onChange={(e) => setFormData({...formData, name: e.target.value})}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
-                  
+
                   <div className="mb-4">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Email
@@ -230,11 +247,11 @@ const EmployeeManagement = () => {
                       type="email"
                       required
                       value={formData.email}
-                      onChange={(e) => setFormData({...formData, email: e.target.value})}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
-                  
+
                   <div className="mb-4">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Phone
@@ -242,23 +259,76 @@ const EmployeeManagement = () => {
                     <input
                       type="tel"
                       value={formData.phone}
-                      onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
-                  
+
+                  <div className="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Department
+                      </label>
+                      <select
+                        value={formData.department}
+                        onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="">Select Dept</option>
+                        <option value="Water">Water</option>
+                        <option value="Roads">Roads</option>
+                        <option value="Waste">Waste</option>
+                        <option value="Electricity">Electricity</option>
+                        <option value="Health">Health</option>
+                        <option value="Drainage">Drainage</option>
+                        <option value="General">General</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Council Code
+                      </label>
+                      <select
+                        value={formData.municipalityCode}
+                        onChange={(e) => setFormData({ ...formData, municipalityCode: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="BMC">BMC</option>
+                        <option value="TMC">TMC</option>
+                        <option value="KDMC">KDMC</option>
+                        <option value="PMC">PMC</option>
+                      </select>
+                    </div>
+                  </div>
+
                   <div className="mb-4">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Department
+                      Employee ID
                     </label>
                     <input
                       type="text"
-                      value={formData.department}
-                      onChange={(e) => setFormData({...formData, department: e.target.value})}
+                      placeholder="e.g. EMP-BMC-WAT-1"
+                      value={formData.employeeId}
+                      onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
-                  
+
+                  {!editingEmployee && (
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Password
+                      </label>
+                      <input
+                        type="password"
+                        required
+                        value={formData.password}
+                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                  )}
+
                   <div className="flex justify-end space-x-3">
                     <button
                       type="button"
@@ -270,7 +340,10 @@ const EmployeeManagement = () => {
                           email: '',
                           phone: '',
                           department: '',
-                          role: 'employee'
+                          municipalityCode: 'BMC',
+                          employeeId: '',
+                          role: 'employee',
+                          password: 'password123'
                         });
                       }}
                       className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"

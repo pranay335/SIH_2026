@@ -33,26 +33,24 @@ const userSchema = new mongoose.Schema({
     ref: 'Municipality',
     default: 'BMC'
   },
-  isVerified: {
+  aadhaar_verified: {
     type: Boolean,
     default: false,
   },
-  aadhaarVerified: {
+  email_verified: {
     type: Boolean,
     default: false,
   },
-  aadhaarLast4: {
-    type: String,
+  phone_verified: {
+    type: Boolean,
+    default: false,
   },
-  aadhaarHash: {
-    type: String,
-  },
-  aadhaarOTP: {
-    type: String,
-  },
-  aadhaarOTPExpires: {
+  verificationDate: {
     type: Date,
   },
+  // OTP fields (Temporary)
+  emailVerificationToken: String,
+  emailVerificationExpires: Date,
   // Employee specific fields
   employeeId: {
     type: String,
@@ -61,7 +59,7 @@ const userSchema = new mongoose.Schema({
   },
   department: {
     type: String,
-    enum: ['Water', 'Roads', 'Waste', 'Electricity', 'Health', 'General'],
+    enum: ['Water', 'Roads', 'Waste', 'Electricity', 'Health', 'General', 'Drainage'],
   },
   designation: {
     type: String,
@@ -76,7 +74,7 @@ const userSchema = new mongoose.Schema({
   skills: [String],
   maxConcurrentComplaints: {
     type: Number,
-    default: 10,
+    default: 5,
   },
   currentWorkload: {
     type: Number,
@@ -84,7 +82,7 @@ const userSchema = new mongoose.Schema({
   },
   availabilityStatus: {
     type: String,
-    enum: ['AVAILABLE', 'BUSY', 'OFF_DUTY', 'ON_LEAVE'],
+    enum: ['AVAILABLE', 'BUSY', 'OFF_DUTY', 'ON_LEAVE', 'UNAVAILABLE'],
     default: 'AVAILABLE',
   },
   performance: {
@@ -109,21 +107,21 @@ const userSchema = new mongoose.Schema({
 });
 
 // Generate password reset token
-userSchema.methods.generatePasswordResetToken = function() {
+userSchema.methods.generatePasswordResetToken = function () {
   const resetToken = crypto.randomBytes(32).toString('hex');
-  
+
   this.resetPasswordToken = crypto
     .createHash('sha256')
     .update(resetToken)
     .digest('hex');
-  
+
   this.resetPasswordExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
-  
+
   return resetToken;
 };
 
 // Clear password reset fields
-userSchema.methods.clearPasswordResetFields = function() {
+userSchema.methods.clearPasswordResetFields = function () {
   this.resetPasswordToken = null;
   this.resetPasswordExpires = null;
 };

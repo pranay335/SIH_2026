@@ -18,7 +18,7 @@ class DeduplicationService {
     try {
       // Step 1: Find similar existing complaints
       const similarGroups = await this.findSimilarGroups(complaintData);
-      
+
       if (similarGroups.length > 0) {
         // Step 2: Add to existing group
         return await this.addToExistingGroup(similarGroups[0], complaintData);
@@ -37,7 +37,7 @@ class DeduplicationService {
    */
   async findSimilarGroups(complaintData) {
     const { location, sector, description, municipalityCode } = complaintData;
-    
+
     // Step 1: Find groups within location threshold
     const nearbyGroups = await ComplaintGroup.find({
       centroid_location: {
@@ -58,10 +58,10 @@ class DeduplicationService {
     const similarGroups = [];
     for (const group of nearbyGroups) {
       const similarity = await this.calculateSemanticSimilarity(
-        description, 
+        description,
         group.issue_description
       );
-      
+
       const overallSimilarity = this.calculateOverallSimilarity(
         similarity,
         this.calculateLocationProximity(location, group.centroid_location),
@@ -87,10 +87,11 @@ class DeduplicationService {
     // Simple text similarity for now - can be enhanced with NLP
     const words1 = this.extractKeywords(text1.toLowerCase());
     const words2 = this.extractKeywords(text2.toLowerCase());
-    
+
     const intersection = words1.filter(word => words2.includes(word));
     const union = [...new Set([...words1, ...words2])];
-    
+
+    if (union.length === 0) return 0;
     return intersection.length / union.length;
   }
 
@@ -100,11 +101,11 @@ class DeduplicationService {
   extractKeywords(text) {
     // Remove common stop words and extract meaningful words
     const stopWords = ['the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'is', 'are', 'was', 'were', 'be', 'been', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could', 'should'];
-    
+
     return text
       .replace(/[^\w\s]/g, '')
       .split(/\s+/)
-      .filter(word => word.length > 2 && !stopWords.includes(word));
+      .filter(word => word && word.length > 2 && !stopWords.includes(word));
   }
 
   /**
@@ -117,7 +118,7 @@ class DeduplicationService {
       location2.coordinates[1], // lat
       location2.coordinates[0]  // lng
     );
-    
+
     // Convert distance to similarity score (closer = higher similarity)
     return Math.max(0, 1 - (distance / this.locationThreshold));
   }
@@ -129,12 +130,12 @@ class DeduplicationService {
     const R = 6371000; // Earth's radius in meters
     const dLat = this.toRadians(lat2 - lat1);
     const dLon = this.toRadians(lon2 - lon1);
-    
-    const a = 
+
+    const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
       Math.cos(this.toRadians(lat1)) * Math.cos(this.toRadians(lat2)) *
       Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    
+
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
   }
@@ -159,7 +160,7 @@ class DeduplicationService {
    */
   async addToExistingGroup(groupData, complaintData) {
     const { group } = groupData;
-    
+
     // Update group centroid location
     const newCentroid = this.calculateNewCentroid(
       group.centroid_location,
@@ -177,13 +178,19 @@ class DeduplicationService {
     group.complaints.push(complaintData._id);
     group.affected_users.addToSet(complaintData.user_id);
     group.last_updated = new Date();
-    
+
     // Update priority based on aggregated severity
     group.priority = this.calculateAggregatedPriority(group.severity_distribution);
-    
+
     // Add representative image if needed
     if (group.representative_images.length < 3) {
       group.representative_images.push(complaintData.image);
+    }
+
+    // PERSIST ASSIGNMENT FROM COMPLAINT IF GROUP IS PENDING
+    if (group.status === 'Pending' && complaintData.assigned_to) {
+      group.assigned_to = complaintData.assigned_to;
+      group.status = complaintData.status || 'Assigned';
     }
 
     await group.save();
@@ -191,7 +198,7 @@ class DeduplicationService {
     // Update individual complaint to reference the group
     await Complaint.findByIdAndUpdate(
       complaintData._id,
-      { 
+      {
         group_id: group._id,
         assigned_to: group.assigned_to,
         status: group.status
@@ -211,7 +218,7 @@ class DeduplicationService {
   async createNewGroup(complaintData) {
     const groupId = this.generateGroupId();
     const severity = complaintData.nlp_result?.predicted_severity?.toLowerCase() || 'low';
-    
+
     const group = new ComplaintGroup({
       group_id: groupId,
       issue_title: this.generateIssueTitle(complaintData.description),
@@ -230,7 +237,11 @@ class DeduplicationService {
         high: severity === 'high' ? 1 : 0
       },
       representative_images: [complaintData.image],
-      avg_confidence: complaintData.nlp_result?.confidence || 0
+      avg_confidence: complaintData.nlp_result?.confidence || 0,
+
+      // PERSIST ASSIGNMENT FROM COMPLAINT
+      assigned_to: complaintData.assigned_to || null,
+      status: complaintData.status || 'Pending'
     });
 
     await group.save();
@@ -254,7 +265,7 @@ class DeduplicationService {
   calculateNewCentroid(currentCentroid, newLocation, currentCount) {
     const newCount = currentCount + 1;
     const weight = 1 / newCount;
-    
+
     return {
       type: 'Point',
       coordinates: [
@@ -269,7 +280,7 @@ class DeduplicationService {
    */
   calculateAggregatedPriority(severityDist) {
     const total = severityDist.low + severityDist.medium + severityDist.high;
-    
+
     if (severityDist.high / total > 0.3) return 'Critical';
     if (severityDist.high / total > 0.1 || severityDist.medium / total > 0.5) return 'High';
     if (severityDist.medium / total > 0.2) return 'Medium';
@@ -310,7 +321,7 @@ class DeduplicationService {
     const totalGroups = await ComplaintGroup.countDocuments();
     const totalComplaints = await Complaint.countDocuments();
     const avgComplaintsPerGroup = totalGroups > 0 ? totalComplaints / totalGroups : 0;
-    
+
     const groupsByStatus = await ComplaintGroup.aggregate([
       { $group: { _id: '$status', count: { $sum: 1 } } }
     ]);

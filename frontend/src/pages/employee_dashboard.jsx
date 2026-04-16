@@ -1,123 +1,671 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import Button from '../components/button.jsx';
+import StatusProgressBar from '../components/StatusProgressBar.jsx';
+
+const API_BASE_URL = 'http://localhost:5000/api';
 
 const EmployeeDashboard = () => {
-  const { user } = useAuth();
-  const [stats, setStats] = useState({
-    assignedComplaints: 0,
-    resolvedComplaints: 0,
-    pendingComplaints: 0,
-    inProgressComplaints: 0
-  });
+  const { user, logout, getToken } = useAuth();
+  const navigate = useNavigate();
+  const [activeSection, setActiveSection] = useState('overview');
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const [uploadedImages, setUploadedImages] = useState([]);
+  const [isCapturing, setIsCapturing] = useState(false);
+  const [stream, setStream] = useState(null);
+  const videoRef = useRef(null);
+  const fileInputRef = useRef(null);
+
+  // Callback ref: fires immediately when the <video> DOM node mounts
+  const setVideoRef = useCallback((node) => {
+    videoRef.current = node;
+    if (node && stream) {
+      node.srcObject = stream;
+      node.play().catch(err => console.warn('Video play failed:', err));
+    }
+  }, [stream]);
+
+  // Live user data (refreshes dynamically)
+  const [liveUser, setLiveUser] = useState(null);
+
+  const fetchLiveUser = async () => {
+    try {
+      const token = getToken();
+      const response = await fetch(`${API_BASE_URL}/users/me`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setLiveUser(data);
+      }
+    } catch (err) {
+      console.error('Error fetching live user data:', err);
+    }
+  };
 
   useEffect(() => {
-    // Fetch employee statistics
-    const fetchStats = async () => {
-      try {
-        const response = await fetch('/api/complaints/employee/stats', {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('civicmind_token')}`
-          }
-        });
-        const data = await response.json();
-        setStats(data);
-      } catch (error) {
-        console.error('Error fetching stats:', error);
+    if (user && user._id) {
+      fetchTasks();
+      fetchLiveUser();
+    }
+  }, [user]);
+
+  const fetchTasks = async () => {
+    try {
+      setLoading(true);
+      const token = getToken();
+      const response = await fetch(`${API_BASE_URL}/complaints/assigned/${user._id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      const data = await response.json();
+      if (data.success) {
+        setTasks(data.groups);
+      } else {
+        setError(data.message || 'Failed to fetch tasks');
       }
+    } catch (err) {
+      console.error('Error fetching tasks:', err);
+      setError('Failed to connect to server');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
+  const handleTaskClick = (task) => {
+    setSelectedTask(task);
+    // Reset resolution state for new task
+    setUploadedImages([]);
+  };
+
+  const handleAcknowledge = async (groupId) => {
+    try {
+      const token = getToken();
+      const response = await fetch(`${API_BASE_URL}/complaints/groups/${groupId}/acknowledge`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      const data = await response.json();
+      if (data.success) {
+        // Update local state
+        setTasks(prev => prev.map(t => t.group_id === groupId ? data.group : t));
+        setSelectedTask(data.group);
+        fetchLiveUser(); // Refresh workload data
+      }
+    } catch (err) {
+      console.error('Acknowledgement failed:', err);
+      alert('Failed to acknowledge task');
+    }
+  };
+
+  const startCamera = async () => {
+    try {
+      const mediaStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment' }
+      });
+      setStream(mediaStream);
+      setIsCapturing(true);
+      // srcObject is now assigned by the useEffect above
+    } catch (err) {
+      console.error('Camera access denied:', err);
+      alert('Camera access is required to capture images.');
+    }
+  };
+
+  const stopCamera = () => {
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop());
+      setStream(null);
+    }
+    setIsCapturing(false);
+  };
+
+  const capturePhoto = () => {
+    const video = videoRef.current;
+    if (!video || !video.videoWidth) {
+      alert('Camera is not ready yet. Please wait a moment.');
+      return;
+    }
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const context = canvas.getContext('2d');
+    context.drawImage(video, 0, 0);
+
+    const imageData = canvas.toDataURL('image/jpeg');
+    const image = {
+      id: Date.now() + Math.random(),
+      preview: imageData,
+      capturedAt: new Date().toISOString()
     };
 
-    fetchStats();
-  }, []);
+    setUploadedImages(prev => [...prev, image]);
+  };
+
+  const handleFileUpload = (e) => {
+    const files = Array.from(e.target.files);
+    files.forEach(file => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const image = {
+          id: Date.now() + Math.random(),
+          preview: reader.result,
+          capturedAt: new Date().toISOString()
+        };
+        setUploadedImages(prev => [...prev, image]);
+      };
+      reader.readAsDataURL(file);
+    });
+    // Reset file input so same file can be re-selected
+    e.target.value = '';
+  };
+
+  const handleMarkResolved = async (groupId) => {
+    try {
+      const token = getToken();
+      const response = await fetch(`${API_BASE_URL}/complaints/groups/${groupId}/status`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          status: 'Resolved',
+          resolution_images: uploadedImages.map(img => img.preview),
+          notes: 'Task resolved by employee'
+        })
+      });
+      const data = await response.json();
+      if (data.success) {
+        // Update local tasks
+        setTasks(prev => prev.map(t => t.group_id === groupId ? data.group : t));
+        setSelectedTask(null);
+        setUploadedImages([]);
+        fetchLiveUser(); // Refresh workload data
+        alert('Task marked as resolved!');
+      }
+    } catch (err) {
+      console.error('Resolution failed:', err);
+      alert('Failed to resolve task');
+    }
+  };
+
+  const menuItems = [
+    { id: 'overview', label: 'Overview', icon: '📊' },
+    { id: 'tasks', label: 'My Tasks', icon: '📋' },
+    { id: 'reports', label: 'Reports', icon: '📈' },
+    { id: 'schedule', label: 'Schedule', icon: '📅' },
+    { id: 'messages', label: 'Messages', icon: '💬' },
+    { id: 'profile', label: 'Profile', icon: '👤' },
+  ];
+
+  const stats = {
+    active: tasks.filter(t => t.status !== 'Resolved' && t.status !== 'Closed').length,
+    completed: tasks.filter(t => t.status === 'Resolved' || t.status === 'Closed').length,
+    performance: '94%' // Mocked for now
+  };
+
+  const renderContent = () => {
+    switch (activeSection) {
+      case 'overview':
+        return (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-white">Employee Overview</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="glass rounded-xl p-6">
+                <div className="text-3xl mb-2">📋</div>
+                <h3 className="text-lg font-semibold text-white mb-1">Active Tasks</h3>
+                <p className="text-3xl font-bold text-[#60A5FA]">{stats.active}</p>
+                <p className="text-white/60 text-sm mt-1">High priority focus</p>
+              </div>
+              <div className="glass rounded-xl p-6">
+                <div className="text-3xl mb-2">✅</div>
+                <h3 className="text-lg font-semibold text-white mb-1">Completed</h3>
+                <p className="text-3xl font-bold text-green-400">{stats.completed}</p>
+                <p className="text-white/60 text-sm mt-1">Total resolved</p>
+              </div>
+              <div className="glass rounded-xl p-6">
+                <div className="text-3xl mb-2">📈</div>
+                <h3 className="text-lg font-semibold text-white mb-1">Performance</h3>
+                <p className="text-3xl font-bold text-purple-400">{stats.performance}</p>
+                <p className="text-white/60 text-sm mt-1">Excellent standing</p>
+              </div>
+            </div>
+
+            <div className="glass rounded-xl p-6">
+              <h3 className="text-xl font-semibold text-white mb-4">Recent Activity</h3>
+              <div className="space-y-3">
+                {tasks.slice(0, 3).map((task, i) => (
+                  <div key={i} className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
+                    <div className="flex items-center space-x-3">
+                      <div className={`w-2 h-2 rounded-full ${task.status === 'Resolved' ? 'bg-green-400' : 'bg-blue-400'}`}></div>
+                      <div>
+                        <p className="text-white font-medium">{task.issue_title}</p>
+                        <p className="text-white/60 text-sm">{new Date(task.updatedAt).toLocaleDateString()}</p>
+                      </div>
+                    </div>
+                    <span className={`text-sm ${task.status === 'Resolved' ? 'text-green-400' : 'text-blue-400'}`}>
+                      {task.status}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'tasks':
+        const pendingTasks = tasks.filter(t => t.status !== 'Resolved' && t.status !== 'Closed');
+        const resolvedTasks = tasks.filter(t => t.status === 'Resolved' || t.status === 'Closed');
+
+        return (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-white">My Tasks</h2>
+
+            {selectedTask ? (
+              <div className="glass rounded-xl p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-xl font-semibold text-white">{selectedTask.issue_title}</h3>
+                  <Button
+                    label="Back to Tasks"
+                    variant="outline"
+                    size="small"
+                    onClick={() => setSelectedTask(null)}
+                  />
+                </div>
+
+                {selectedTask.status !== 'Closed' && (
+                  <StatusProgressBar status={selectedTask.status} />
+                )}
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  <div className="glass rounded-xl p-6">
+                    <h4 className="text-white font-medium mb-3">Task Details</h4>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-white/60">Priority:</span>
+                        <span className={`${selectedTask.priority === 'High' ? 'text-red-400' : 'text-white'}`}>{selectedTask.priority}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-white/60">Sector:</span>
+                        <span className="text-white">{selectedTask.sector}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-white/60">Location:</span>
+                        <span className="text-white">{selectedTask.address?.fullAddress}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="glass rounded-xl p-6">
+                    <h4 className="text-white font-medium mb-3">Description</h4>
+                    <p className="text-white/70 text-sm italic">"{selectedTask.issue_description}"</p>
+                  </div>
+                </div>
+
+                {selectedTask.status === 'In Progress' && (
+                  <div className="space-y-6">
+                    <div className="glass rounded-xl p-6">
+                      <h4 className="text-white font-medium mb-4">📷 Add Resolution Images</h4>
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        accept="image/*"
+                        multiple
+                        onChange={handleFileUpload}
+                        className="hidden"
+                      />
+                      {!isCapturing ? (
+                        <div className="flex gap-3">
+                          <Button
+                            label="📸 Open Camera"
+                            variant="primary"
+                            size="large"
+                            className="flex-1"
+                            onClick={startCamera}
+                          />
+                          <Button
+                            label="📁 Upload Image"
+                            variant="outline"
+                            size="large"
+                            className="flex-1"
+                            onClick={() => fileInputRef.current?.click()}
+                          />
+                        </div>
+                      ) : (
+                        <div className="space-y-4">
+                          <div className="relative rounded-lg overflow-hidden bg-black aspect-video">
+                            <video
+                              ref={setVideoRef}
+                              autoPlay
+                              playsInline
+                              muted
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          <div className="flex space-x-3">
+                            <Button
+                              label="📸 Capture"
+                              variant="primary"
+                              className="flex-1"
+                              onClick={capturePhoto}
+                            />
+                            <Button
+                              label="Close"
+                              variant="outline"
+                              onClick={stopCamera}
+                            />
+                          </div>
+                        </div>
+                      )}
+
+                      {uploadedImages.length > 0 && (
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+                          {uploadedImages.map(image => (
+                            <div key={image.id} className="relative group">
+                              <img src={image.preview} className="w-full h-24 object-cover rounded-lg border border-white/20" />
+                              <button
+                                onClick={() => setUploadedImages(prev => prev.filter(i => i.id !== image.id))}
+                                className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                              >
+                                ×
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    <Button
+                      label="Mark as Resolved"
+                      variant="primary"
+                      size="large"
+                      className="w-full h-14 text-lg"
+                      disabled={uploadedImages.length === 0}
+                      onClick={() => handleMarkResolved(selectedTask.group_id)}
+                    />
+                  </div>
+                )}
+
+                {(selectedTask.status === 'Assigned' || selectedTask.status === 'Pending') && (
+                  <Button
+                    label="Acknowledge & Start Task"
+                    variant="primary"
+                    size="large"
+                    className="w-full h-14 text-lg"
+                    onClick={() => handleAcknowledge(selectedTask.group_id)}
+                  />
+                )}
+
+                {(selectedTask.status === 'Resolved' || selectedTask.status === 'Closed') && (
+                  <div className="glass rounded-xl p-6">
+                    <h4 className="text-white font-medium mb-4">Resolution Evidence</h4>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {selectedTask.resolution_images?.map((img, i) => (
+                        <img
+                          key={i}
+                          src={img}
+                          className="w-full h-32 object-cover rounded-lg cursor-pointer hover:scale-105 transition-transform"
+                          onClick={() => window.open(img, '_blank')}
+                        />
+                      ))}
+                    </div>
+                    <div className="mt-4 p-4 bg-green-500/10 rounded-lg border border-green-500/20 text-green-400 text-sm">
+                      ✅ This task has been resolved and is awaiting citizen feedback.
+                    </div>
+                  </div>
+                )}
+
+                {/* Citizen Feedback Section */}
+                {selectedTask.feedbackStatus && (
+                  <div className="glass rounded-xl p-6 mt-4">
+                    <h4 className="text-white font-medium mb-4">📋 Citizen Feedback</h4>
+                    <div className="flex items-center gap-3 mb-3">
+                      <span className="text-white/60 text-sm">Status:</span>
+                      <span className={`px-3 py-1 text-xs rounded-full border font-medium ${selectedTask.feedbackStatus === 'SATISFIED'
+                        ? 'bg-green-500/20 text-green-400 border-green-500/30'
+                        : selectedTask.feedbackStatus === 'NOT_SATISFIED'
+                          ? 'bg-red-500/20 text-red-400 border-red-500/30'
+                          : 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30'
+                        }`}>
+                        {selectedTask.feedbackStatus === 'SATISFIED' ? '✅ Satisfied'
+                          : selectedTask.feedbackStatus === 'NOT_SATISFIED' ? '❌ Not Satisfied'
+                            : '⏳ Awaiting Feedback'}
+                      </span>
+                    </div>
+                    {selectedTask.feedbackMessage && (
+                      <div className="p-3 bg-white/5 rounded-lg border border-white/10">
+                        <p className="text-white/40 text-xs font-medium mb-1">Citizen's Comment:</p>
+                        <p className="text-white/70 text-sm italic">"{selectedTask.feedbackMessage}"</p>
+                      </div>
+                    )}
+                    {selectedTask.feedbackStatus === 'NOT_SATISFIED' && (
+                      <div className="mt-3 p-3 bg-red-500/10 rounded-lg border border-red-500/20">
+                        <p className="text-red-400 text-sm font-medium">⚠️ The citizen was not satisfied. Please review and address their concerns.</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Reopened Badge */}
+                {selectedTask.reopened && (
+                  <div className="mt-4 p-4 bg-red-500/10 rounded-xl border border-red-500/20 flex items-center gap-3">
+                    <span className="text-2xl">🔄</span>
+                    <div>
+                      <p className="text-red-400 font-semibold">Reopened by Citizen</p>
+                      <p className="text-white/50 text-sm">This task was reopened because the citizen was not satisfied with the resolution. {selectedTask.reopenCount > 1 ? `(Reopened ${selectedTask.reopenCount} times)` : ''}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="glass rounded-xl p-6">
+                  <h3 className="text-lg font-semibold text-white mb-4">Active Tasks ({pendingTasks.length})</h3>
+                  <div className="space-y-3">
+                    {pendingTasks.map(task => (
+                      <div
+                        key={task.group_id}
+                        onClick={() => handleTaskClick(task)}
+                        className="p-4 bg-white/5 rounded-lg border border-white/10 cursor-pointer hover:bg-white/10 transition-all duration-200"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <h4 className="text-white font-medium">{task.issue_title}</h4>
+                              {task.reopened && (
+                                <span className="px-2 py-0.5 text-[9px] rounded-full bg-red-500/20 text-red-400 border border-red-500/30 font-bold">🔄 REOPENED</span>
+                              )}
+                            </div>
+                            <p className="text-white/60 text-xs mt-1">Status: {task.status}</p>
+                            <p className="text-white/40 text-[10px] mt-1">📍 {task.address?.area}</p>
+                          </div>
+                          <span className={`px-2 py-1 text-[10px] rounded-full uppercase font-bold ${task.priority === 'High' ? 'bg-red-500/20 text-red-400' : 'bg-yellow-500/20 text-yellow-400'
+                            }`}>
+                            {task.priority}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                    {pendingTasks.length === 0 && <p className="text-center text-white/40 py-8">No active tasks</p>}
+                  </div>
+                </div>
+                <div className="glass rounded-xl p-6">
+                  <h3 className="text-lg font-semibold text-white mb-4">Completed ({resolvedTasks.length})</h3>
+                  <div className="space-y-3">
+                    {resolvedTasks.map(task => (
+                      <div
+                        key={task.group_id}
+                        onClick={() => handleTaskClick(task)}
+                        className="p-4 bg-green-500/10 rounded-lg border border-green-500/20 cursor-pointer hover:bg-green-500/20 transition-all duration-200"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <h4 className="text-white font-medium">{task.issue_title}</h4>
+                            <p className="text-white/60 text-xs mt-1">Resolved on {new Date(task.resolvedDate || task.updatedAt).toLocaleDateString()}</p>
+                          </div>
+                          <span className="px-2 py-1 bg-green-500/20 text-green-400 text-[10px] rounded-full uppercase font-bold">Done</span>
+                        </div>
+                      </div>
+                    ))}
+                    {resolvedTasks.length === 0 && <p className="text-center text-white/40 py-8">No completed tasks yet</p>}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+
+      case 'profile':
+        return (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-white">Profile</h2>
+            <div className="glass rounded-xl p-6">
+              <div className="flex items-center space-x-6 mb-6">
+                <div className="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg shadow-blue-500/20">
+                  {user?.name?.charAt(0) || 'E'}
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-white">{user?.name}</h3>
+                  <p className="text-white/60">{user?.email}</p>
+                  <span className="inline-block px-3 py-1 bg-blue-500/20 text-blue-400 text-xs rounded-full mt-2 font-bold uppercase tracking-wider">
+                    {user?.role}
+                  </span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-white/10">
+                <div>
+                  <h4 className="text-white/40 text-xs font-bold uppercase mb-3">Service Details</h4>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-white/60">Department:</span>
+                      <span className="text-white">{user?.department}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-white/60">Municipality:</span>
+                      <span className="text-white">{user?.municipalityCode}</span>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <h4 className="text-white/40 text-xs font-bold uppercase mb-3">Workload</h4>
+                  {(() => {
+                    const profileUser = liveUser || user;
+                    const current = profileUser?.currentWorkload || 0;
+                    const max = profileUser?.maxConcurrentComplaints || 5;
+                    const remaining = Math.max(0, max - current);
+                    const pct = max > 0 ? (current / max) * 100 : 0;
+                    const barColor = pct >= 100 ? 'bg-red-500' : pct >= 50 ? 'bg-yellow-400' : 'bg-green-400';
+                    const textColor = pct >= 100 ? 'text-red-400' : pct >= 50 ? 'text-yellow-400' : 'text-green-400';
+                    return (
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center text-sm">
+                          <span className="text-white/60">Current Load:</span>
+                          <span className={`font-bold ${textColor}`}>{current}/{max} complaints</span>
+                        </div>
+                        <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+                          <div className={`h-full ${barColor} rounded-full transition-all duration-500`} style={{ width: `${Math.min(pct, 100)}%` }}></div>
+                        </div>
+                        <div className="flex justify-between items-center text-sm">
+                          <span className="text-white/60">Remaining Slots:</span>
+                          <span className={`font-bold ${textColor}`}>{remaining} available</span>
+                        </div>
+                        <div className="flex justify-between items-center text-sm">
+                          <span className="text-white/60">Status:</span>
+                          <span className={`font-bold ${textColor}`}>{profileUser?.availabilityStatus || 'AVAILABLE'}</span>
+                        </div>
+                      </div>
+                    );
+                  })()}
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+      default:
+        return (
+          <div className="flex flex-col items-center justify-center h-[60vh] text-white/40">
+            <span className="text-6xl mb-4">🚧</span>
+            <h2 className="text-xl font-medium">Under Construction</h2>
+            <p>This section is currently being developed.</p>
+          </div>
+        );
+    }
+  };
+
+  if (loading) return (
+    <div className="min-h-screen bg-[#0B0F1A] flex items-center justify-center">
+      <div className="text-blue-400 animate-pulse text-xl font-bold">Loading CivcMind Dashboard...</div>
+    </div>
+  );
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Employee Dashboard</h1>
-          <p className="text-gray-600 mt-2">Welcome back, {user?.name}</p>
-        </div>
-
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white p-6 rounded-lg shadow">
+    <div className="min-h-screen bg-[#0B0F1A] text-white">
+      {/* Header */}
+      <header className="glass border-b border-white/10 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
-              <div className="flex-shrink-0 bg-blue-500 rounded-md p-3">
-                <svg className="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                </svg>
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">Assigned</dt>
-                  <dd className="text-lg font-medium text-gray-900">{stats.assignedComplaints}</dd>
-                </dl>
-              </div>
+              <h1 className="text-xl font-black italic tracking-tighter text-blue-500">CIVICMIND <span className="text-white not-italic font-light">EMPLOYEE</span></h1>
             </div>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow">
-            <div className="flex items-center">
-              <div className="flex-shrink-0 bg-green-500 rounded-md p-3">
-                <svg className="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+            <div className="flex items-center space-x-6">
+              <div className="hidden md:block text-right">
+                <div className="text-xs text-white/40 font-bold uppercase">Assigned To</div>
+                <div className="text-sm font-medium">{user?.name}</div>
               </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">Resolved</dt>
-                  <dd className="text-lg font-medium text-gray-900">{stats.resolvedComplaints}</dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow">
-            <div className="flex items-center">
-              <div className="flex-shrink-0 bg-yellow-500 rounded-md p-3">
-                <svg className="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">In Progress</dt>
-                  <dd className="text-lg font-medium text-gray-900">{stats.inProgressComplaints}</dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow">
-            <div className="flex items-center">
-              <div className="flex-shrink-0 bg-red-500 rounded-md p-3">
-                <svg className="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                </svg>
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">Pending</dt>
-                  <dd className="text-lg font-medium text-gray-900">{stats.pendingComplaints}</dd>
-                </dl>
-              </div>
+              <Button
+                label="Logout"
+                variant="outline"
+                size="small"
+                onClick={handleLogout}
+              />
             </div>
           </div>
         </div>
+      </header>
 
-        {/* Recent Complaints */}
-        <div className="bg-white shadow rounded-lg">
-          <div className="px-4 py-5 sm:p-6">
-            <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">Recent Assigned Complaints</h3>
-            <div className="text-center py-8 text-gray-500">
-              <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-              </svg>
-              <p className="mt-2">No complaints assigned yet</p>
-              <p className="text-sm">Complaints assigned to you will appear here</p>
-            </div>
-          </div>
-        </div>
+      <div className="flex">
+        {/* Sidebar */}
+        <aside className="w-64 hidden lg:block h-[calc(100vh-64px)] sticky top-16 glass border-r border-white/10">
+          <nav className="p-4 space-y-2">
+            {menuItems.map(item => (
+              <button
+                key={item.id}
+                onClick={() => setActiveSection(item.id)}
+                className={`
+                                    w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left transition-all duration-200
+                                    ${activeSection === item.id
+                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20'
+                    : 'text-white/60 hover:text-white hover:bg-white/5'
+                  }
+                                `}
+              >
+                <span className="text-xl">{item.icon}</span>
+                <span className="font-medium">{item.label}</span>
+              </button>
+            ))}
+          </nav>
+        </aside>
+
+        {/* Main Content */}
+        <main className="flex-1 p-6">
+          {renderContent()}
+        </main>
       </div>
     </div>
   );

@@ -1,20 +1,44 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const AdminLayout = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [unreadCount, setUnreadCount] = useState(0);
     const location = useLocation();
-    const { logout, user } = useAuth();
+    const { logout, user, getToken } = useAuth();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        fetchUnreadCount();
+        const interval = setInterval(fetchUnreadCount, 30000); // Poll every 30s
+        return () => clearInterval(interval);
+    }, []);
+
+    const fetchUnreadCount = async () => {
+        try {
+            const token = getToken();
+            const response = await fetch('http://localhost:5000/api/messages', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                const unread = data.filter(m => !m.read).length;
+                setUnreadCount(unread);
+            }
+        } catch (err) {
+            console.error('Error fetching unread count:', err);
+        }
+    };
 
     const menuItems = [
         { path: '/admin-dashboard', label: 'Dashboard', icon: '📊' },
+        { path: '/admin/reassignment', label: 'Management', icon: '🔄' },
         { path: '/admin/complaints', label: 'All Complaints', icon: '📋' },
-        { path: '/admin/assigned', label: 'Assigned Complaints', icon: '✅' },
+        { path: '/admin/flagged', label: 'Flagged Complaints', icon: '🚩' },
         { path: '/admin/notices', label: 'Notices', icon: '📢' },
-        { path: '/admin/employees', label: 'Employees', icon: '👥' },
-        { path: '/admin/employee-management', label: 'Employee Management', icon: '➕' }
+        { path: '/admin/employee-management', label: 'Employee Management', icon: '➕' },
+        { path: '/admin/feedback', label: 'Feedback Review', icon: '📝' }
     ];
 
     const handleLogout = () => {
@@ -121,10 +145,19 @@ const AdminLayout = () => {
                                     )}
                                 </svg>
                             </button>
-                            <div className="flex-1 lg:flex-none">
+                            <div className="flex-1 lg:flex-none flex items-center justify-between lg:justify-start lg:space-x-4">
                                 <h1 className="text-xl font-semibold text-white">
                                     {menuItems.find(item => isActive(item.path))?.label || 'Dashboard'}
                                 </h1>
+
+                                <Link to="/admin-dashboard" className="relative p-2 text-white/70 hover:text-white transition-colors">
+                                    <span className="text-xl">🔔</span>
+                                    {unreadCount > 0 && (
+                                        <span className="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-500 rounded-full">
+                                            {unreadCount}
+                                        </span>
+                                    )}
+                                </Link>
                             </div>
                         </div>
                     </div>

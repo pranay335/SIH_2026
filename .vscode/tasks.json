@@ -1,0 +1,130 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Remove extra venv folders",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"if (Test-Path '.venv') { Remove-Item '.venv' -Recurse -Force }; if (Test-Path 'ml_backend\\venv') { Remove-Item 'ml_backend\\venv' -Recurse -Force }"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "Remove extra venv folders (cmd)",
+			"type": "shell",
+			"command": "cmd",
+			"args": [
+				"/c",
+				"if exist .venv rmdir /s /q .venv & if exist ml_backend\\venv rmdir /s /q ml_backend\\venv"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "Health check APIs",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"$ProgressPreference='SilentlyContinue'; Write-Host '---5000 root---'; try { (Invoke-WebRequest -UseBasicParsing -Uri 'http://localhost:5000/' -TimeoutSec 5).StatusCode } catch { $_.Exception.Message }; Write-Host '---5000 api/complaints---'; try { (Invoke-WebRequest -UseBasicParsing -Uri 'http://localhost:5000/api/complaints' -TimeoutSec 8).StatusCode } catch { $_.Exception.Message }; Write-Host '---8000 root---'; try { (Invoke-WebRequest -UseBasicParsing -Uri 'http://127.0.0.1:8000/' -TimeoutSec 8).StatusCode } catch { $_.Exception.Message }; Write-Host '---8000 docs---'; try { (Invoke-WebRequest -UseBasicParsing -Uri 'http://127.0.0.1:8000/docs' -TimeoutSec 8).StatusCode } catch { $_.Exception.Message }"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "Inspect port 8000 process",
+			"type": "shell",
+			"command": "cmd",
+			"args": [
+				"/c",
+				"echo ---netstat--- && netstat -ano | findstr :8000 && echo ---tasklist--- && for /f \"tokens=5\" %a in ('netstat -ano ^| findstr :8000 ^| findstr LISTENING') do @tasklist /fi \"PID eq %a\""
+			],
+			"isBackground": false
+		},
+		{
+			"label": "Inspect port 8000 process (ps)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"Write-Host \"---netstat---\"; netstat -ano | Select-String \":8000\"; Write-Host \"---owners---\"; $pids = (netstat -ano | Select-String \":8000\" | ForEach-Object { ($_ -split \"\\s+\")[-1] } | Select-Object -Unique); foreach ($pid in $pids) { try { Get-Process -Id $pid | Select-Object Id, ProcessName, Path } catch { Write-Host \"PID $pid not found\" } }"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "Simple 8000 diagnostics",
+			"type": "shell",
+			"command": "cmd",
+			"args": [
+				"/c",
+				"echo ---netstat--- && netstat -ano | findstr 8000 && echo ---python processes--- && tasklist | findstr python"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "Identify stale 8000 pids",
+			"type": "shell",
+			"command": "cmd",
+			"args": [
+				"/c",
+				"tasklist /FI \"PID eq 8360\" & tasklist /FI \"PID eq 14596\""
+			],
+			"isBackground": false
+		},
+		{
+			"label": "Restart ML backend cleanly",
+			"type": "shell",
+			"command": "cmd",
+			"args": [
+				"/c",
+				"taskkill /F /PID 8360 & taskkill /F /PID 14596 & cd ml_backend & C:/Users/bhere/AppData/Local/Programs/Python/Python311/python.exe app_simple.py"
+			],
+			"isBackground": true
+		},
+		{
+			"label": "Recheck API health",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"Write-Host '---5000 root---'; try { (Invoke-WebRequest -UseBasicParsing -Uri 'http://localhost:5000/' -TimeoutSec 5).StatusCode } catch { $_.Exception.Message }; Write-Host '---8000 root---'; try { (Invoke-WebRequest -UseBasicParsing -Uri 'http://127.0.0.1:8000/' -TimeoutSec 5).StatusCode } catch { $_.Exception.Message }; Write-Host '---8000 predict check---'; try { (Invoke-WebRequest -UseBasicParsing -Uri 'http://127.0.0.1:8000/docs' -TimeoutSec 5).StatusCode } catch { $_.Exception.Message }"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "Test ML predict endpoint",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"$form = @{ description = 'pothole near hospital road'; image = Get-Item 'fire.jpg' }; try { $resp = Invoke-WebRequest -UseBasicParsing -Uri 'http://127.0.0.1:8000/predict' -Method Post -Form $form -TimeoutSec 20; Write-Host $resp.StatusCode; $resp.Content } catch { $_.Exception.Message }"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "Quick ML responsiveness check",
+			"type": "shell",
+			"command": "cmd",
+			"args": [
+				"/c",
+				"curl -s -o NUL -w \"%{http_code}\" http://127.0.0.1:8000/"
+			],
+			"isBackground": false
+		},
+		{
+			"label": "Test ML predict with curl",
+			"type": "shell",
+			"command": "cmd",
+			"args": [
+				"/c",
+				"curl -s -w \"\\n%{http_code}\\n\" -F description=pothole_near_hospital_road -F image=@fire.jpg http://127.0.0.1:8000/predict"
+			],
+			"isBackground": false
+		}
+	]
+}
