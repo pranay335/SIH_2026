@@ -137,6 +137,7 @@ const FileComplaint = () => {
                 File a Complaint
             </h2>
 
+            {!predictionResult && (
             <form onSubmit={handleSubmit} className="glass p-6 rounded-xl space-y-6">
 
                 {/* Description */}
@@ -222,6 +223,7 @@ const FileComplaint = () => {
                     />
                 </div>
             </form>
+            )}
 
             {/* Result & API Output Card */}
             {predictionResult && (
@@ -281,6 +283,14 @@ const FileComplaint = () => {
                             {JSON.stringify(predictionResult.rawResponse, null, 2)}
                         </pre>
                     </details>
+
+                    <Button
+                        type="button"
+                        label="File Another Complaint"
+                        variant="primary"
+                        onClick={handleReset}
+                        className="mt-4 w-full"
+                    />
                 </div>
             )}
         </div>
