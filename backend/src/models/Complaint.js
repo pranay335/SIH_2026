@@ -127,13 +127,58 @@ const complaintSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Complaint',
       default: null
+    },
+
+    // 🤖 Minimal AI Classification Metadata (Auditability & Tracking)
+    aiClassification: {
+      provider: {
+        type: String,
+        default: 'Groq'
+      },
+      model: {
+        type: String
+      },
+      defectClass: {
+        type: String
+      },
+      confidence: {
+        type: Number
+      },
+      confidenceTier: {
+        type: String,
+        enum: ['HIGH_CONFIDENCE', 'MEDIUM_CONFIDENCE', 'LOW_CONFIDENCE']
+      },
+      detectedIssue: {
+        type: String
+      },
+      evidence: {
+        type: String
+      },
+      classifiedAt: {
+        type: Date,
+        default: Date.now
+      },
+      status: {
+        type: String,
+        enum: ['SUCCESS', 'FAILED', 'MANUAL_REVIEW_REQUIRED'],
+        default: 'SUCCESS'
+      },
+      errorCode: {
+        type: String,
+        default: null
+      },
+      errorMessage: {
+        type: String,
+        default: null
+      }
     }
   },
   { timestamps: true }
 );
 
-// ✅ REQUIRED GEO INDEX
+// ✅ REQUIRED GEO & QUERY INDEXES
 complaintSchema.index({ location: '2dsphere' });
 complaintSchema.index({ imageHash: 1 });
+complaintSchema.index({ 'aiClassification.defectClass': 1 });
 
 module.exports = mongoose.model('Complaint', complaintSchema);

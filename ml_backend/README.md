@@ -1,53 +1,17 @@
-# ML Backend - FastAPI Service
+# CivicMind — AI Classification Migration Notice
 
-This FastAPI backend service provides unified predictions from both NLP and CNN models.
+The legacy Python FastAPI microservice (`app.py`, `app_simple.py`, ResNet50 CNN, and Keras NLP models) has been **decommissioned and migrated**.
 
-## Setup
+## 🚀 Native Groq Multimodal AI Engine
 
-1. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
+AI classification for CivicMind is now performed by the official **Groq JavaScript SDK** directly integrated into the backend Node.js server (`backend/src/services/groqService.js`).
 
-2. Ensure model files are in place:
-   - `../ML_models/NLP_Severity_&_Sector.h5`
-   - `../ML_models/tokenizer.pkl`
-   - `../ML_models/sector_encoder.pkl`
-   - `../ML_models/severity_encoder.pkl`
-   - `ml_backend/urban_issue_resnet50_final.pth` (CNN model)
+### Features of the New AI System:
+- **Single Source of Truth**: 13-Class Canonical Municipal Defect Taxonomy ([`backend/src/config/taxonomy.js`](../backend/src/config/taxonomy.js)).
+- **Multimodal Classification**: Processes both citizen text descriptions and visual image evidence in a single fast inference pass (<0.5s).
+- **Authoritative Municipal Routing**: Deterministic routing resolver mapping defect classes to municipal departments ([`backend/src/config/routingResolver.js`](../backend/src/config/routingResolver.js)).
+- **Confidence Safeguards**: 3-tier confidence model with automated admin review flagging for low-confidence (<0.60) classifications.
+- **Production Failure Fallback**: Non-crashing graceful fallback preserving complaint submission during API outages.
 
-3. Run the server:
-```bash
-python app.py
-```
-
-Or using uvicorn directly:
-```bash
-uvicorn app:app --reload --port 8000
-```
-
-## API Endpoints
-
-### POST `/predict`
-Accepts form-data with:
-- `description` (string): Text description of the issue
-- `image` (file): Image file of the issue
-
-Returns:
-```json
-{
-  "nlp_result": {
-    "predicted_sector": "...",
-    "predicted_severity": "...",
-    "sector_confidence": 0.95,
-    "severity_confidence": 0.87
-  },
-  "cnn_result": {
-    "predicted_class": "...",
-    "confidence": 0.92
-  }
-}
-```
-
-### GET `/`
-Health check endpoint that shows model loading status.
+### Historical Reference Materials
+The Jupyter notebooks (`ML_models/CNN_running_code.ipynb`, `ML_models/NLP_runnning_code.ipynb`) and dataset (`complaints_extended.csv`) are retained in this directory strictly for historical ML research and model benchmarking reference.

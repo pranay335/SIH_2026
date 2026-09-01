@@ -7,6 +7,9 @@ const Message = require('../models/Message');
 const deduplicationService = require('../services/deduplicationService');
 const geocodingService = require('../services/geocodingService');
 const fraudService = require('../services/fraudService');
+const taxonomy = require('../config/taxonomy');
+const routingResolver = require('../config/routingResolver');
+const groqService = require('../services/groqService');
 const axios = require('axios');
 
 // Configure Nodemailer
@@ -44,13 +47,21 @@ const getMunicipalityCode = (locationText) => {
    Helper: Normalize sector to department
 ---------------------------------------------- */
 const normalizeSectorToDepartment = (sector) => {
+  if (!sector) return 'General';
+
+  // 1. Check canonical taxonomy mapping first
+  if (taxonomy.isValidClassId(sector)) {
+    return taxonomy.mapClassToNormalizedDepartment(sector);
+  }
+
+  // 2. Fallback heuristic keyword matching
   const s = sector.toLowerCase();
-  if (s.includes('water')) return 'Water';
-  if (s.includes('road')) return 'Roads';
-  if (s.includes('waste') || s.includes('garbage')) return 'Waste';
-  if (s.includes('electric')) return 'Electricity';
-  if (s.includes('health') || s.includes('medical')) return 'Health';
-  if (s.includes('drain') || s.includes('sewer')) return 'Drainage';
+  if (s.includes('water') || s.includes('pipeline')) return 'Water';
+  if (s.includes('road') || s.includes('pothole') || s.includes('footpath') || s.includes('bridge') || s.includes('concrete')) return 'Roads';
+  if (s.includes('waste') || s.includes('garbage') || s.includes('dumping')) return 'Waste';
+  if (s.includes('electric') || s.includes('wire') || s.includes('light') || s.includes('pole')) return 'Electricity';
+  if (s.includes('health') || s.includes('medical') || s.includes('animal')) return 'Health';
+  if (s.includes('drain') || s.includes('sewer') || s.includes('flood') || s.includes('waterlog')) return 'Drainage';
   return 'General';
 };
 
@@ -78,19 +89,15 @@ const fileComplaint = async (req, res) => {
       description,
       image,
       location, // "lat, lng"
-      nlp_result,
-      cnn_result,
       user_id,
-      sector
+      sector: providedSector
     } = req.body;
 
     if (
       !complaint_id ||
       !description ||
       !image ||
-      !location ||
-      !nlp_result ||
-      !cnn_result
+      !location
     ) {
       return res.status(400).json({
         message: 'Missing required fields'
@@ -167,6 +174,122 @@ const fileComplaint = async (req, res) => {
       });
     }
 
+    /* 🤖 GROQ MULTIMODAL AI CLASSIFICATION (PRIMARY CLASSIFICATION PATH) */
+    console.log('🤖 Executing Groq Multimodal AI Classification...');
+    const groqResult = await groqService.classifyDefect({
+      description,
+      image,
+      address,
+      municipalityCode
+    });
+
+    const groqValidator = require('../utils/groqValidator');
+    let effectiveSector;
+    let titleCaseSeverity;
+    let nlp_result;
+    let cnn_result;
+    let complaintPriority;
+    let aiClassificationPayload;
+
+    if (!groqResult.success) {
+      // 1. Client Input Validation Errors (Must return HTTP 400 Bad Request)
+      const inputErrorCodes = ['INVALID_DESCRIPTION', 'INVALID_IMAGE', 'IMAGE_TOO_LARGE'];
+      if (inputErrorCodes.includes(groqResult.code)) {
+        console.error('❌ Groq Classification Input Validation Failed:', groqResult.error);
+        return res.status(400).json({
+          message: `Complaint submission failed: ${groqResult.error}`,
+          code: groqResult.code
+        });
+      }
+
+      // 2. Controlled Groq Service Failure Fallback (Groq unavailable / timeout / 401 / 429 / 500 / network error / malformed response)
+      console.warn(`⚠️ Groq AI Classification unavailable (${groqResult.code}): ${groqResult.error}. Preserving complaint submission for manual admin review.`);
+
+      // Use submitted sector if valid canonical class; otherwise default to 'potholes_and_roadcracks'
+      const fallbackSector = (providedSector && taxonomy.isValidClassId(providedSector))
+        ? providedSector.toLowerCase()
+        : 'potholes_and_roadcracks';
+
+      effectiveSector = fallbackSector;
+      titleCaseSeverity = 'Medium';
+      complaintPriority = 'Medium';
+
+      nlp_result = {
+        predicted_sector: fallbackSector,
+        predicted_severity: 'Medium',
+        groqSeverity: 'MEDIUM',
+        confidence: 0,
+        evidence: `AI Classification Service Unavailable: ${groqResult.error} (${groqResult.code})`,
+        department: taxonomy.mapClassToDepartment(fallbackSector),
+        operationalAction: 'Manual administrative inspection and routing required'
+      };
+
+      cnn_result = {
+        predicted_issue: 'AI Classification Service Unavailable',
+        predicted_class: fallbackSector,
+        confidence: 0
+      };
+
+      aiClassificationPayload = {
+        provider: 'Groq',
+        model: process.env.GROQ_MODEL || 'qwen/qwen3.6-27b',
+        defectClass: null,
+        confidence: 0,
+        confidenceTier: 'LOW_CONFIDENCE',
+        detectedIssue: 'AI Classification Service Unavailable',
+        evidence: `AI Classification failed: ${groqResult.error} (${groqResult.code})`,
+        classifiedAt: new Date(),
+        status: 'FAILED',
+        errorCode: groqResult.code,
+        errorMessage: groqResult.error
+      };
+
+      // Override groqResult parameters for downstream safeguard checks
+      groqResult.confidence = 0;
+      groqResult.defectClass = fallbackSector;
+
+    } else {
+      console.log('✅ Groq Classification Success:', {
+        defectClass: groqResult.defectClass,
+        displayName: groqResult.displayName,
+        department: groqResult.department,
+        severity: groqResult.severity,
+        confidence: groqResult.confidence
+      });
+
+      effectiveSector = groqResult.defectClass;
+      titleCaseSeverity = groqValidator.toBackwardCompatibleSeverity(groqResult.severity);
+      complaintPriority = titleCaseSeverity;
+
+      nlp_result = {
+        predicted_sector: groqResult.defectClass,
+        predicted_severity: titleCaseSeverity,
+        groqSeverity: groqResult.severity,
+        confidence: groqResult.confidence,
+        evidence: groqResult.evidence,
+        department: groqResult.department,
+        operationalAction: groqResult.operationalAction
+      };
+
+      cnn_result = {
+        predicted_issue: groqResult.detectedIssue,
+        predicted_class: groqResult.defectClass,
+        confidence: groqResult.confidence
+      };
+
+      aiClassificationPayload = {
+        provider: 'Groq',
+        model: groqResult.modelUsed || process.env.GROQ_MODEL || 'openai/gpt-oss-20b',
+        defectClass: groqResult.defectClass,
+        confidence: groqResult.confidence,
+        confidenceTier: groqValidator.getConfidenceTier(groqResult.confidence),
+        detectedIssue: groqResult.detectedIssue,
+        evidence: groqResult.evidence,
+        classifiedAt: new Date(),
+        status: 'SUCCESS'
+      };
+    }
+
     /* 🕵️ FRAUD GATE - NEW LOCATION BEFORE AUTO-ASSIGNMENT */
     console.log('🕵️ Running fraud detection...');
     const fraudResult = await fraudService.evaluateFraud({
@@ -175,9 +298,22 @@ const fileComplaint = async (req, res) => {
       cnn_result,
       user_id,
       description,
-      sector,
+      sector: effectiveSector,
       location: geoLocation
     });
+
+    /* 🤖 CONFIDENCE SAFEGUARD EVALUATION */
+    const isLowConfidence = groqResult.confidence < 0.60;
+    const confidenceTier = groqValidator.getConfidenceTier(groqResult.confidence);
+
+    let finalFlagged = fraudResult.flagged || isLowConfidence;
+    let combinedFlagReason = fraudResult.flagReason || '';
+
+    if (isLowConfidence) {
+      const confidenceMsg = `Low AI Classification Confidence (${(groqResult.confidence * 100).toFixed(1)}%)`;
+      combinedFlagReason = combinedFlagReason ? `${combinedFlagReason}; ${confidenceMsg}` : confidenceMsg;
+      console.log(`⚠️ Complaint FLAGGED due to low AI confidence: ${groqResult.confidence} (${confidenceTier})`);
+    }
 
     let assigned_to = null;
     let status = 'Pending';
@@ -199,10 +335,12 @@ const fileComplaint = async (req, res) => {
                <p>If you believe this is an error, please ensure your image clearly matches your description and try submitting again.</p>`
       }).catch(err => console.error('Failed to send citizen rejection email:', err));
 
-    } else if (fraudResult.finalAction === 'Flagged') {
-      console.log(`🚨 Complaint FLAGGED for fraud! Score: ${fraudResult.fraudScore}. Reason: ${fraudResult.flagReason}`);
+    } else if (fraudResult.finalAction === 'Flagged' || isLowConfidence) {
+      console.log(`🚨 Complaint FLAGGED for review! Reason: ${combinedFlagReason}`);
       status = 'Flagged';
-      assignmentNote = 'Flagged for admin review due to suspicious content';
+      assignmentNote = isLowConfidence && !fraudResult.flagged
+        ? 'Flagged for admin review due to low AI classification confidence'
+        : 'Flagged for admin review due to suspicious content';
       
       // Send Email to Citizen
       transporter.sendMail({
@@ -211,36 +349,35 @@ const fileComplaint = async (req, res) => {
         subject: `⚠️ Your CivicMind Complaint Needs Review — ${complaint_id}`,
         html: `<p>Hello ${user.name},</p>
                <p>Your recent complaint (ID: <b>${complaint_id}</b>) has been flagged by our automated system for manual review.</p>
-               <p><b>Reason:</b> ${fraudResult.flagReason}</p>
-               <p>An administrator will review your submission within 24 hours. If found legitimate, it will be assigned. Otherwise, it may be dismissed. We recommend you ensure images match descriptions.</p>`
+               <p><b>Reason:</b> ${combinedFlagReason}</p>
+               <p>An administrator will review your submission within 24 hours. If found legitimate, it will be assigned. Otherwise, it may be dismissed.</p>`
       }).catch(err => console.error('Failed to send citizen flag email:', err));
 
       // Send Email to Admin
       transporter.sendMail({
         from: '"CivicMind System" <' + process.env.GMAIL_USER + '>',
         to: process.env.GMAIL_USER, // or ADMIN_EMAIL
-        subject: `🚨 Action Required: Complaint ${complaint_id} Flagged as Suspicious`,
-        html: `<p>A new complaint was submitted and flagged due to a high fraud score.</p>
+        subject: `🚨 Action Required: Complaint ${complaint_id} Flagged for Review`,
+        html: `<p>A new complaint was submitted and flagged for admin review.</p>
                <p><b>ID:</b> ${complaint_id}<br/>
                <b>Citizen:</b> ${user.name} (${user.email})<br/>
                <b>Trust Score:</b> ${user.trustScore}<br/>
                <b>Fraud Score:</b> ${fraudResult.fraudScore}<br/>
-               <b>Reason:</b> ${fraudResult.flagReason}</p>
+               <b>AI Confidence:</b> ${groqResult.confidence} (${confidenceTier})<br/>
+               <b>Reason:</b> ${combinedFlagReason}</p>
                <p>Please review it in the Admin Dashboard.</p>`
       }).catch(err => console.error('Failed to send admin flag notice email:', err));
 
     } else {
       /* 🤖 AUTO-ASSIGNMENT LOGIC (Only runs if not flagged) */
       const MAX_COMPLAINTS_DEFAULT = 5;
-      const normalizedDept = normalizeSectorToDepartment(sector);
-      console.log(`🤖 Attempting auto-assignment for sector: ${sector} (Normalized: ${normalizedDept}) in ${municipalityCode}`);
-
-      const deptAliases = getDepartmentAliases(normalizedDept);
+      const routing = routingResolver.resolveRoutingForClass(effectiveSector);
+      console.log(`🤖 Attempting auto-assignment for defectClass: ${effectiveSector} (Official Dept: ${routing.officialDepartment}) in ${municipalityCode}`);
 
       const eligibleEmployees = await User.find({
         role: 'employee',
         municipalityCode: municipalityCode,
-        department: { $in: deptAliases }
+        department: { $in: routing.compatibleEmployeeDepartments }
       }).sort({ currentWorkload: 1 });
 
       if (eligibleEmployees.length > 0) {
@@ -256,23 +393,18 @@ const fileComplaint = async (req, res) => {
           const employeeMax = bestEmployee.maxConcurrentComplaints || MAX_COMPLAINTS_DEFAULT;
           assigned_to = bestEmployee._id;
           status = 'Assigned';
-          assignmentNote = `Automatically assigned to ${bestEmployee.name}`;
+          assignmentNote = `Auto-assigned to employee ${bestEmployee.name} (${bestEmployee.department}). Current Workload: ${bestEmployee.currentWorkload + 1}/${employeeMax}.`;
 
-          const newWorkload = bestEmployee.currentWorkload + 1;
-          await User.findByIdAndUpdate(bestEmployee._id, {
-            $inc: { currentWorkload: 1 },
-            ...(newWorkload >= employeeMax ? { availabilityStatus: 'UNAVAILABLE' } : {})
-          });
-
-          console.log(`✅ Auto-assigned to: ${bestEmployee.name} (New workload: ${newWorkload}/${employeeMax})`);
-          if (newWorkload >= employeeMax) {
-            console.log(`🔒 Employee ${bestEmployee.name} is now UNAVAILABLE`);
-          }
+          // Increment currentWorkload atomically
+          await User.findByIdAndUpdate(bestEmployee._id, { $inc: { currentWorkload: 1 } });
+          console.log(`✅ Auto-assigned to: ${bestEmployee.name} (New workload: ${bestEmployee.currentWorkload + 1}/${employeeMax})`);
         } else {
-          console.log('⚠️ No available employees found for auto-assignment.');
+          console.log(`⚠️ All matching employees for department ${routing.officialDepartment} are at max capacity or unavailable.`);
+          assignmentNote = `All matching employees in ${routing.officialDepartment} are currently busy or unavailable.`;
         }
       } else {
-        console.log('⚠️ No available employees found for auto-assignment.');
+        console.log(`⚠️ No active employees found for department: ${routing.officialDepartment} in ${municipalityCode}`);
+        assignmentNote = `No registered employees found for department ${routing.officialDepartment}.`;
       }
     }
 
@@ -282,23 +414,28 @@ const fileComplaint = async (req, res) => {
       image,
       location: geoLocation,
       address: address,
-      sector,
+      sector: effectiveSector,
       municipalityCode,
       nlp_result,
       cnn_result,
+      aiClassification: {
+        provider: 'Groq',
+        model: groqResult.modelUsed || process.env.GROQ_MODEL || 'openai/gpt-oss-20b',
+        defectClass: groqResult.defectClass,
+        confidence: groqResult.confidence,
+        confidenceTier: confidenceTier,
+        detectedIssue: groqResult.detectedIssue,
+        evidence: groqResult.evidence,
+        classifiedAt: new Date()
+      },
       user_id,
       assigned_to, // Set by auto-assignment
-      status,      // Set to 'Assigned' if auto-assigned
+      status,      // Set to 'Assigned' if auto-assigned, 'Flagged' if low confidence/fraud
       notes: assignmentNote,
-      priority:
-        nlp_result.predicted_severity === 'High'
-          ? 'High'
-          : nlp_result.predicted_severity === 'Medium'
-            ? 'Medium'
-            : 'Low',
-      flagged: fraudResult.flagged,
+      priority: complaintPriority,
+      flagged: finalFlagged,
       fraudScore: fraudResult.fraudScore,
-      flagReason: fraudResult.flagReason,
+      flagReason: combinedFlagReason,
       imageHash: fraudResult.imageHash,
       duplicateOf: fraudResult.duplicateOf
     });
@@ -306,7 +443,7 @@ const fileComplaint = async (req, res) => {
     // Debug: Log the complaint object before saving
     console.log('🔍 Complaint object before save:', {
       complaint_id: complaint.complaint_id,
-      address_fullAddress: complaint.address.fullAddress,
+      address_fullAddress: complaint.address?.fullAddress || 'N/A',
       municipalityCode: complaint.municipalityCode,
       status: complaint.status,
       assigned_to: complaint.assigned_to ? 'YES' : 'NO'
@@ -347,7 +484,7 @@ const fileComplaint = async (req, res) => {
         _id: savedComplaint._id,
         location: geoLocation,
         address: address, // 🗺️ Use geocoded address
-        sector,
+        sector: effectiveSector,
         municipalityCode,
         description,
         nlp_result,
