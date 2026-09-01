@@ -1,5 +1,5 @@
 const complaintController = require('../src/controllers/complaintController');
-const groqService = require('../src/services/groqService');
+const groqService = require('../src/services/claudeService');
 const geocodingService = require('../src/services/geocodingService');
 const deduplicationService = require('../src/services/deduplicationService');
 const fraudService = require('../src/services/fraudService');
@@ -9,7 +9,7 @@ const ComplaintGroup = require('../src/models/ComplaintGroup');
 const taxonomy = require('../src/config/taxonomy');
 const mongoose = require('mongoose');
 
-jest.mock('../src/services/groqService');
+jest.mock('../src/services/claudeService');
 jest.mock('../src/services/geocodingService');
 jest.mock('../src/services/deduplicationService');
 jest.mock('../src/services/fraudService');

@@ -9,7 +9,7 @@ const geocodingService = require('../services/geocodingService');
 const fraudService = require('../services/fraudService');
 const taxonomy = require('../config/taxonomy');
 const routingResolver = require('../config/routingResolver');
-const groqService = require('../services/groqService');
+const groqService = require('../services/claudeService');
 const axios = require('axios');
 
 // Configure Nodemailer
@@ -231,8 +231,8 @@ const fileComplaint = async (req, res) => {
       };
 
       aiClassificationPayload = {
-        provider: 'Groq',
-        model: process.env.GROQ_MODEL || 'qwen/qwen3.6-27b',
+        provider: 'Claude',
+        model: process.env.ANTHROPIC_MODEL || 'claude-sonnet-5',
         defectClass: null,
         confidence: 0,
         confidenceTier: 'LOW_CONFIDENCE',
@@ -278,8 +278,8 @@ const fileComplaint = async (req, res) => {
       };
 
       aiClassificationPayload = {
-        provider: 'Groq',
-        model: groqResult.modelUsed || process.env.GROQ_MODEL || 'openai/gpt-oss-20b',
+        provider: 'Claude',
+        model: groqResult.modelUsed || process.env.ANTHROPIC_MODEL || 'claude-sonnet-5',
         defectClass: groqResult.defectClass,
         confidence: groqResult.confidence,
         confidenceTier: groqValidator.getConfidenceTier(groqResult.confidence),
@@ -419,8 +419,8 @@ const fileComplaint = async (req, res) => {
       nlp_result,
       cnn_result,
       aiClassification: {
-        provider: 'Groq',
-        model: groqResult.modelUsed || process.env.GROQ_MODEL || 'openai/gpt-oss-20b',
+        provider: 'Claude',
+        model: groqResult.modelUsed || process.env.ANTHROPIC_MODEL || 'claude-sonnet-5',
         defectClass: groqResult.defectClass,
         confidence: groqResult.confidence,
         confidenceTier: confidenceTier,

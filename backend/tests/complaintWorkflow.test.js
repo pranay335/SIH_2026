@@ -1,12 +1,12 @@
 const complaintController = require('../src/controllers/complaintController');
-const groqService = require('../src/services/groqService');
+const groqService = require('../src/services/claudeService');
 const geocodingService = require('../src/services/geocodingService');
 const fraudService = require('../src/services/fraudService');
 const deduplicationService = require('../src/services/deduplicationService');
 const Complaint = require('../src/models/Complaint');
 const User = require('../src/models/User');
 
-jest.mock('../src/services/groqService');
+jest.mock('../src/services/claudeService');
 jest.mock('../src/services/geocodingService');
 jest.mock('../src/services/fraudService');
 jest.mock('../src/services/deduplicationService');

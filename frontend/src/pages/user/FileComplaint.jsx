@@ -244,11 +244,11 @@ const FileComplaint = () => {
                        </p>
                     )}
 
-                    {/* Groq AI Classification Breakdown */}
+                    {/* AI Classification Breakdown */}
                     {predictionResult.complaint?.aiClassification && (
                         <div className="mt-4 p-4 rounded-lg bg-white border border-gray-200 space-y-2">
                             <div className="flex justify-between items-center border-b border-gray-200 pb-2 mb-2">
-                                <span className="text-xs font-bold uppercase tracking-wider text-emerald-600">🤖 Groq Multimodal AI Output</span>
+                                <span className="text-xs font-bold uppercase tracking-wider text-emerald-600">🤖 AI Classification Output</span>
                                 <span className="text-xs px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 font-mono">
                                     {predictionResult.complaint.aiClassification.provider} ({predictionResult.complaint.aiClassification.model})
                                 </span>
