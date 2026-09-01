@@ -1,0 +1,674 @@
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import Button from '../components/button.jsx';
+import StatusProgressBar from '../components/StatusProgressBar.jsx';
+
+const API_BASE_URL = `http://${window.location.hostname}:5000/api`;
+
+const EmployeeDashboard = () => {
+  const { user, logout, getToken } = useAuth();
+  const navigate = useNavigate();
+  const [activeSection, setActiveSection] = useState('overview');
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const [uploadedImages, setUploadedImages] = useState([]);
+  const [isCapturing, setIsCapturing] = useState(false);
+  const [stream, setStream] = useState(null);
+  const videoRef = useRef(null);
+  const fileInputRef = useRef(null);
+
+  // Callback ref: fires immediately when the <video> DOM node mounts
+  const setVideoRef = useCallback((node) => {
+    videoRef.current = node;
+    if (node && stream) {
+      node.srcObject = stream;
+      node.play().catch(err => console.warn('Video play failed:', err));
+    }
+  }, [stream]);
+
+  // Live user data (refreshes dynamically)
+  const [liveUser, setLiveUser] = useState(null);
+
+  const fetchLiveUser = async () => {
+    try {
+      const token = getToken();
+      const response = await fetch(`${API_BASE_URL}/users/me`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setLiveUser(data);
+      }
+    } catch (err) {
+      console.error('Error fetching live user data:', err);
+    }
+  };
+
+  useEffect(() => {
+    if (user && user._id) {
+      fetchTasks();
+      fetchLiveUser();
+    }
+  }, [user]);
+
+  const fetchTasks = async () => {
+    try {
+      setLoading(true);
+      const token = getToken();
+      const response = await fetch(`${API_BASE_URL}/complaints/assigned/${user._id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      const data = await response.json();
+      if (data.success) {
+        setTasks(data.groups);
+      } else {
+        setError(data.message || 'Failed to fetch tasks');
+      }
+    } catch (err) {
+      console.error('Error fetching tasks:', err);
+      setError('Failed to connect to server');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
+  const handleTaskClick = (task) => {
+    setSelectedTask(task);
+    // Reset resolution state for new task
+    setUploadedImages([]);
+  };
+
+  const handleAcknowledge = async (groupId) => {
+    try {
+      const token = getToken();
+      const response = await fetch(`${API_BASE_URL}/complaints/groups/${groupId}/acknowledge`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      const data = await response.json();
+      if (data.success) {
+        // Update local state
+        setTasks(prev => prev.map(t => t.group_id === groupId ? data.group : t));
+        setSelectedTask(data.group);
+        fetchLiveUser(); // Refresh workload data
+      }
+    } catch (err) {
+      console.error('Acknowledgement failed:', err);
+      alert('Failed to acknowledge task');
+    }
+  };
+
+  const startCamera = async () => {
+    try {
+      const mediaStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment' }
+      });
+      setStream(mediaStream);
+      setIsCapturing(true);
+      // srcObject is now assigned by the useEffect above
+    } catch (err) {
+      console.error('Camera access denied:', err);
+      alert('Camera access is required to capture images.');
+    }
+  };
+
+  const stopCamera = () => {
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop());
+      setStream(null);
+    }
+    setIsCapturing(false);
+  };
+
+  const capturePhoto = () => {
+    const video = videoRef.current;
+    if (!video || !video.videoWidth) {
+      alert('Camera is not ready yet. Please wait a moment.');
+      return;
+    }
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const context = canvas.getContext('2d');
+    context.drawImage(video, 0, 0);
+
+    const imageData = canvas.toDataURL('image/jpeg');
+    const image = {
+      id: Date.now() + Math.random(),
+      preview: imageData,
+      capturedAt: new Date().toISOString()
+    };
+
+    setUploadedImages(prev => [...prev, image]);
+  };
+
+  const handleFileUpload = (e) => {
+    const files = Array.from(e.target.files);
+    files.forEach(file => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const image = {
+          id: Date.now() + Math.random(),
+          preview: reader.result,
+          capturedAt: new Date().toISOString()
+        };
+        setUploadedImages(prev => [...prev, image]);
+      };
+      reader.readAsDataURL(file);
+    });
+    // Reset file input so same file can be re-selected
+    e.target.value = '';
+  };
+
+  const handleMarkResolved = async (groupId) => {
+    try {
+      const token = getToken();
+      const response = await fetch(`${API_BASE_URL}/complaints/groups/${groupId}/status`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          status: 'Resolved',
+          resolution_images: uploadedImages.map(img => img.preview),
+          notes: 'Task resolved by employee'
+        })
+      });
+      const data = await response.json();
+      if (data.success) {
+        // Update local tasks
+        setTasks(prev => prev.map(t => t.group_id === groupId ? data.group : t));
+        setSelectedTask(null);
+        setUploadedImages([]);
+        fetchLiveUser(); // Refresh workload data
+        alert('Task marked as resolved!');
+      }
+    } catch (err) {
+      console.error('Resolution failed:', err);
+      alert('Failed to resolve task');
+    }
+  };
+
+  const menuItems = [
+    { id: 'overview', label: 'Overview', icon: '📊' },
+    { id: 'tasks', label: 'My Tasks', icon: '📋' },
+    { id: 'reports', label: 'Reports', icon: '📈' },
+    { id: 'schedule', label: 'Schedule', icon: '📅' },
+    { id: 'messages', label: 'Messages', icon: '💬' },
+    { id: 'profile', label: 'Profile', icon: '👤' },
+  ];
+
+  const stats = {
+    active: tasks.filter(t => t.status !== 'Resolved' && t.status !== 'Closed').length,
+    completed: tasks.filter(t => t.status === 'Resolved' || t.status === 'Closed').length,
+    performance: '94%' // Mocked for now
+  };
+
+  const renderContent = () => {
+    switch (activeSection) {
+      case 'overview':
+        return (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-gray-900">Employee Overview</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="glass rounded-xl p-6">
+                <div className="text-3xl mb-2">📋</div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-1">Active Tasks</h3>
+                <p className="text-3xl font-bold text-blue-600">{stats.active}</p>
+                <p className="text-gray-500 text-sm mt-1">High priority focus</p>
+              </div>
+              <div className="glass rounded-xl p-6">
+                <div className="text-3xl mb-2">✅</div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-1">Completed</h3>
+                <p className="text-3xl font-bold text-green-600">{stats.completed}</p>
+                <p className="text-gray-500 text-sm mt-1">Total resolved</p>
+              </div>
+              <div className="glass rounded-xl p-6">
+                <div className="text-3xl mb-2">📈</div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-1">Performance</h3>
+                <p className="text-3xl font-bold text-purple-600">{stats.performance}</p>
+                <p className="text-gray-500 text-sm mt-1">Excellent standing</p>
+              </div>
+            </div>
+
+            <div className="glass rounded-xl p-6">
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">Recent Activity</h3>
+              <div className="space-y-3">
+                {tasks.slice(0, 3).map((task, i) => (
+                  <div key={i} className="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
+                    <div className="flex items-center space-x-3">
+                      <div className={`w-2 h-2 rounded-full ${task.status === 'Resolved' ? 'bg-green-400' : 'bg-blue-400'}`}></div>
+                      <div>
+                        <p className="text-gray-900 font-medium">{task.issue_title}</p>
+                        <p className="text-gray-500 text-sm">{new Date(task.updatedAt).toLocaleDateString()}</p>
+                      </div>
+                    </div>
+                    <span className={`text-sm ${task.status === 'Resolved' ? 'text-green-600' : 'text-blue-600'}`}>
+                      {task.status}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'tasks':
+        const pendingTasks = tasks.filter(t => t.status !== 'Resolved' && t.status !== 'Closed');
+        const resolvedTasks = tasks.filter(t => t.status === 'Resolved' || t.status === 'Closed');
+
+        return (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-gray-900">My Tasks</h2>
+
+            {selectedTask ? (
+              <div className="glass rounded-xl p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-xl font-semibold text-gray-900">{selectedTask.issue_title}</h3>
+                  <Button
+                    label="Back to Tasks"
+                    variant="outline"
+                    size="small"
+                    onClick={() => setSelectedTask(null)}
+                  />
+                </div>
+
+                {selectedTask.status !== 'Closed' && (
+                  <StatusProgressBar status={selectedTask.status} />
+                )}
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  <div className="glass rounded-xl p-6">
+                    <h4 className="text-gray-900 font-medium mb-3">Task Details</h4>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">Priority:</span>
+                        <span className={`${selectedTask.priority === 'High' ? 'text-red-600' : 'text-gray-900'}`}>{selectedTask.priority}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">Sector:</span>
+                        <span className="text-gray-900">{selectedTask.sector}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">Location:</span>
+                        <span className="text-gray-900">{selectedTask.address?.fullAddress}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="glass rounded-xl p-6">
+                    <h4 className="text-gray-900 font-medium mb-3">Description</h4>
+                    <p className="text-gray-600 text-sm italic">"{selectedTask.issue_description}"</p>
+                  </div>
+                </div>
+
+                {selectedTask.status === 'In Progress' && (
+                  <div className="space-y-6">
+                    <div className="glass rounded-xl p-6">
+                      <h4 className="text-gray-900 font-medium mb-4">📷 Add Resolution Images</h4>
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        accept="image/*"
+                        multiple
+                        onChange={handleFileUpload}
+                        className="hidden"
+                      />
+                      {!isCapturing ? (
+                        <div className="flex gap-3">
+                          <Button
+                            label="📸 Open Camera"
+                            variant="primary"
+                            size="large"
+                            className="flex-1"
+                            onClick={startCamera}
+                          />
+                          <Button
+                            label="📁 Upload Image"
+                            variant="outline"
+                            size="large"
+                            className="flex-1"
+                            onClick={() => fileInputRef.current?.click()}
+                          />
+                        </div>
+                      ) : (
+                        <div className="space-y-4">
+                          <div className="relative rounded-lg overflow-hidden bg-black aspect-video">
+                            <video
+                              ref={setVideoRef}
+                              autoPlay
+                              playsInline
+                              muted
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          <div className="flex space-x-3">
+                            <Button
+                              label="📸 Capture"
+                              variant="primary"
+                              className="flex-1"
+                              onClick={capturePhoto}
+                            />
+                            <Button
+                              label="Close"
+                              variant="outline"
+                              onClick={stopCamera}
+                            />
+                          </div>
+                        </div>
+                      )}
+
+                      {uploadedImages.length > 0 && (
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+                          {uploadedImages.map(image => (
+                            <div key={image.id} className="relative group">
+                              <img src={image.preview} className="w-full h-24 object-cover rounded-lg border border-gray-200" />
+                              <button
+                                onClick={() => setUploadedImages(prev => prev.filter(i => i.id !== image.id))}
+                                className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                              >
+                                ×
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    <Button
+                      label="Mark as Resolved"
+                      variant="primary"
+                      size="large"
+                      className="w-full h-14 text-lg"
+                      disabled={uploadedImages.length === 0}
+                      onClick={() => handleMarkResolved(selectedTask.group_id)}
+                    />
+                  </div>
+                )}
+
+                {(selectedTask.status === 'Assigned' || selectedTask.status === 'Pending') && (
+                  <Button
+                    label="Acknowledge & Start Task"
+                    variant="primary"
+                    size="large"
+                    className="w-full h-14 text-lg"
+                    onClick={() => handleAcknowledge(selectedTask.group_id)}
+                  />
+                )}
+
+                {(selectedTask.status === 'Resolved' || selectedTask.status === 'Closed') && (
+                  <div className="glass rounded-xl p-6">
+                    <h4 className="text-gray-900 font-medium mb-4">Resolution Evidence</h4>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {selectedTask.resolution_images?.map((img, i) => (
+                        <img
+                          key={i}
+                          src={img}
+                          className="w-full h-32 object-cover rounded-lg cursor-pointer hover:scale-105 transition-transform"
+                          onClick={() => window.open(img, '_blank')}
+                        />
+                      ))}
+                    </div>
+                    <div className="mt-4 p-4 bg-green-50 rounded-lg border border-green-200 text-green-700 text-sm">
+                      ✅ This task has been resolved and is awaiting citizen feedback.
+                    </div>
+                  </div>
+                )}
+
+                {/* Citizen Feedback Section */}
+                {selectedTask.feedbackStatus && (
+                  <div className="glass rounded-xl p-6 mt-4">
+                    <h4 className="text-gray-900 font-medium mb-4">📋 Citizen Feedback</h4>
+                    <div className="flex items-center gap-3 mb-3">
+                      <span className="text-gray-500 text-sm">Status:</span>
+                      <span className={`px-3 py-1 text-xs rounded-full border font-medium ${selectedTask.feedbackStatus === 'SATISFIED'
+                        ? 'bg-green-100 text-green-700 border-green-200'
+                        : selectedTask.feedbackStatus === 'NOT_SATISFIED'
+                          ? 'bg-red-100 text-red-700 border-red-200'
+                          : 'bg-yellow-100 text-yellow-700 border-yellow-200'
+                        }`}>
+                        {selectedTask.feedbackStatus === 'SATISFIED' ? '✅ Satisfied'
+                          : selectedTask.feedbackStatus === 'NOT_SATISFIED' ? '❌ Not Satisfied'
+                            : '⏳ Awaiting Feedback'}
+                      </span>
+                    </div>
+                    {selectedTask.feedbackMessage && (
+                      <div className="p-3 bg-gray-100 rounded-lg border border-gray-200">
+                        <p className="text-gray-400 text-xs font-medium mb-1">Citizen's Comment:</p>
+                        <p className="text-gray-600 text-sm italic">"{selectedTask.feedbackMessage}"</p>
+                      </div>
+                    )}
+                    {selectedTask.feedbackStatus === 'NOT_SATISFIED' && (
+                      <div className="mt-3 p-3 bg-red-50 rounded-lg border border-red-200">
+                        <p className="text-red-700 text-sm font-medium">⚠️ The citizen was not satisfied. Please review and address their concerns.</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Reopened Badge */}
+                {selectedTask.reopened && (
+                  <div className="mt-4 p-4 bg-red-50 rounded-xl border border-red-200 flex items-center gap-3">
+                    <span className="text-2xl">🔄</span>
+                    <div>
+                      <p className="text-red-700 font-semibold">Reopened by Citizen</p>
+                      <p className="text-gray-500 text-sm">This task was reopened because the citizen was not satisfied with the resolution. {selectedTask.reopenCount > 1 ? `(Reopened ${selectedTask.reopenCount} times)` : ''}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="glass rounded-xl p-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Active Tasks ({pendingTasks.length})</h3>
+                  <div className="space-y-3">
+                    {pendingTasks.map(task => (
+                      <div
+                        key={task.group_id}
+                        onClick={() => handleTaskClick(task)}
+                        className="p-4 bg-gray-100 rounded-lg border border-gray-200 cursor-pointer hover:bg-gray-100 transition-all duration-200"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <h4 className="text-gray-900 font-medium">{task.issue_title}</h4>
+                              {task.reopened && (
+                                <span className="px-2 py-0.5 text-[9px] rounded-full bg-red-100 text-red-700 border border-red-200 font-bold">🔄 REOPENED</span>
+                              )}
+                            </div>
+                            <p className="text-gray-500 text-xs mt-1">Status: {task.status}</p>
+                            <p className="text-gray-400 text-[10px] mt-1">📍 {task.address?.area}</p>
+                          </div>
+                          <span className={`px-2 py-1 text-[10px] rounded-full uppercase font-bold ${task.priority === 'High' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'
+                            }`}>
+                            {task.priority}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                    {pendingTasks.length === 0 && <p className="text-center text-gray-400 py-8">No active tasks</p>}
+                  </div>
+                </div>
+                <div className="glass rounded-xl p-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Completed ({resolvedTasks.length})</h3>
+                  <div className="space-y-3">
+                    {resolvedTasks.map(task => (
+                      <div
+                        key={task.group_id}
+                        onClick={() => handleTaskClick(task)}
+                        className="p-4 bg-green-50 rounded-lg border border-green-200 cursor-pointer hover:bg-green-100 transition-all duration-200"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <h4 className="text-gray-900 font-medium">{task.issue_title}</h4>
+                            <p className="text-gray-500 text-xs mt-1">Resolved on {new Date(task.resolvedDate || task.updatedAt).toLocaleDateString()}</p>
+                          </div>
+                          <span className="px-2 py-1 bg-green-100 text-green-700 text-[10px] rounded-full uppercase font-bold">Done</span>
+                        </div>
+                      </div>
+                    ))}
+                    {resolvedTasks.length === 0 && <p className="text-center text-gray-400 py-8">No completed tasks yet</p>}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+
+      case 'profile':
+        return (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-gray-900">Profile</h2>
+            <div className="glass rounded-xl p-6">
+              <div className="flex items-center space-x-6 mb-6">
+                <div className="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg shadow-blue-500/20">
+                  {user?.name?.charAt(0) || 'E'}
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900">{user?.name}</h3>
+                  <p className="text-gray-500">{user?.email}</p>
+                  <span className="inline-block px-3 py-1 bg-blue-100 text-blue-700 text-xs rounded-full mt-2 font-bold uppercase tracking-wider">
+                    {user?.role}
+                  </span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-gray-200">
+                <div>
+                  <h4 className="text-gray-400 text-xs font-bold uppercase mb-3">Service Details</h4>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Department:</span>
+                      <span className="text-gray-900">{user?.department}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Municipality:</span>
+                      <span className="text-gray-900">{user?.municipalityCode}</span>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <h4 className="text-gray-400 text-xs font-bold uppercase mb-3">Workload</h4>
+                  {(() => {
+                    const profileUser = liveUser || user;
+                    const current = profileUser?.currentWorkload || 0;
+                    const max = profileUser?.maxConcurrentComplaints || 5;
+                    const remaining = Math.max(0, max - current);
+                    const pct = max > 0 ? (current / max) * 100 : 0;
+                    const barColor = pct >= 100 ? 'bg-red-500' : pct >= 50 ? 'bg-yellow-400' : 'bg-green-400';
+                    const textColor = pct >= 100 ? 'text-red-600' : pct >= 50 ? 'text-yellow-600' : 'text-green-600';
+                    return (
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center text-sm">
+                          <span className="text-gray-500">Current Load:</span>
+                          <span className={`font-bold ${textColor}`}>{current}/{max} complaints</span>
+                        </div>
+                        <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                          <div className={`h-full ${barColor} rounded-full transition-all duration-500`} style={{ width: `${Math.min(pct, 100)}%` }}></div>
+                        </div>
+                        <div className="flex justify-between items-center text-sm">
+                          <span className="text-gray-500">Remaining Slots:</span>
+                          <span className={`font-bold ${textColor}`}>{remaining} available</span>
+                        </div>
+                        <div className="flex justify-between items-center text-sm">
+                          <span className="text-gray-500">Status:</span>
+                          <span className={`font-bold ${textColor}`}>{profileUser?.availabilityStatus || 'AVAILABLE'}</span>
+                        </div>
+                      </div>
+                    );
+                  })()}
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+      default:
+        return (
+          <div className="flex flex-col items-center justify-center h-[60vh] text-gray-400">
+            <span className="text-6xl mb-4">🚧</span>
+            <h2 className="text-xl font-medium">Under Construction</h2>
+            <p>This section is currently being developed.</p>
+          </div>
+        );
+    }
+  };
+
+  if (loading) return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="text-blue-600 animate-pulse text-xl font-bold">Loading CivcMind Dashboard...</div>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-gray-50 text-gray-900">
+      {/* Header */}
+      <header className="glass border-b border-gray-200 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center">
+              <h1 className="text-xl font-black italic tracking-tighter text-blue-500">CIVICMIND <span className="text-gray-900 not-italic font-light">EMPLOYEE</span></h1>
+            </div>
+            <div className="flex items-center space-x-6">
+              <div className="hidden md:block text-right">
+                <div className="text-xs text-gray-400 font-bold uppercase">Assigned To</div>
+                <div className="text-sm font-medium">{user?.name}</div>
+              </div>
+              <Button
+                label="Logout"
+                variant="outline"
+                size="small"
+                onClick={handleLogout}
+              />
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div className="flex">
+        {/* Sidebar */}
+        <aside className="w-64 hidden lg:block h-[calc(100vh-64px)] sticky top-16 glass border-r border-gray-200">
+          <nav className="p-4 space-y-2">
+            {menuItems.map(item => (
+              <button
+                key={item.id}
+                onClick={() => setActiveSection(item.id)}
+                className={`
+                                    w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-left transition-all duration-200
+                                    ${activeSection === item.id
+                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20'
+                    : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
+                  }
+                                `}
+              >
+                <span className="text-xl">{item.icon}</span>
+                <span className="font-medium">{item.label}</span>
+              </button>
+            ))}
+          </nav>
+        </aside>
+
+        {/* Main Content */}
+        <main className="flex-1 p-6">
+          {renderContent()}
+        </main>
+      </div>
+    </div>
+  );
+};
+
+export default EmployeeDashboard;

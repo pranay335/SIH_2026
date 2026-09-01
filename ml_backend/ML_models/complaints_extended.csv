@@ -1,0 +1,2001 @@
+text,sector,severity,municipal_corp,date,month,year
+Broken park bench at Central Park in MMC jurisdiction,parks,0,MMC,2023-08-27,8,2023
+Bridge approach damaged near West Zone in MMC jurisdiction,road,2,MMC,2023-12-11,12,2023
+Water bill discrepancy for Ward 2,water,1,RMC,2024-07-03,7,2024
+Drain blockage at Central Zone in RMC jurisdiction,water,1,RMC,2024-11-17,11,2024
+Building material on road in WMC jurisdiction,building,1,WMC,2023-09-08,9,2023
+Overflowing water tank at South Zone,water,2,UMC,2023-02-27,2,2023
+Pipeline repair work incomplete in VMC jurisdiction,water,1,VMC,2023-05-23,5,2023
+Park lights not functioning,electricity,0,CMC,2024-02-13,2,2024
+Building permit delay,building,0,DMC,2023-04-23,4,2023
+Leaking pipeline near Ward 5 in WMC jurisdiction,water,1,WMC,2023-06-15,6,2023
+Sidewalk damaged on Market Road in KDMC jurisdiction,road,1,KDMC,2024-07-16,7,2024
+Drain cleaning overdue in HMC jurisdiction,sanitation,1,HMC,2023-08-19,8,2023
+Property tax assessment error,building,0,VMC,2023-04-22,4,2023
+Sidewalk damaged on Link Road in MMC jurisdiction,road,1,MMC,2023-03-19,3,2023
+Tree needs pruning in TMC jurisdiction,parks,0,TMC,2024-04-10,4,2024
+Drain cleaning overdue in UMC jurisdiction,sanitation,1,UMC,2023-10-31,10,2023
+Road surface cracks on College Road in CMC jurisdiction,road,0,CMC,2024-09-26,9,2024
+Garbage truck leaking in JMC jurisdiction,sanitation,1,JMC,2023-11-18,11,2023
+Pipeline repair work incomplete in NMC jurisdiction,water,1,NMC,2023-03-16,3,2023
+Partial power failure in Middle Class Colony in PMC jurisdiction,electricity,1,PMC,2023-09-29,9,2023
+Garbage overflow at Middle Class Colony in HMC jurisdiction,sanitation,1,HMC,2024-11-10,11,2024
+Dog waste in park in PMC jurisdiction,parks,0,PMC,2023-10-06,10,2023
+Road hump needs repainting on Link Road,road,0,GMC,2023-02-22,2,2023
+Illegal electricity connection in CMC jurisdiction,electricity,2,CMC,2023-05-11,5,2023
+Water quality issues in Ward 7 in BMC jurisdiction,water,2,BMC,2024-11-13,11,2024
+Water bill discrepancy for Ward 6,water,1,SMC,2023-04-21,4,2023
+Roadside vegetation obstructing view in CMC jurisdiction,road,1,CMC,2023-08-22,8,2023
+Construction waste on roadside,sanitation,1,GMC,2023-10-13,10,2023
+Irregular water supply timing in HMC jurisdiction,water,1,HMC,2024-08-13,8,2024
+Park maintenance overdue,parks,1,PMC,2024-06-03,6,2024
+Water feature malfunction in NMC jurisdiction,parks,1,NMC,2023-01-01,1,2023
+Bridge approach damaged near Industrial Area in WMC jurisdiction,road,2,WMC,2024-11-22,11,2024
+No water supply for 24+ hours in SMC jurisdiction,water,2,SMC,2023-07-23,7,2023
+Street light sensor not working,electricity,0,LMC,2024-05-31,5,2024
+Park maintenance overdue,parks,1,AMC,2024-04-05,4,2024
+Roadside vegetation obstructing view in HMC jurisdiction,road,1,HMC,2023-10-09,10,2023
+Dumpster missing lid,sanitation,0,JMC,2023-03-24,3,2023
+Speed breaker damaged on Lake Side in CMC jurisdiction,road,1,CMC,2024-07-09,7,2024
+Drain blockage at Industrial Area,water,1,VMC,2024-09-29,9,2024
+Road surface cracks on Garden Street in JMC jurisdiction,road,0,JMC,2024-01-24,1,2024
+Construction quality issues in KDMC jurisdiction,building,1,KDMC,2024-07-06,7,2024
+Building permit delay,building,0,KDMC,2023-09-11,9,2023
+Road hump needs repainting on Church Street in KMC jurisdiction,road,0,KMC,2023-08-12,8,2023
+Road hump needs repainting on River View,road,0,NMC,2023-07-23,7,2023
+Stray animals in garbage in BMC jurisdiction,sanitation,1,BMC,2024-11-08,11,2024
+Public toilet in park dirty,parks,2,LMC,2024-08-29,8,2024
+Street light not working at Slum Area,electricity,1,JMC,2023-07-06,7,2023
+Borewell not functioning,water,1,RMC,2024-07-17,7,2024
+Recycling not being done in GMC jurisdiction,sanitation,0,GMC,2023-07-17,7,2023
+Industrial waste mixing in AMC jurisdiction,sanitation,2,AMC,2024-05-10,5,2024
+Electrical pole leaning dangerously,electricity,2,WMC,2023-07-18,7,2023
+Littering in public park,sanitation,0,DMC,2024-08-10,8,2024
+Electrical meter issue,electricity,0,BMC,2024-05-04,5,2024
+Road hump needs repainting on Office Lane in UMC jurisdiction,road,0,UMC,2024-09-25,9,2024
+Billboard lights causing glare,electricity,1,LMC,2024-03-15,3,2024
+Composting facility issue in CMC jurisdiction,sanitation,1,CMC,2023-08-19,8,2023
+Illegal electricity connection in GMC jurisdiction,electricity,2,GMC,2023-06-29,6,2023
+Garbage overflow at Industrial Area in UMC jurisdiction,sanitation,1,UMC,2023-09-16,9,2023
+Building cracks noticed in HMC jurisdiction,building,1,HMC,2024-07-09,7,2024
+Roadside vegetation obstructing view in WMC jurisdiction,road,1,WMC,2023-02-22,2,2023
+Pipeline repair work incomplete,water,1,MMC,2023-09-07,9,2023
+Road surface cracks on Park Avenue in WMC jurisdiction,road,0,WMC,2024-02-29,2,2024
+Dumpster missing lid,sanitation,0,TMC,2024-08-24,8,2024
+Overflowing water tank at Commercial Complex in CMC jurisdiction,water,2,CMC,2024-02-25,2,2024
+Dumpster missing lid,sanitation,0,AMC,2023-02-17,2,2023
+Sidewalk damaged on Nehru Marg in MMC jurisdiction,road,1,MMC,2024-08-02,8,2024
+Heritage building damage,building,2,DMC,2023-08-24,8,2023
+Unauthorized building modifications,building,2,RMC,2023-01-15,1,2023
+Poor road repair work on Hill Road in GMC jurisdiction,road,1,GMC,2023-08-28,8,2023
+Partial power failure in Ward 5 in MMC jurisdiction,electricity,1,MMC,2023-02-08,2,2023
+Dead animal not removed,sanitation,2,MMC,2024-11-01,11,2024
+Park closing early,parks,0,RMC,2024-10-22,10,2024
+Water meter not working in PMC jurisdiction,water,0,PMC,2023-08-06,8,2023
+Street light timing incorrect,electricity,0,JMC,2024-08-01,8,2024
+Street light timing incorrect in KMC jurisdiction,electricity,0,KMC,2023-06-28,6,2023
+Flower beds neglected,parks,0,RMC,2024-08-25,8,2024
+Poor road repair work on Church Street in VMC jurisdiction,road,1,VMC,2024-03-30,3,2024
+Sidewalk damaged on Link Road in KDMC jurisdiction,road,1,KDMC,2024-08-22,8,2024
+No water supply for 24+ hours in HMC jurisdiction,water,2,HMC,2024-09-11,9,2024
+Recycling not being done in UMC jurisdiction,sanitation,0,UMC,2023-08-22,8,2023
+Stray animals in garbage in PMC jurisdiction,sanitation,1,PMC,2024-11-12,11,2024
+Construction noise after hours in DMC jurisdiction,building,1,DMC,2023-03-29,3,2023
+Pothole developing on College Road,road,1,KMC,2024-07-29,7,2024
+Pothole developing on Service Road in MMC jurisdiction,road,1,MMC,2023-12-27,12,2023
+Overflowing water tank at Market Area,water,2,CMC,2024-09-28,9,2024
+Fountain not working in AMC jurisdiction,parks,1,AMC,2024-02-15,2,2024
+Industrial waste mixing in KDMC jurisdiction,sanitation,2,KDMC,2024-04-09,4,2024
+Irregular water supply timing,water,1,CMC,2023-06-09,6,2023
+Street light not working at East Zone in NMC jurisdiction,electricity,1,NMC,2024-09-05,9,2024
+Bridge approach damaged near Ward 3 in LMC jurisdiction,road,2,LMC,2023-04-19,4,2023
+Billboard lights causing glare,electricity,1,VMC,2023-08-15,8,2023
+Drainage cover broken on road,road,1,PMC,2023-12-24,12,2023
+Building completion certificate issue in KMC jurisdiction,building,1,KMC,2023-09-20,9,2023
+Power fluctuations damaging appliances,electricity,2,KDMC,2024-10-05,10,2024
+Medical waste in regular garbage,sanitation,2,LMC,2024-10-04,10,2024
+Water bill discrepancy for Commercial Complex in NMC jurisdiction,water,1,NMC,2024-06-03,6,2024
+Street light not working at Industrial Area,electricity,1,UMC,2024-08-08,8,2024
+Speed breaker damaged on Cross Street in JMC jurisdiction,road,1,JMC,2024-11-25,11,2024
+Sewage backup in South Zone in WMC jurisdiction,water,2,WMC,2024-11-10,11,2024
+Tap leaking at Market Area in HMC jurisdiction,water,0,HMC,2023-01-19,1,2023
+Road surface cracks on Nehru Marg,road,0,DMC,2023-06-08,6,2023
+Littering in public park in UMC jurisdiction,sanitation,0,UMC,2024-09-24,9,2024
+Roadside vegetation obstructing view in NMC jurisdiction,road,1,NMC,2023-09-02,9,2023
+Tree branch fallen on road at Ward 3,road,2,PMC,2023-10-07,10,2023
+Leaking pipeline near Residential Colony,water,1,RMC,2024-01-19,1,2024
+Voltage fluctuations frequent in HMC jurisdiction,electricity,1,HMC,2023-10-23,10,2023
+Sidewalk damaged on Service Road in SMC jurisdiction,road,1,SMC,2024-09-21,9,2024
+Illegal electricity connection in HMC jurisdiction,electricity,2,HMC,2024-04-26,4,2024
+Stagnant water causing mosquito breeding,water,1,TMC,2023-12-20,12,2023
+Public bins missing in LMC jurisdiction,sanitation,0,LMC,2023-05-19,5,2023
+Sewage smell in Ward 2,sanitation,1,NMC,2023-02-12,2,2023
+Pipeline repair work incomplete in UMC jurisdiction,water,1,UMC,2024-10-24,10,2024
+Minor pothole on Cross Street in PMC jurisdiction,road,0,PMC,2023-11-10,11,2023
+Irregular water supply timing in BMC jurisdiction,water,1,BMC,2024-02-20,2,2024
+Public toilet unclean at Industrial Area in TMC jurisdiction,sanitation,1,TMC,2023-03-10,3,2023
+Garbage overflow at Ward 5 in CMC jurisdiction,sanitation,1,CMC,2024-01-15,1,2024
+Stray animals in garbage in HMC jurisdiction,sanitation,1,HMC,2024-10-27,10,2024
+Property tax assessment error in AMC jurisdiction,building,0,AMC,2024-07-29,7,2024
+Garbage truck leaking in CMC jurisdiction,sanitation,1,CMC,2024-05-17,5,2024
+Construction debris on Garden Street,road,1,RMC,2024-07-18,7,2024
+Dog waste in park,parks,0,VMC,2024-06-22,6,2024
+Street light sensor not working in UMC jurisdiction,electricity,0,UMC,2023-05-13,5,2023
+Park closing early in PMC jurisdiction,parks,0,PMC,2023-06-18,6,2023
+Property tax assessment error,building,0,HMC,2023-09-14,9,2023
+Building permit delay in NMC jurisdiction,building,0,NMC,2023-06-22,6,2023
+Street light sensor not working in WMC jurisdiction,electricity,0,WMC,2024-07-31,7,2024
+Garden not watered in CMC jurisdiction,parks,0,CMC,2024-08-08,8,2024
+Drain cleaning overdue in NMC jurisdiction,sanitation,1,NMC,2023-03-03,3,2023
+Public toilet in park dirty in KMC jurisdiction,parks,2,KMC,2023-04-19,4,2023
+Public event damage not repaired,parks,1,AMC,2023-11-17,11,2023
+Illegal electricity connection in CMC jurisdiction,electricity,2,CMC,2023-02-21,2,2023
+Electrical pole leaning dangerously in DMC jurisdiction,electricity,2,DMC,2023-04-21,4,2023
+Poor road repair work on Hospital Lane in KDMC jurisdiction,road,1,KDMC,2024-07-17,7,2024
+Building material on road,building,1,PMC,2024-02-08,2,2024
+Building material on road in RMC jurisdiction,building,1,RMC,2024-06-05,6,2024
+Billboard lights causing glare in DMC jurisdiction,electricity,1,DMC,2023-01-18,1,2023
+Poor road repair work on Market Road,road,1,WMC,2023-09-06,9,2023
+Property tax assessment error in TMC jurisdiction,building,0,TMC,2023-06-05,6,2023
+Voltage fluctuations frequent in DMC jurisdiction,electricity,1,DMC,2023-06-27,6,2023
+Electrical maintenance overdue in GMC jurisdiction,electricity,1,GMC,2023-09-10,9,2023
+Traffic signal not working at Ward 7 in GMC jurisdiction,road,2,GMC,2024-07-05,7,2024
+Street light sensor not working,electricity,0,PMC,2023-09-03,9,2023
+Garbage overflow at Ward 4 in SMC jurisdiction,sanitation,1,SMC,2024-04-28,4,2024
+Recycling not being done in UMC jurisdiction,sanitation,0,UMC,2024-05-02,5,2024
+Major road collapse on Service Road,road,2,DMC,2023-01-10,1,2023
+Exposed wires at West Zone in HMC jurisdiction,electricity,2,HMC,2023-04-26,4,2023
+Garbage overflow at South Zone,sanitation,1,AMC,2024-08-04,8,2024
+Road surface cracks on MG Road in JMC jurisdiction,road,0,JMC,2023-08-30,8,2023
+Public tap not working at Commercial Complex in CMC jurisdiction,water,0,CMC,2024-10-31,10,2024
+Public toilet in park dirty in PMC jurisdiction,parks,2,PMC,2023-08-15,8,2023
+Drainage cover broken on road in BMC jurisdiction,road,1,BMC,2023-06-03,6,2023
+High mast light not working in SMC jurisdiction,electricity,1,SMC,2023-06-08,6,2023
+Encroachment on public land in SMC jurisdiction,building,2,SMC,2024-08-31,8,2024
+Power fluctuations damaging appliances in BMC jurisdiction,electricity,2,BMC,2023-10-24,10,2023
+Park security issue,parks,1,CMC,2023-11-25,11,2023
+Public toilet in park dirty in HMC jurisdiction,parks,2,HMC,2023-10-09,10,2023
+Demolition debris not cleared in HMC jurisdiction,building,1,HMC,2024-02-23,2,2024
+Overflowing water tank at East Zone in DMC jurisdiction,water,2,DMC,2024-12-25,12,2024
+Park lights not functioning in MMC jurisdiction,electricity,0,MMC,2023-05-18,5,2023
+Electrical maintenance overdue in CMC jurisdiction,electricity,1,CMC,2023-12-07,12,2023
+Sewage smell in Middle Class Colony in VMC jurisdiction,sanitation,1,VMC,2023-10-17,10,2023
+Power cut during office hours in GMC jurisdiction,electricity,1,GMC,2024-05-24,5,2024
+Road hump needs repainting on Service Road in GMC jurisdiction,road,0,GMC,2023-12-04,12,2023
+Stray animals in garbage in AMC jurisdiction,sanitation,1,AMC,2024-07-13,7,2024
+Dead animal not removed,sanitation,2,MMC,2023-08-25,8,2023
+Play equipment damaged in TMC jurisdiction,parks,1,TMC,2024-02-26,2,2024
+Street light flickering at Affluent Society,electricity,0,NMC,2024-11-21,11,2024
+Building permit delay in PMC jurisdiction,building,0,PMC,2024-09-26,9,2024
+Speed breaker damaged on Main Street in NMC jurisdiction,road,1,NMC,2024-01-24,1,2024
+Illegal electricity connection,electricity,2,PMC,2023-08-24,8,2023
+Drain blockage at South Zone in BMC jurisdiction,water,1,BMC,2023-08-01,8,2023
+Construction waste on roadside in VMC jurisdiction,sanitation,1,VMC,2024-07-31,7,2024
+Drainage system failure during rain,water,2,WMC,2023-12-01,12,2023
+Garbage truck leaking,sanitation,1,KDMC,2024-12-31,12,2024
+Borewell not functioning in KMC jurisdiction,water,1,KMC,2023-04-20,4,2023
+Construction noise after hours in GMC jurisdiction,building,1,GMC,2023-07-11,7,2023
+Illegal electricity connection in SMC jurisdiction,electricity,2,SMC,2024-12-02,12,2024
+Road surface cracks on Park Avenue in DMC jurisdiction,road,0,DMC,2023-10-10,10,2023
+Minor pothole on River View in NMC jurisdiction,road,0,NMC,2024-09-27,9,2024
+Irrigation system broken,parks,1,MMC,2023-05-20,5,2023
+Leaking pipeline near South Zone in DMC jurisdiction,water,1,DMC,2024-02-07,2,2024
+Building permit delay in UMC jurisdiction,building,0,UMC,2024-07-17,7,2024
+Sanitation workers strike,sanitation,2,CMC,2024-12-10,12,2024
+Dead animal not removed in DMC jurisdiction,sanitation,2,DMC,2023-09-05,9,2023
+Poor road repair work on Cross Street,road,1,CMC,2024-03-16,3,2024
+Bridge approach damaged near North Zone in KMC jurisdiction,road,2,KMC,2023-07-31,7,2023
+Major road collapse on Nehru Marg in PMC jurisdiction,road,2,PMC,2024-07-19,7,2024
+Emergency lights not working in SMC jurisdiction,electricity,2,SMC,2023-07-08,7,2023
+Sewage smell in Industrial Area in WMC jurisdiction,sanitation,1,WMC,2024-02-03,2,2024
+Minor pothole on Temple Street in KDMC jurisdiction,road,0,KDMC,2023-11-30,11,2023
+Sewage backup in North Zone,water,2,WMC,2024-08-27,8,2024
+Public toilet in park dirty in AMC jurisdiction,parks,2,AMC,2023-05-24,5,2023
+Road markings faded on Main Street in SMC jurisdiction,road,0,SMC,2024-07-04,7,2024
+Drain cleaning overdue in BMC jurisdiction,sanitation,1,BMC,2024-03-11,3,2024
+Waterlogging on Gandhi Road during rain,road,2,PMC,2024-08-25,8,2024
+Garbage truck leaking in UMC jurisdiction,sanitation,1,UMC,2023-06-22,6,2023
+Construction safety violation in KMC jurisdiction,building,2,KMC,2024-12-29,12,2024
+Street light flickering at Ward 4 in BMC jurisdiction,electricity,0,BMC,2024-04-15,4,2024
+Drainage cover broken on road in KMC jurisdiction,road,1,KMC,2024-03-31,3,2024
+Dead animal not removed in MMC jurisdiction,sanitation,2,MMC,2023-08-23,8,2023
+Dumpster missing lid,sanitation,0,JMC,2023-05-21,5,2023
+Poor road repair work on Service Road in CMC jurisdiction,road,1,CMC,2023-09-03,9,2023
+Property tax assessment error in CMC jurisdiction,building,0,CMC,2024-11-30,11,2024
+Complete blackout in Commercial Complex in KDMC jurisdiction,electricity,2,KDMC,2023-09-26,9,2023
+Pothole developing on Nehru Marg in SMC jurisdiction,road,1,SMC,2024-03-20,3,2024
+Street light flickering at Ward 1,electricity,0,AMC,2024-12-19,12,2024
+Play equipment damaged in PMC jurisdiction,parks,1,PMC,2024-03-15,3,2024
+Speed breaker damaged on School Road in CMC jurisdiction,road,1,CMC,2024-01-04,1,2024
+Garden not watered,parks,0,AMC,2024-08-10,8,2024
+Pothole developing on MG Road in TMC jurisdiction,road,1,TMC,2024-04-28,4,2024
+Park closing early,parks,0,BMC,2024-11-02,11,2024
+Public bins missing in KDMC jurisdiction,sanitation,0,KDMC,2023-07-25,7,2023
+Sewage smell in Ward 5 in UMC jurisdiction,sanitation,1,UMC,2024-02-24,2,2024
+Power cut during office hours in TMC jurisdiction,electricity,1,TMC,2024-11-04,11,2024
+Public toilet unclean at Residential Colony in HMC jurisdiction,sanitation,1,HMC,2024-08-04,8,2024
+Recycling not being done in GMC jurisdiction,sanitation,0,GMC,2023-07-27,7,2023
+Recycling not being done in PMC jurisdiction,sanitation,0,PMC,2023-11-18,11,2023
+Exposed wires at North Zone in CMC jurisdiction,electricity,2,CMC,2023-05-03,5,2023
+Littering in public park in WMC jurisdiction,sanitation,0,WMC,2023-12-02,12,2023
+Waterlogging on Church Street during rain in LMC jurisdiction,road,2,LMC,2023-05-24,5,2023
+Property tax assessment error,building,0,CMC,2023-03-18,3,2023
+Major road collapse on Park Avenue,road,2,LMC,2023-12-06,12,2023
+Illegal parking blocking School Road in SMC jurisdiction,road,1,SMC,2024-07-17,7,2024
+Drainage cover broken on road in MMC jurisdiction,road,1,MMC,2024-06-22,6,2024
+Dumpster missing lid in CMC jurisdiction,sanitation,0,CMC,2023-07-04,7,2023
+Demolition debris not cleared,building,1,VMC,2023-06-27,6,2023
+Illegal electricity connection in RMC jurisdiction,electricity,2,RMC,2024-12-18,12,2024
+Park lights not functioning in CMC jurisdiction,electricity,0,CMC,2023-06-29,6,2023
+Road markings faded on Main Street in AMC jurisdiction,road,0,AMC,2024-08-23,8,2024
+Road markings faded on Park Avenue in HMC jurisdiction,road,0,HMC,2024-11-09,11,2024
+Bridge approach damaged near East Zone in WMC jurisdiction,road,2,WMC,2023-06-29,6,2023
+Littering in public park,sanitation,0,AMC,2024-08-09,8,2024
+Construction safety violation in BMC jurisdiction,building,2,BMC,2024-09-18,9,2024
+Electrical pole leaning dangerously,electricity,2,KMC,2023-09-01,9,2023
+Stagnant water causing mosquito breeding in KDMC jurisdiction,water,1,KDMC,2023-09-29,9,2023
+Public toilet unclean at Industrial Area in SMC jurisdiction,sanitation,1,SMC,2023-02-04,2,2023
+Composting facility issue in AMC jurisdiction,sanitation,1,AMC,2023-04-14,4,2023
+Unauthorized commercial use in UMC jurisdiction,building,1,UMC,2023-10-16,10,2023
+Roadside vegetation obstructing view in UMC jurisdiction,road,1,UMC,2024-01-05,1,2024
+Traffic signal not working at Ward 7 in WMC jurisdiction,road,2,WMC,2023-07-31,7,2023
+Public bins missing in UMC jurisdiction,sanitation,0,UMC,2024-01-26,1,2024
+Public toilet in park dirty in WMC jurisdiction,parks,2,WMC,2024-04-04,4,2024
+No water supply for 24+ hours in KMC jurisdiction,water,2,KMC,2023-03-10,3,2023
+Partial power failure in Market Area in MMC jurisdiction,electricity,1,MMC,2024-08-03,8,2024
+Park closing early in DMC jurisdiction,parks,0,DMC,2023-02-08,2,2023
+Construction debris on MG Road in GMC jurisdiction,road,1,GMC,2023-11-07,11,2023
+Sidewalk damaged on Hospital Lane,road,1,VMC,2023-01-30,1,2023
+Sidewalk damaged on School Road in LMC jurisdiction,road,1,LMC,2023-12-25,12,2023
+Dumpster missing lid in KDMC jurisdiction,sanitation,0,KDMC,2023-02-20,2,2023
+Recycling not being done,sanitation,0,HMC,2024-09-06,9,2024
+Leaking pipeline near South Zone,water,1,CMC,2023-08-16,8,2023
+Public event damage not repaired in SMC jurisdiction,parks,1,SMC,2023-11-11,11,2023
+Walking track damaged in CMC jurisdiction,parks,1,CMC,2023-05-01,5,2023
+Park lights not working in WMC jurisdiction,parks,1,WMC,2023-07-19,7,2023
+Water feature malfunction in NMC jurisdiction,parks,1,NMC,2023-06-04,6,2023
+Major road collapse on School Road,road,2,CMC,2023-04-01,4,2023
+Tree branch fallen on road at Industrial Area,road,2,NMC,2024-09-02,9,2024
+Stagnant water causing mosquito breeding,water,1,KMC,2024-05-16,5,2024
+Large dangerous pothole on Nehru Marg causing accidents in VMC jurisdiction,road,2,VMC,2023-05-15,5,2023
+Construction debris on Main Street in PMC jurisdiction,road,1,PMC,2024-10-17,10,2024
+Street light flickering at Ward 1 in BMC jurisdiction,electricity,0,BMC,2023-04-29,4,2023
+Drain blockage at Ward 7 in DMC jurisdiction,water,1,DMC,2024-10-07,10,2024
+Water meter not working in HMC jurisdiction,water,0,HMC,2024-12-18,12,2024
+Power fluctuations damaging appliances in HMC jurisdiction,electricity,2,HMC,2024-02-24,2,2024
+Roadside vegetation obstructing view in CMC jurisdiction,road,1,CMC,2023-01-03,1,2023
+Road hump needs repainting on Market Road,road,0,CMC,2024-06-07,6,2024
+Sanitation workers strike,sanitation,2,SMC,2023-10-31,10,2023
+Tree branch fallen on road at Central Zone,road,2,BMC,2023-11-17,11,2023
+Large dangerous pothole on Market Road causing accidents in BMC jurisdiction,road,2,BMC,2023-06-24,6,2023
+Public toilet in park dirty in GMC jurisdiction,parks,2,GMC,2023-12-17,12,2023
+Public bins missing,sanitation,0,CMC,2024-11-25,11,2024
+Complete blackout in Ward 5 in WMC jurisdiction,electricity,2,WMC,2024-05-14,5,2024
+Large dangerous pothole on MG Road causing accidents in WMC jurisdiction,road,2,WMC,2023-06-10,6,2023
+Water quality issues in Ward 4,water,2,LMC,2024-10-31,10,2024
+Tap leaking at Ward 3,water,0,UMC,2024-09-25,9,2024
+Low water pressure in Ward 6 in PMC jurisdiction,water,1,PMC,2024-02-24,2,2024
+Street light timing incorrect in VMC jurisdiction,electricity,0,VMC,2023-07-15,7,2023
+Pothole developing on Temple Street,road,1,HMC,2024-08-22,8,2024
+Power theft suspected in Commercial Complex in AMC jurisdiction,electricity,2,AMC,2023-05-12,5,2023
+Dumpster missing lid in JMC jurisdiction,sanitation,0,JMC,2023-05-17,5,2023
+Park closing early in AMC jurisdiction,parks,0,AMC,2024-10-14,10,2024
+Dumpster missing lid in BMC jurisdiction,sanitation,0,BMC,2024-07-08,7,2024
+Recycling not being done,sanitation,0,UMC,2024-07-28,7,2024
+Garbage overflow at Ward 1,sanitation,1,UMC,2023-07-27,7,2023
+Medical waste in regular garbage,sanitation,2,SMC,2024-07-13,7,2024
+Illegal parking blocking Garden Street in CMC jurisdiction,road,1,CMC,2024-11-30,11,2024
+Pothole developing on Cross Street in GMC jurisdiction,road,1,GMC,2023-06-08,6,2023
+Irrigation system broken in WMC jurisdiction,parks,1,WMC,2024-08-09,8,2024
+Drainage cover broken on road,road,1,HMC,2024-06-17,6,2024
+Recycling not being done,sanitation,0,NMC,2024-09-25,9,2024
+Unauthorized building modifications in TMC jurisdiction,building,2,TMC,2024-04-01,4,2024
+Garbage not collected for 2+ days in SMC jurisdiction,sanitation,2,SMC,2023-11-25,11,2023
+Water treatment plant issue in LMC jurisdiction,water,2,LMC,2024-10-29,10,2024
+Public toilet unclean at Ward 1 in KDMC jurisdiction,sanitation,1,KDMC,2023-12-06,12,2023
+Minor pothole on College Road,road,0,GMC,2023-09-22,9,2023
+Street light not working at Residential Colony in JMC jurisdiction,electricity,1,JMC,2024-07-01,7,2024
+Littering in public park,sanitation,0,CMC,2023-03-16,3,2023
+Street light sensor not working in NMC jurisdiction,electricity,0,NMC,2024-03-24,3,2024
+Dumpster missing lid in KMC jurisdiction,sanitation,0,KMC,2024-10-25,10,2024
+Water bill discrepancy for Ward 7,water,1,KDMC,2023-12-19,12,2023
+Minor pothole on Temple Street in CMC jurisdiction,road,0,CMC,2024-07-16,7,2024
+Public bins missing,sanitation,0,CMC,2024-01-01,1,2024
+Sidewalk damaged on Temple Street in GMC jurisdiction,road,1,GMC,2024-10-03,10,2024
+Minor pothole on College Road in HMC jurisdiction,road,0,HMC,2024-08-27,8,2024
+Exposed wires at Affluent Society in KMC jurisdiction,electricity,2,KMC,2024-02-11,2,2024
+Road surface cracks on Hospital Lane in WMC jurisdiction,road,0,WMC,2023-06-13,6,2023
+Construction quality issues,building,1,KMC,2023-02-11,2,2023
+Street light timing incorrect in RMC jurisdiction,electricity,0,RMC,2023-07-31,7,2023
+Garbage overflow at Ward 2,sanitation,1,LMC,2023-11-28,11,2023
+Building plans not approved in GMC jurisdiction,building,1,GMC,2024-08-06,8,2024
+Garbage truck leaking in KDMC jurisdiction,sanitation,1,KDMC,2023-08-17,8,2023
+Road markings faded on Gandhi Road in KDMC jurisdiction,road,0,KDMC,2023-06-11,6,2023
+Park lights not functioning in AMC jurisdiction,electricity,0,AMC,2023-02-14,2,2023
+Street light flickering at Commercial Complex in HMC jurisdiction,electricity,0,HMC,2023-06-20,6,2023
+Large dangerous pothole on Service Road causing accidents,road,2,WMC,2023-08-10,8,2023
+Encroachment on public land,building,2,AMC,2024-09-07,9,2024
+Power theft suspected in Affluent Society in WMC jurisdiction,electricity,2,WMC,2024-12-03,12,2024
+Voltage fluctuations frequent in SMC jurisdiction,electricity,1,SMC,2023-04-22,4,2023
+Emergency lights not working in MMC jurisdiction,electricity,2,MMC,2023-04-09,4,2023
+Tap leaking at North Zone in SMC jurisdiction,water,0,SMC,2024-07-10,7,2024
+Speed breaker damaged on Hospital Lane in TMC jurisdiction,road,1,TMC,2024-11-01,11,2024
+Public toilet unclean at Market Area in PMC jurisdiction,sanitation,1,PMC,2023-09-17,9,2023
+Sewage backup in Central Zone in DMC jurisdiction,water,2,DMC,2024-05-10,5,2024
+Public tap not working at Ward 5,water,0,VMC,2024-11-06,11,2024
+Composting facility issue in WMC jurisdiction,sanitation,1,WMC,2023-09-27,9,2023
+Building cracks noticed,building,1,CMC,2024-06-06,6,2024
+Road markings faded on Nehru Marg in BMC jurisdiction,road,0,BMC,2023-06-11,6,2023
+Borewell not functioning in VMC jurisdiction,water,1,VMC,2024-06-14,6,2024
+Tree branch fallen on road at Ward 3 in SMC jurisdiction,road,2,SMC,2023-12-17,12,2023
+Building completion certificate issue,building,1,RMC,2023-10-03,10,2023
+Sanitation workers strike,sanitation,2,CMC,2023-08-29,8,2023
+Flower beds neglected in CMC jurisdiction,parks,0,CMC,2024-09-25,9,2024
+Electrical pole leaning dangerously in HMC jurisdiction,electricity,2,HMC,2024-08-13,8,2024
+Park lights not functioning in HMC jurisdiction,electricity,0,HMC,2023-01-09,1,2023
+Construction debris on Office Lane,road,1,JMC,2023-07-11,7,2023
+Construction debris on Hill Road in WMC jurisdiction,road,1,WMC,2024-03-10,3,2024
+Garbage truck leaking in VMC jurisdiction,sanitation,1,VMC,2024-08-08,8,2024
+Electrical meter issue,electricity,0,PMC,2024-07-22,7,2024
+Water meter not working,water,0,KMC,2023-06-30,6,2023
+Construction debris on Hill Road in GMC jurisdiction,road,1,GMC,2023-09-21,9,2023
+Tap leaking at South Zone in KMC jurisdiction,water,0,KMC,2024-09-19,9,2024
+Transformer making noise at Ward 1 in AMC jurisdiction,electricity,1,AMC,2023-08-29,8,2023
+Building completion certificate issue in KDMC jurisdiction,building,1,KDMC,2023-04-16,4,2023
+Road surface cracks on Hill Road in HMC jurisdiction,road,0,HMC,2024-07-01,7,2024
+Electrical pole leaning dangerously in UMC jurisdiction,electricity,2,UMC,2024-07-28,7,2024
+Emergency lights not working in WMC jurisdiction,electricity,2,WMC,2023-10-06,10,2023
+Industrial waste mixing,sanitation,2,MMC,2023-07-06,7,2023
+Illegal parking blocking Office Lane in LMC jurisdiction,road,1,LMC,2023-11-25,11,2023
+Complete blackout in Ward 5 in JMC jurisdiction,electricity,2,JMC,2024-02-06,2,2024
+Public tap not working at Slum Area in BMC jurisdiction,water,0,BMC,2023-06-08,6,2023
+Road markings faded on Main Street in KDMC jurisdiction,road,0,KDMC,2024-10-22,10,2024
+Industrial waste mixing in LMC jurisdiction,sanitation,2,LMC,2024-01-22,1,2024
+Park lights not functioning in KMC jurisdiction,electricity,0,KMC,2023-09-27,9,2023
+Voltage fluctuations frequent in JMC jurisdiction,electricity,1,JMC,2023-04-24,4,2023
+Recycling not being done,sanitation,0,KMC,2023-07-26,7,2023
+Road hump needs repainting on Hospital Lane in VMC jurisdiction,road,0,VMC,2024-08-27,8,2024
+Poor road repair work on Gandhi Road in UMC jurisdiction,road,1,UMC,2024-11-03,11,2024
+Construction waste on roadside in MMC jurisdiction,sanitation,1,MMC,2023-07-04,7,2023
+Electrical meter issue in UMC jurisdiction,electricity,0,UMC,2024-04-08,4,2024
+Low water pressure in Affluent Society in NMC jurisdiction,water,1,NMC,2023-11-06,11,2023
+Road surface cracks on Nehru Marg in CMC jurisdiction,road,0,CMC,2023-11-04,11,2023
+Littering in public park,sanitation,0,NMC,2024-08-13,8,2024
+Medical waste in regular garbage,sanitation,2,JMC,2024-03-20,3,2024
+Public toilet in park dirty in SMC jurisdiction,parks,2,SMC,2024-10-09,10,2024
+Public tap not working at Ward 5 in UMC jurisdiction,water,0,UMC,2024-12-15,12,2024
+Roadside vegetation obstructing view,road,1,VMC,2024-08-12,8,2024
+Poor road repair work on Hospital Lane in KDMC jurisdiction,road,1,KDMC,2024-12-15,12,2024
+Park lights not functioning in GMC jurisdiction,electricity,0,GMC,2024-08-12,8,2024
+Sewage smell in South Zone in RMC jurisdiction,sanitation,1,RMC,2024-11-02,11,2024
+Water treatment plant issue in WMC jurisdiction,water,2,WMC,2024-03-27,3,2024
+Recycling not being done,sanitation,0,RMC,2023-03-29,3,2023
+Tree branch fallen on road at Ward 1 in KMC jurisdiction,road,2,KMC,2023-04-24,4,2023
+Speed breaker damaged on MG Road in RMC jurisdiction,road,1,RMC,2024-10-26,10,2024
+Demolition debris not cleared in PMC jurisdiction,building,1,PMC,2024-09-03,9,2024
+Pothole developing on Main Street in LMC jurisdiction,road,1,LMC,2024-06-26,6,2024
+Recycling not being done in VMC jurisdiction,sanitation,0,VMC,2024-08-09,8,2024
+Fire safety violation in JMC jurisdiction,building,2,JMC,2023-07-31,7,2023
+Drain blockage at Ward 7 in GMC jurisdiction,water,1,GMC,2023-07-09,7,2023
+Building maintenance overdue in WMC jurisdiction,building,1,WMC,2024-09-02,9,2024
+Water treatment plant issue in DMC jurisdiction,water,2,DMC,2023-07-17,7,2023
+Property tax assessment error,building,0,LMC,2023-10-20,10,2023
+Drain blockage at Industrial Area,water,1,BMC,2024-04-07,4,2024
+Street light sensor not working in CMC jurisdiction,electricity,0,CMC,2024-02-28,2,2024
+Electrical maintenance overdue in CMC jurisdiction,electricity,1,CMC,2024-03-28,3,2024
+Littering in public park in KDMC jurisdiction,sanitation,0,KDMC,2023-07-02,7,2023
+Road hump needs repainting on Park Avenue,road,0,RMC,2024-07-17,7,2024
+Electrical meter issue in GMC jurisdiction,electricity,0,GMC,2024-06-21,6,2024
+Water meter not working in CMC jurisdiction,water,0,CMC,2024-10-09,10,2024
+Unauthorized dumping ground,sanitation,2,SMC,2023-01-02,1,2023
+Low water pressure in Ward 4 in JMC jurisdiction,water,1,JMC,2023-12-16,12,2023
+Street light flickering at Affluent Society in MMC jurisdiction,electricity,0,MMC,2024-11-25,11,2024
+Electrical meter issue in JMC jurisdiction,electricity,0,JMC,2023-06-02,6,2023
+Major road collapse on College Road in UMC jurisdiction,road,2,UMC,2023-07-11,7,2023
+Drainage cover broken on road in NMC jurisdiction,road,1,NMC,2023-06-29,6,2023
+Building completion certificate issue,building,1,KMC,2024-04-15,4,2024
+Public tap not working at South Zone,water,0,GMC,2024-11-18,11,2024
+Minor pothole on Gandhi Road in TMC jurisdiction,road,0,TMC,2024-07-16,7,2024
+Low water pressure in Slum Area,water,1,KMC,2023-02-21,2,2023
+Roadside vegetation obstructing view in AMC jurisdiction,road,1,AMC,2023-11-16,11,2023
+Stagnant water causing mosquito breeding in JMC jurisdiction,water,1,JMC,2023-01-31,1,2023
+High mast light not working in MMC jurisdiction,electricity,1,MMC,2024-07-15,7,2024
+Power cut during office hours in LMC jurisdiction,electricity,1,LMC,2024-03-31,3,2024
+Leaking pipeline near South Zone in CMC jurisdiction,water,1,CMC,2024-11-26,11,2024
+Tap leaking at Central Zone,water,0,NMC,2023-02-24,2,2023
+Emergency lights not working in PMC jurisdiction,electricity,2,PMC,2023-02-01,2,2023
+Major road collapse on MG Road in KMC jurisdiction,road,2,KMC,2023-01-17,1,2023
+Park security issue in MMC jurisdiction,parks,1,MMC,2024-06-05,6,2024
+Public toilet unclean at Market Area in SMC jurisdiction,sanitation,1,SMC,2024-08-14,8,2024
+Composting facility issue,sanitation,1,GMC,2024-08-13,8,2024
+Construction noise after hours in RMC jurisdiction,building,1,RMC,2024-12-08,12,2024
+Construction debris on Lake Side in DMC jurisdiction,road,1,DMC,2023-10-29,10,2023
+Tree branch fallen on road at Ward 2 in NMC jurisdiction,road,2,NMC,2024-08-15,8,2024
+Park closing early in KMC jurisdiction,parks,0,KMC,2023-09-21,9,2023
+Road surface cracks on Garden Street in CMC jurisdiction,road,0,CMC,2023-06-29,6,2023
+Pothole developing on Link Road,road,1,RMC,2023-04-29,4,2023
+High mast light not working in DMC jurisdiction,electricity,1,DMC,2024-12-23,12,2024
+Low water pressure in North Zone,water,1,MMC,2024-04-04,4,2024
+Irregular water supply timing,water,1,BMC,2024-10-14,10,2024
+Stray animals in garbage in GMC jurisdiction,sanitation,1,GMC,2023-04-11,4,2023
+Speed breaker damaged on MG Road in TMC jurisdiction,road,1,TMC,2024-06-21,6,2024
+Speed breaker damaged on Church Street in CMC jurisdiction,road,1,CMC,2024-09-11,9,2024
+Dead animal not removed,sanitation,2,CMC,2024-12-13,12,2024
+Garbage truck leaking in JMC jurisdiction,sanitation,1,JMC,2023-03-17,3,2023
+Pipeline repair work incomplete,water,1,PMC,2023-04-16,4,2023
+Pothole developing on School Road in LMC jurisdiction,road,1,LMC,2024-10-17,10,2024
+Construction waste on roadside in VMC jurisdiction,sanitation,1,VMC,2023-01-04,1,2023
+Medical waste in regular garbage in PMC jurisdiction,sanitation,2,PMC,2023-11-07,11,2023
+Medical waste in regular garbage in KDMC jurisdiction,sanitation,2,KDMC,2023-12-15,12,2023
+Stagnant water causing mosquito breeding in PMC jurisdiction,water,1,PMC,2024-10-09,10,2024
+Road surface cracks on School Road in TMC jurisdiction,road,0,TMC,2024-07-07,7,2024
+Road hump needs repainting on Temple Street in HMC jurisdiction,road,0,HMC,2024-08-16,8,2024
+Pothole developing on School Road,road,1,DMC,2024-09-25,9,2024
+Speed breaker damaged on School Road in PMC jurisdiction,road,1,PMC,2024-09-22,9,2024
+Large dangerous pothole on College Road causing accidents in CMC jurisdiction,road,2,CMC,2023-03-06,3,2023
+Sidewalk damaged on Garden Street in RMC jurisdiction,road,1,RMC,2024-08-18,8,2024
+Missing manhole cover on Station Road in WMC jurisdiction,road,2,WMC,2024-05-13,5,2024
+Tap leaking at Ward 4 in JMC jurisdiction,water,0,JMC,2023-04-11,4,2023
+Water meter not working in LMC jurisdiction,water,0,LMC,2023-12-18,12,2023
+Tap leaking at Commercial Complex,water,0,WMC,2023-08-24,8,2023
+Park security issue in CMC jurisdiction,parks,1,CMC,2024-04-18,4,2024
+Street light flickering at Market Area,electricity,0,UMC,2023-05-16,5,2023
+Garbage overflow at Ward 3 in LMC jurisdiction,sanitation,1,LMC,2024-12-08,12,2024
+Speed breaker damaged on Temple Street,road,1,UMC,2023-07-29,7,2023
+Industrial waste mixing,sanitation,2,KDMC,2024-04-13,4,2024
+Tap leaking at Ward 6 in KDMC jurisdiction,water,0,KDMC,2024-12-14,12,2024
+Electrical maintenance overdue in HMC jurisdiction,electricity,1,HMC,2024-08-03,8,2024
+Low water pressure in South Zone,water,1,CMC,2023-06-01,6,2023
+Sewage backup in Commercial Complex,water,2,CMC,2024-03-28,3,2024
+Stray animals in garbage in KDMC jurisdiction,sanitation,1,KDMC,2024-10-18,10,2024
+Park lights not functioning in RMC jurisdiction,electricity,0,RMC,2024-03-13,3,2024
+Water meter not working,water,0,RMC,2024-07-28,7,2024
+Public tap not working at Commercial Complex,water,0,LMC,2023-05-21,5,2023
+Leaking pipeline near Ward 1,water,1,LMC,2023-06-07,6,2023
+Unauthorized building modifications in DMC jurisdiction,building,2,DMC,2023-10-22,10,2023
+Roadside vegetation obstructing view in CMC jurisdiction,road,1,CMC,2023-09-22,9,2023
+Power cut during office hours in PMC jurisdiction,electricity,1,PMC,2024-08-12,8,2024
+Stagnant water causing mosquito breeding in KMC jurisdiction,water,1,KMC,2024-12-10,12,2024
+Minor pothole on Office Lane,road,0,AMC,2024-07-10,7,2024
+No water supply for 24+ hours in NMC jurisdiction,water,2,NMC,2024-12-05,12,2024
+Construction waste on roadside in HMC jurisdiction,sanitation,1,HMC,2023-03-20,3,2023
+Water contamination reported in Ward 1,water,2,PMC,2024-03-17,3,2024
+Large dangerous pothole on School Road causing accidents in HMC jurisdiction,road,2,HMC,2023-09-17,9,2023
+Tap leaking at Ward 7 in PMC jurisdiction,water,0,PMC,2023-07-24,7,2023
+Partial power failure in Commercial Complex,electricity,1,KDMC,2024-06-25,6,2024
+Electrical maintenance overdue in AMC jurisdiction,electricity,1,AMC,2023-04-20,4,2023
+Leaking pipeline near Market Area in CMC jurisdiction,water,1,CMC,2023-11-18,11,2023
+Road markings faded on Temple Street,road,0,RMC,2023-03-26,3,2023
+Road markings faded on Garden Street in WMC jurisdiction,road,0,WMC,2024-02-22,2,2024
+Flower beds neglected,parks,0,KDMC,2024-11-26,11,2024
+Poor road repair work on Garden Street in PMC jurisdiction,road,1,PMC,2024-11-23,11,2024
+Speed breaker damaged on Station Road in CMC jurisdiction,road,1,CMC,2023-07-23,7,2023
+Power fluctuations damaging appliances,electricity,2,PMC,2024-05-26,5,2024
+Drain blockage at Industrial Area in GMC jurisdiction,water,1,GMC,2023-09-14,9,2023
+Building material on road in JMC jurisdiction,building,1,JMC,2024-09-30,9,2024
+Traffic signal not working at Ward 7 in DMC jurisdiction,road,2,DMC,2024-05-24,5,2024
+Street light sensor not working in DMC jurisdiction,electricity,0,DMC,2024-08-08,8,2024
+Power cut during office hours in NMC jurisdiction,electricity,1,NMC,2024-08-27,8,2024
+Littering in public park,sanitation,0,CMC,2024-10-02,10,2024
+Road hump needs repainting on Hill Road in RMC jurisdiction,road,0,RMC,2023-09-08,9,2023
+Garbage truck leaking in KDMC jurisdiction,sanitation,1,KDMC,2023-06-23,6,2023
+Road hump needs repainting on Cross Street in CMC jurisdiction,road,0,CMC,2024-05-15,5,2024
+Dumpster missing lid in HMC jurisdiction,sanitation,0,HMC,2023-11-03,11,2023
+Public tap not working at Commercial Complex in KDMC jurisdiction,water,0,KDMC,2023-12-11,12,2023
+Recycling not being done in NMC jurisdiction,sanitation,0,NMC,2024-09-07,9,2024
+Poor road repair work on Hill Road in KDMC jurisdiction,road,1,KDMC,2023-04-03,4,2023
+Electrical pole leaning dangerously in HMC jurisdiction,electricity,2,HMC,2023-04-03,4,2023
+Missing manhole cover on Nehru Marg,road,2,JMC,2023-08-12,8,2023
+Water supply contaminated with sewage in JMC jurisdiction,water,2,JMC,2024-11-30,11,2024
+Water quality issues in Slum Area,water,2,KMC,2023-11-12,11,2023
+Building completion certificate issue in BMC jurisdiction,building,1,BMC,2024-01-29,1,2024
+Unauthorized commercial use,building,1,PMC,2024-03-29,3,2024
+Walking track damaged in GMC jurisdiction,parks,1,GMC,2023-08-30,8,2023
+Dog waste in park in LMC jurisdiction,parks,0,LMC,2024-10-21,10,2024
+Pothole developing on River View in KMC jurisdiction,road,1,KMC,2023-11-09,11,2023
+Poor road repair work on River View,road,1,AMC,2024-08-07,8,2024
+Encroachment on public land,building,2,WMC,2024-04-18,4,2024
+Public bins missing in VMC jurisdiction,sanitation,0,VMC,2023-06-02,6,2023
+Street light timing incorrect,electricity,0,CMC,2023-09-30,9,2023
+Minor pothole on Service Road,road,0,KMC,2023-08-30,8,2023
+Occupancy certificate delay,building,1,CMC,2024-09-03,9,2024
+Building cracks noticed in BMC jurisdiction,building,1,BMC,2024-09-26,9,2024
+Unauthorized commercial use in KMC jurisdiction,building,1,KMC,2023-07-03,7,2023
+Park closing early,parks,0,GMC,2023-09-28,9,2023
+Tap leaking at Ward 6 in BMC jurisdiction,water,0,BMC,2023-09-24,9,2023
+Street light flickering at Central Zone in KMC jurisdiction,electricity,0,KMC,2023-10-18,10,2023
+High mast light not working,electricity,1,KDMC,2024-11-24,11,2024
+Road hump needs repainting on Link Road in DMC jurisdiction,road,0,DMC,2023-01-06,1,2023
+Water supply contaminated with sewage,water,2,KDMC,2024-01-26,1,2024
+Tap leaking at Ward 1,water,0,VMC,2023-06-16,6,2023
+Electrical maintenance overdue in VMC jurisdiction,electricity,1,VMC,2024-09-06,9,2024
+Dead animal not removed in WMC jurisdiction,sanitation,2,WMC,2024-03-12,3,2024
+Water meter not working in MMC jurisdiction,water,0,MMC,2024-07-18,7,2024
+Low water pressure in Ward 4,water,1,HMC,2024-04-18,4,2024
+Sewage backup in Ward 7 in JMC jurisdiction,water,2,JMC,2024-09-10,9,2024
+Electrical maintenance overdue in WMC jurisdiction,electricity,1,WMC,2024-09-23,9,2024
+Garbage truck leaking in VMC jurisdiction,sanitation,1,VMC,2023-05-19,5,2023
+Leaking pipeline near Ward 3 in UMC jurisdiction,water,1,UMC,2024-04-19,4,2024
+Public tap not working at Industrial Area,water,0,KMC,2024-04-27,4,2024
+Public tap not working at Residential Colony in NMC jurisdiction,water,0,NMC,2023-01-09,1,2023
+Drain blockage at North Zone,water,1,TMC,2024-04-25,4,2024
+Road hump needs repainting on Market Road,road,0,JMC,2024-12-29,12,2024
+Drain blockage at Ward 6 in DMC jurisdiction,water,1,DMC,2024-09-12,9,2024
+Unauthorized dumping ground in DMC jurisdiction,sanitation,2,DMC,2024-07-24,7,2024
+Major road collapse on Station Road,road,2,RMC,2024-05-30,5,2024
+Drainage cover broken on road in WMC jurisdiction,road,1,WMC,2023-08-18,8,2023
+Garbage overflow at Affluent Society in PMC jurisdiction,sanitation,1,PMC,2024-10-07,10,2024
+Dumpster missing lid in DMC jurisdiction,sanitation,0,DMC,2023-06-25,6,2023
+Overflowing water tank at Ward 5,water,2,RMC,2024-06-26,6,2024
+Tap leaking at Affluent Society,water,0,KMC,2023-03-28,3,2023
+Park lights not functioning in VMC jurisdiction,electricity,0,VMC,2024-07-11,7,2024
+Voltage fluctuations frequent,electricity,1,RMC,2023-11-05,11,2023
+Billboard lights causing glare in KMC jurisdiction,electricity,1,KMC,2024-06-07,6,2024
+Complete blackout in Ward 1,electricity,2,AMC,2024-07-06,7,2024
+Road damage after rains on Main Street,road,2,MMC,2023-09-23,9,2023
+Composting facility issue in KMC jurisdiction,sanitation,1,KMC,2023-09-11,9,2023
+Tap leaking at Slum Area in MMC jurisdiction,water,0,MMC,2023-03-21,3,2023
+Voltage fluctuations frequent,electricity,1,HMC,2024-08-21,8,2024
+Building maintenance overdue,building,1,PMC,2023-04-23,4,2023
+Street light flickering at Central Zone in KMC jurisdiction,electricity,0,KMC,2024-01-19,1,2024
+Public tap not working at Slum Area in AMC jurisdiction,water,0,AMC,2024-07-14,7,2024
+Garbage overflow at Commercial Complex in AMC jurisdiction,sanitation,1,AMC,2024-12-25,12,2024
+Complete blackout in Ward 4 in HMC jurisdiction,electricity,2,HMC,2024-06-28,6,2024
+Traffic signal not working at Ward 3,road,2,SMC,2024-09-13,9,2024
+Power cut during office hours in TMC jurisdiction,electricity,1,TMC,2024-02-29,2,2024
+Partial power failure in Ward 4 in KDMC jurisdiction,electricity,1,KDMC,2023-10-20,10,2023
+Water meter not working in BMC jurisdiction,water,0,BMC,2023-11-24,11,2023
+Broken park bench at Nehru Park in PMC jurisdiction,parks,0,PMC,2024-09-03,9,2024
+Minor pothole on Link Road in SMC jurisdiction,road,0,SMC,2024-08-23,8,2024
+Street light not working at Ward 2,electricity,1,AMC,2024-05-08,5,2024
+Leaking pipeline near Commercial Complex,water,1,RMC,2023-10-16,10,2023
+Building plans not approved in LMC jurisdiction,building,1,LMC,2023-11-26,11,2023
+Tap leaking at Industrial Area in TMC jurisdiction,water,0,TMC,2023-07-17,7,2023
+Road markings faded on Gandhi Road in GMC jurisdiction,road,0,GMC,2024-09-20,9,2024
+Transformer making noise at Ward 3 in CMC jurisdiction,electricity,1,CMC,2023-03-08,3,2023
+Heritage building damage in HMC jurisdiction,building,2,HMC,2024-11-25,11,2024
+Building plans not approved in WMC jurisdiction,building,1,WMC,2024-04-09,4,2024
+Stagnant water causing mosquito breeding in BMC jurisdiction,water,1,BMC,2024-02-21,2,2024
+Drainage cover broken on road in KDMC jurisdiction,road,1,KDMC,2023-12-04,12,2023
+Construction waste on roadside,sanitation,1,SMC,2024-09-26,9,2024
+Speed breaker damaged on Main Street,road,1,PMC,2024-01-22,1,2024
+Littering in public park,sanitation,0,KMC,2024-03-28,3,2024
+Park lights not functioning in TMC jurisdiction,electricity,0,TMC,2024-08-24,8,2024
+Road markings faded on Hill Road,road,0,JMC,2024-06-14,6,2024
+Stagnant water causing mosquito breeding in TMC jurisdiction,water,1,TMC,2024-01-02,1,2024
+Road markings faded on Main Street,road,0,CMC,2023-07-23,7,2023
+Bridge approach damaged near Middle Class Colony in AMC jurisdiction,road,2,AMC,2023-07-20,7,2023
+Dead animal not removed in TMC jurisdiction,sanitation,2,TMC,2023-04-24,4,2023
+Grass not maintained,parks,0,KMC,2023-07-16,7,2023
+Recycling not being done,sanitation,0,MMC,2024-09-22,9,2024
+Composting facility issue in GMC jurisdiction,sanitation,1,GMC,2024-08-20,8,2024
+Power cut during office hours in DMC jurisdiction,electricity,1,DMC,2023-01-26,1,2023
+Speed breaker damaged on Service Road,road,1,RMC,2024-06-09,6,2024
+Heritage building damage in UMC jurisdiction,building,2,UMC,2023-11-03,11,2023
+Overflowing water tank at Industrial Area in MMC jurisdiction,water,2,MMC,2024-07-25,7,2024
+Large dangerous pothole on School Road causing accidents,road,2,NMC,2023-12-30,12,2023
+Public tap not working at Affluent Society in NMC jurisdiction,water,0,NMC,2023-02-28,2,2023
+Street light timing incorrect,electricity,0,CMC,2023-11-14,11,2023
+Water quality issues in North Zone in LMC jurisdiction,water,2,LMC,2023-06-29,6,2023
+Roadside vegetation obstructing view in MMC jurisdiction,road,1,MMC,2024-11-05,11,2024
+High mast light not working,electricity,1,BMC,2023-06-11,6,2023
+Emergency lights not working in KDMC jurisdiction,electricity,2,KDMC,2023-11-30,11,2023
+Street light timing incorrect in VMC jurisdiction,electricity,0,VMC,2023-01-11,1,2023
+Street light sensor not working,electricity,0,PMC,2023-06-22,6,2023
+Drain cleaning overdue in KMC jurisdiction,sanitation,1,KMC,2023-08-10,8,2023
+Composting facility issue in PMC jurisdiction,sanitation,1,PMC,2024-03-30,3,2024
+Waterlogging on Hill Road during rain,road,2,CMC,2023-07-24,7,2023
+Leaking pipeline near Middle Class Colony in WMC jurisdiction,water,1,WMC,2024-03-14,3,2024
+Pothole developing on River View in AMC jurisdiction,road,1,AMC,2023-01-13,1,2023
+Water contamination reported in Middle Class Colony,water,2,DMC,2024-08-05,8,2024
+Low water pressure in East Zone in SMC jurisdiction,water,1,SMC,2023-05-08,5,2023
+Building cracks noticed in NMC jurisdiction,building,1,NMC,2023-12-06,12,2023
+Road surface cracks on Office Lane,road,0,SMC,2024-06-17,6,2024
+Borewell not functioning in SMC jurisdiction,water,1,SMC,2023-09-12,9,2023
+Electrical pole leaning dangerously,electricity,2,CMC,2024-05-07,5,2024
+Unauthorized vendors in park,parks,1,KMC,2023-09-21,9,2023
+Garbage truck leaking in KMC jurisdiction,sanitation,1,KMC,2024-11-28,11,2024
+Leaking pipeline near Market Area in KDMC jurisdiction,water,1,KDMC,2024-03-13,3,2024
+No water supply for 24+ hours,water,2,VMC,2023-04-02,4,2023
+Tap leaking at Ward 6 in MMC jurisdiction,water,0,MMC,2024-12-21,12,2024
+Electrical maintenance overdue in PMC jurisdiction,electricity,1,PMC,2023-08-06,8,2023
+Road markings faded on Lake Side in CMC jurisdiction,road,0,CMC,2024-10-01,10,2024
+Public bins missing in KDMC jurisdiction,sanitation,0,KDMC,2023-03-07,3,2023
+Medical waste in regular garbage in DMC jurisdiction,sanitation,2,DMC,2023-12-11,12,2023
+Public toilet in park dirty in VMC jurisdiction,parks,2,VMC,2024-12-30,12,2024
+Street light not working at Ward 5 in HMC jurisdiction,electricity,1,HMC,2023-03-31,3,2023
+Minor pothole on Lake Side,road,0,KDMC,2023-01-30,1,2023
+Park closing early in KMC jurisdiction,parks,0,KMC,2024-05-18,5,2024
+Composting facility issue,sanitation,1,UMC,2023-08-17,8,2023
+Minor pothole on Service Road in VMC jurisdiction,road,0,VMC,2024-07-02,7,2024
+Drain blockage at Affluent Society in RMC jurisdiction,water,1,RMC,2024-08-27,8,2024
+Dumpster missing lid in JMC jurisdiction,sanitation,0,JMC,2024-12-06,12,2024
+Water bill discrepancy for Ward 7,water,1,NMC,2024-07-15,7,2024
+Large dangerous pothole on Service Road causing accidents in CMC jurisdiction,road,2,CMC,2023-06-17,6,2023
+Leaking pipeline near Ward 7,water,1,KMC,2023-07-20,7,2023
+Composting facility issue in KMC jurisdiction,sanitation,1,KMC,2023-05-02,5,2023
+Unauthorized dumping ground in VMC jurisdiction,sanitation,2,VMC,2024-03-31,3,2024
+Road surface cracks on MG Road in DMC jurisdiction,road,0,DMC,2024-08-09,8,2024
+Tap leaking at Middle Class Colony in JMC jurisdiction,water,0,JMC,2024-12-18,12,2024
+Electrical maintenance overdue in HMC jurisdiction,electricity,1,HMC,2024-08-21,8,2024
+Speed breaker damaged on Main Street in JMC jurisdiction,road,1,JMC,2023-07-31,7,2023
+Road surface cracks on Market Road in NMC jurisdiction,road,0,NMC,2023-08-10,8,2023
+Irregular water supply timing in MMC jurisdiction,water,1,MMC,2023-09-24,9,2023
+Walking track damaged in KDMC jurisdiction,parks,1,KDMC,2024-12-12,12,2024
+Drainage cover broken on road,road,1,GMC,2024-07-31,7,2024
+Public toilet unclean at South Zone,sanitation,1,MMC,2024-03-20,3,2024
+Construction debris on Link Road in RMC jurisdiction,road,1,RMC,2023-08-20,8,2023
+Missing manhole cover on Church Street,road,2,SMC,2023-05-07,5,2023
+Tap leaking at Ward 6 in PMC jurisdiction,water,0,PMC,2024-02-03,2,2024
+Composting facility issue in UMC jurisdiction,sanitation,1,UMC,2023-05-11,5,2023
+Public toilet unclean at Residential Colony in KMC jurisdiction,sanitation,1,KMC,2023-10-01,10,2023
+Garbage burning in open,sanitation,2,SMC,2023-07-07,7,2023
+Water bill discrepancy for Market Area in NMC jurisdiction,water,1,NMC,2023-08-23,8,2023
+Public toilet in park dirty,parks,2,MMC,2024-10-11,10,2024
+Power theft suspected in Affluent Society,electricity,2,MMC,2023-05-20,5,2023
+Power theft suspected in Ward 4 in UMC jurisdiction,electricity,2,UMC,2024-09-23,9,2024
+Building material on road in VMC jurisdiction,building,1,VMC,2023-04-26,4,2023
+Unauthorized dumping ground in PMC jurisdiction,sanitation,2,PMC,2023-10-28,10,2023
+Stagnant water causing mosquito breeding,water,1,TMC,2023-07-10,7,2023
+Speed breaker damaged on Hospital Lane in CMC jurisdiction,road,1,CMC,2023-06-07,6,2023
+Grass not maintained in GMC jurisdiction,parks,0,GMC,2024-01-19,1,2024
+Tap leaking at Industrial Area in GMC jurisdiction,water,0,GMC,2024-03-25,3,2024
+Leaking pipeline near Ward 4 in RMC jurisdiction,water,1,RMC,2023-02-11,2,2023
+Street light timing incorrect in CMC jurisdiction,electricity,0,CMC,2023-05-16,5,2023
+Water meter not working in KMC jurisdiction,water,0,KMC,2023-07-24,7,2023
+Large dangerous pothole on MG Road causing accidents in AMC jurisdiction,road,2,AMC,2023-11-26,11,2023
+Exposed wires at Ward 6 in PMC jurisdiction,electricity,2,PMC,2024-05-18,5,2024
+Public tap not working at Middle Class Colony,water,0,TMC,2023-05-14,5,2023
+Stray animals in garbage in CMC jurisdiction,sanitation,1,CMC,2023-10-10,10,2023
+Garbage truck leaking in HMC jurisdiction,sanitation,1,HMC,2023-08-14,8,2023
+Water quality issues in East Zone,water,2,TMC,2023-10-14,10,2023
+Construction noise after hours,building,1,CMC,2024-12-05,12,2024
+Industrial waste mixing,sanitation,2,WMC,2023-08-14,8,2023
+Sidewalk damaged on Garden Street in VMC jurisdiction,road,1,VMC,2024-03-20,3,2024
+Tree needs pruning in AMC jurisdiction,parks,0,AMC,2023-06-30,6,2023
+Public tap not working at Ward 2 in TMC jurisdiction,water,0,TMC,2023-03-27,3,2023
+Road hump needs repainting on Station Road in CMC jurisdiction,road,0,CMC,2024-05-05,5,2024
+Major road collapse on MG Road,road,2,MMC,2023-01-25,1,2023
+Property tax assessment error in NMC jurisdiction,building,0,NMC,2023-12-08,12,2023
+Public toilet in park dirty in BMC jurisdiction,parks,2,BMC,2024-06-27,6,2024
+Tap leaking at Residential Colony in KMC jurisdiction,water,0,KMC,2024-05-21,5,2024
+Public toilet unclean at East Zone in JMC jurisdiction,sanitation,1,JMC,2024-07-16,7,2024
+Bio-medical waste not disposed properly in SMC jurisdiction,sanitation,2,SMC,2023-01-03,1,2023
+Large dangerous pothole on Market Road causing accidents in AMC jurisdiction,road,2,AMC,2023-03-22,3,2023
+Public tap not working at Ward 6 in BMC jurisdiction,water,0,BMC,2023-01-12,1,2023
+Transformer making noise at West Zone,electricity,1,MMC,2024-06-18,6,2024
+Building maintenance overdue in VMC jurisdiction,building,1,VMC,2024-02-06,2,2024
+Public bins missing in RMC jurisdiction,sanitation,0,RMC,2023-04-22,4,2023
+Water pipe burst at East Zone causing flooding in JMC jurisdiction,water,2,JMC,2024-07-08,7,2024
+Road surface cracks on Temple Street in NMC jurisdiction,road,0,NMC,2023-02-03,2,2023
+Roadside vegetation obstructing view in BMC jurisdiction,road,1,BMC,2023-11-19,11,2023
+Medical waste in regular garbage in PMC jurisdiction,sanitation,2,PMC,2024-05-30,5,2024
+Public bins missing in CMC jurisdiction,sanitation,0,CMC,2023-02-08,2,2023
+Dumpster missing lid in HMC jurisdiction,sanitation,0,HMC,2023-05-15,5,2023
+Water pipe burst at Residential Colony causing flooding in MMC jurisdiction,water,2,MMC,2024-09-17,9,2024
+Water treatment plant issue in KDMC jurisdiction,water,2,KDMC,2023-11-18,11,2023
+Water meter not working in CMC jurisdiction,water,0,CMC,2023-03-14,3,2023
+Road hump needs repainting on Main Street in CMC jurisdiction,road,0,CMC,2023-10-21,10,2023
+Pipeline repair work incomplete in HMC jurisdiction,water,1,HMC,2024-11-29,11,2024
+Building permit delay in SMC jurisdiction,building,0,SMC,2023-04-18,4,2023
+Pipeline repair work incomplete in UMC jurisdiction,water,1,UMC,2023-07-04,7,2023
+Public toilet in park dirty in MMC jurisdiction,parks,2,MMC,2023-03-08,3,2023
+Littering in public park in AMC jurisdiction,sanitation,0,AMC,2023-10-08,10,2023
+Leaking pipeline near West Zone in MMC jurisdiction,water,1,MMC,2023-02-25,2,2023
+Electrical pole leaning dangerously,electricity,2,MMC,2024-08-07,8,2024
+Waterlogging on Park Avenue during rain,road,2,WMC,2024-08-15,8,2024
+Water pipe burst at Ward 5 causing flooding,water,2,JMC,2023-06-01,6,2023
+Unauthorized building modifications in LMC jurisdiction,building,2,LMC,2023-07-12,7,2023
+Poor road repair work on Lake Side in LMC jurisdiction,road,1,LMC,2024-07-09,7,2024
+Property tax assessment error in AMC jurisdiction,building,0,AMC,2023-07-01,7,2023
+Pothole developing on Service Road,road,1,CMC,2023-08-05,8,2023
+Play equipment damaged,parks,1,VMC,2023-08-18,8,2023
+Park lights not functioning in CMC jurisdiction,electricity,0,CMC,2024-02-05,2,2024
+Garbage burning in open in CMC jurisdiction,sanitation,2,CMC,2024-10-13,10,2024
+Construction waste on roadside in PMC jurisdiction,sanitation,1,PMC,2024-09-02,9,2024
+Road hump needs repainting on Park Avenue in TMC jurisdiction,road,0,TMC,2024-10-02,10,2024
+Drain cleaning overdue,sanitation,1,JMC,2023-07-04,7,2023
+Pipeline repair work incomplete,water,1,NMC,2024-05-22,5,2024
+Tree branch fallen on road at Ward 6,road,2,CMC,2024-05-14,5,2024
+Stagnant water causing mosquito breeding in GMC jurisdiction,water,1,GMC,2024-09-13,9,2024
+Stagnant water causing mosquito breeding in WMC jurisdiction,water,1,WMC,2023-04-28,4,2023
+Overflowing water tank at Ward 3 in RMC jurisdiction,water,2,RMC,2024-01-16,1,2024
+Littering in public park,sanitation,0,JMC,2023-08-07,8,2023
+Bio-medical waste not disposed properly in UMC jurisdiction,sanitation,2,UMC,2024-09-08,9,2024
+Overflowing water tank at Ward 2,water,2,CMC,2024-05-25,5,2024
+Tap leaking at South Zone in LMC jurisdiction,water,0,LMC,2023-08-31,8,2023
+Low water pressure in Industrial Area in CMC jurisdiction,water,1,CMC,2024-02-17,2,2024
+Building permit delay,building,0,SMC,2023-05-23,5,2023
+Electrical meter issue,electricity,0,BMC,2023-02-14,2,2023
+Drain cleaning overdue in SMC jurisdiction,sanitation,1,SMC,2023-10-15,10,2023
+Park maintenance overdue in CMC jurisdiction,parks,1,CMC,2024-05-21,5,2024
+Garbage truck leaking,sanitation,1,JMC,2024-11-02,11,2024
+Complete blackout in West Zone in CMC jurisdiction,electricity,2,CMC,2024-12-03,12,2024
+Exercise equipment broken,parks,1,KMC,2023-04-23,4,2023
+Tree needs pruning in TMC jurisdiction,parks,0,TMC,2024-04-08,4,2024
+Poor road repair work on Gandhi Road in RMC jurisdiction,road,1,RMC,2024-05-29,5,2024
+Water meter not working in GMC jurisdiction,water,0,GMC,2023-07-28,7,2023
+Dead animal not removed in SMC jurisdiction,sanitation,2,SMC,2023-03-13,3,2023
+Pipeline repair work incomplete in TMC jurisdiction,water,1,TMC,2023-01-22,1,2023
+Public tap not working at Central Zone,water,0,TMC,2024-08-20,8,2024
+Sanitation workers strike in GMC jurisdiction,sanitation,2,GMC,2024-04-14,4,2024
+Recycling not being done in MMC jurisdiction,sanitation,0,MMC,2023-05-26,5,2023
+Public tap not working at South Zone,water,0,CMC,2023-05-06,5,2023
+Garbage truck leaking in KMC jurisdiction,sanitation,1,KMC,2024-11-11,11,2024
+Poor road repair work on Hill Road in TMC jurisdiction,road,1,TMC,2023-01-01,1,2023
+Illegal parking blocking Nehru Marg in KDMC jurisdiction,road,1,KDMC,2023-12-30,12,2023
+Billboard lights causing glare in WMC jurisdiction,electricity,1,WMC,2024-02-07,2,2024
+Drain cleaning overdue,sanitation,1,HMC,2023-03-28,3,2023
+Construction waste on roadside,sanitation,1,JMC,2024-08-02,8,2024
+Water meter not working in TMC jurisdiction,water,0,TMC,2023-07-25,7,2023
+Speed breaker damaged on Nehru Marg in PMC jurisdiction,road,1,PMC,2024-04-30,4,2024
+Drain cleaning overdue,sanitation,1,WMC,2024-09-23,9,2024
+Street light sensor not working in PMC jurisdiction,electricity,0,PMC,2024-11-14,11,2024
+Drainage system failure during rain,water,2,LMC,2023-06-01,6,2023
+Street light timing incorrect in RMC jurisdiction,electricity,0,RMC,2024-04-14,4,2024
+Electrical meter issue in KMC jurisdiction,electricity,0,KMC,2024-07-30,7,2024
+Recycling not being done in TMC jurisdiction,sanitation,0,TMC,2024-11-12,11,2024
+Water pipe burst at West Zone causing flooding in KDMC jurisdiction,water,2,KDMC,2023-03-16,3,2023
+Drain blockage at South Zone in TMC jurisdiction,water,1,TMC,2024-04-05,4,2024
+Tree needs pruning in HMC jurisdiction,parks,0,HMC,2023-08-01,8,2023
+Transformer making noise at Ward 3 in WMC jurisdiction,electricity,1,WMC,2024-10-02,10,2024
+Road markings faded on Church Street in HMC jurisdiction,road,0,HMC,2023-08-25,8,2023
+Electrical meter issue in NMC jurisdiction,electricity,0,NMC,2024-01-02,1,2024
+Public toilet in park dirty,parks,2,KDMC,2024-09-17,9,2024
+Construction debris on Lake Side in SMC jurisdiction,road,1,SMC,2023-08-22,8,2023
+Missing manhole cover on MG Road in CMC jurisdiction,road,2,CMC,2023-02-23,2,2023
+Demolition debris not cleared in CMC jurisdiction,building,1,CMC,2023-03-01,3,2023
+Road hump needs repainting on School Road in WMC jurisdiction,road,0,WMC,2024-11-03,11,2024
+Stagnant water causing mosquito breeding,water,1,DMC,2023-08-14,8,2023
+Water bill discrepancy for East Zone in UMC jurisdiction,water,1,UMC,2023-10-01,10,2023
+Park lights not functioning,electricity,0,RMC,2024-09-28,9,2024
+Waterlogging on Service Road during rain,road,2,HMC,2023-08-04,8,2023
+Property tax assessment error in BMC jurisdiction,building,0,BMC,2024-01-29,1,2024
+Property tax assessment error in WMC jurisdiction,building,0,WMC,2024-01-27,1,2024
+Road hump needs repainting on Temple Street in AMC jurisdiction,road,0,AMC,2023-11-09,11,2023
+Emergency lights not working,electricity,2,NMC,2024-07-01,7,2024
+Property tax assessment error,building,0,TMC,2023-10-08,10,2023
+Poor road repair work on Main Street in JMC jurisdiction,road,1,JMC,2024-01-06,1,2024
+Low water pressure in Ward 4 in WMC jurisdiction,water,1,WMC,2024-11-07,11,2024
+Exposed wires at Ward 2 in CMC jurisdiction,electricity,2,CMC,2023-03-23,3,2023
+Park lights not functioning in KDMC jurisdiction,electricity,0,KDMC,2023-10-10,10,2023
+Street light timing incorrect,electricity,0,AMC,2024-11-02,11,2024
+Road hump needs repainting on College Road in HMC jurisdiction,road,0,HMC,2024-07-20,7,2024
+Minor pothole on Hospital Lane in PMC jurisdiction,road,0,PMC,2024-06-07,6,2024
+Speed breaker damaged on Lake Side,road,1,MMC,2023-05-27,5,2023
+Speed breaker damaged on Park Avenue,road,1,VMC,2023-08-18,8,2023
+Road markings faded on Park Avenue in MMC jurisdiction,road,0,MMC,2024-06-01,6,2024
+Pipeline repair work incomplete,water,1,SMC,2023-08-24,8,2023
+Stray animals in garbage in NMC jurisdiction,sanitation,1,NMC,2023-03-25,3,2023
+Street light timing incorrect,electricity,0,DMC,2024-04-09,4,2024
+Property tax assessment error in TMC jurisdiction,building,0,TMC,2024-04-09,4,2024
+Water bill discrepancy for Ward 4 in CMC jurisdiction,water,1,CMC,2024-05-20,5,2024
+Illegal electricity connection,electricity,2,CMC,2024-03-12,3,2024
+Street light timing incorrect in NMC jurisdiction,electricity,0,NMC,2023-10-08,10,2023
+Minor pothole on Nehru Marg in GMC jurisdiction,road,0,GMC,2023-05-25,5,2023
+Street light not working at Ward 2,electricity,1,AMC,2024-07-06,7,2024
+Construction debris on Gandhi Road in TMC jurisdiction,road,1,TMC,2024-08-07,8,2024
+Drainage cover broken on road,road,1,KDMC,2023-12-01,12,2023
+Road surface cracks on School Road,road,0,DMC,2024-05-23,5,2024
+Road markings faded on Office Lane in MMC jurisdiction,road,0,MMC,2024-08-20,8,2024
+Drain cleaning overdue in RMC jurisdiction,sanitation,1,RMC,2023-08-13,8,2023
+Public toilet in park dirty,parks,2,NMC,2023-11-30,11,2023
+Composting facility issue in DMC jurisdiction,sanitation,1,DMC,2023-01-30,1,2023
+Drainage system failure during rain in MMC jurisdiction,water,2,MMC,2023-02-25,2,2023
+Dumpster missing lid in BMC jurisdiction,sanitation,0,BMC,2023-08-15,8,2023
+Public tap not working at Residential Colony,water,0,AMC,2023-08-23,8,2023
+Minor pothole on Hospital Lane in HMC jurisdiction,road,0,HMC,2024-05-11,5,2024
+Construction debris on Lake Side in NMC jurisdiction,road,1,NMC,2023-01-24,1,2023
+Park lights not functioning in CMC jurisdiction,electricity,0,CMC,2024-03-15,3,2024
+Building plans not approved,building,1,DMC,2024-06-30,6,2024
+Water quality issues in Middle Class Colony,water,2,VMC,2024-04-08,4,2024
+Construction quality issues in SMC jurisdiction,building,1,SMC,2024-07-30,7,2024
+Drainage cover broken on road in DMC jurisdiction,road,1,DMC,2024-05-20,5,2024
+Tap leaking at South Zone in KMC jurisdiction,water,0,KMC,2024-09-05,9,2024
+Speed breaker damaged on Church Street in DMC jurisdiction,road,1,DMC,2023-03-21,3,2023
+Recycling not being done in PMC jurisdiction,sanitation,0,PMC,2023-04-27,4,2023
+Water meter not working in HMC jurisdiction,water,0,HMC,2024-07-14,7,2024
+Construction safety violation in KMC jurisdiction,building,2,KMC,2024-04-30,4,2024
+Tap leaking at North Zone,water,0,KDMC,2023-07-24,7,2023
+Street light sensor not working in BMC jurisdiction,electricity,0,BMC,2023-06-10,6,2023
+Garbage not collected for 2+ days,sanitation,2,RMC,2023-10-09,10,2023
+Partial power failure in Commercial Complex in CMC jurisdiction,electricity,1,CMC,2023-08-10,8,2023
+Public tap not working at Residential Colony in HMC jurisdiction,water,0,HMC,2024-08-29,8,2024
+Construction safety violation,building,2,GMC,2024-07-27,7,2024
+Public bins missing in PMC jurisdiction,sanitation,0,PMC,2023-07-02,7,2023
+Grass not maintained,parks,0,RMC,2023-01-11,1,2023
+Street light flickering at West Zone in GMC jurisdiction,electricity,0,GMC,2024-02-12,2,2024
+Public toilet unclean at Ward 3 in AMC jurisdiction,sanitation,1,AMC,2023-05-03,5,2023
+Dumpster missing lid,sanitation,0,PMC,2023-07-18,7,2023
+Recycling not being done,sanitation,0,JMC,2024-08-23,8,2024
+Water meter not working,water,0,VMC,2024-11-16,11,2024
+Tree branch fallen on road at Ward 3 in KMC jurisdiction,road,2,KMC,2023-02-15,2,2023
+Pothole developing on Service Road in AMC jurisdiction,road,1,AMC,2023-12-26,12,2023
+Illegal electricity connection,electricity,2,KDMC,2023-04-01,4,2023
+Public bins missing in RMC jurisdiction,sanitation,0,RMC,2023-09-10,9,2023
+Road markings faded on Park Avenue in LMC jurisdiction,road,0,LMC,2024-08-15,8,2024
+Garbage overflow at Commercial Complex in AMC jurisdiction,sanitation,1,AMC,2024-07-04,7,2024
+Recycling not being done in HMC jurisdiction,sanitation,0,HMC,2024-04-23,4,2024
+Exercise equipment broken in AMC jurisdiction,parks,1,AMC,2024-08-23,8,2024
+Power cut during office hours,electricity,1,BMC,2024-10-06,10,2024
+Garden not watered in DMC jurisdiction,parks,0,DMC,2023-04-13,4,2023
+Tap leaking at Ward 1 in UMC jurisdiction,water,0,UMC,2024-09-23,9,2024
+Water feature malfunction,parks,1,MMC,2024-08-14,8,2024
+Street light timing incorrect in TMC jurisdiction,electricity,0,TMC,2023-06-26,6,2023
+Public toilet unclean at Central Zone in DMC jurisdiction,sanitation,1,DMC,2024-07-17,7,2024
+Sanitation workers strike,sanitation,2,VMC,2023-04-09,4,2023
+Public tap not working at Residential Colony,water,0,TMC,2024-10-23,10,2024
+Public tap not working at Slum Area in VMC jurisdiction,water,0,VMC,2024-03-07,3,2024
+Major road collapse on Cross Street in TMC jurisdiction,road,2,TMC,2024-06-03,6,2024
+Voltage fluctuations frequent,electricity,1,VMC,2023-11-07,11,2023
+Dumpster missing lid,sanitation,0,LMC,2024-12-30,12,2024
+Street light flickering at Ward 4,electricity,0,NMC,2024-04-16,4,2024
+Road markings faded on Lake Side in NMC jurisdiction,road,0,NMC,2023-11-29,11,2023
+Road hump needs repainting on Nehru Marg in BMC jurisdiction,road,0,BMC,2024-07-01,7,2024
+Traffic signal not working at Ward 2 in HMC jurisdiction,road,2,HMC,2024-01-17,1,2024
+Voltage fluctuations frequent in PMC jurisdiction,electricity,1,PMC,2023-03-22,3,2023
+Littering in public park,sanitation,0,MMC,2024-08-07,8,2024
+Water bill discrepancy for Affluent Society in AMC jurisdiction,water,1,AMC,2024-09-11,9,2024
+Waterlogging on Temple Street during rain in DMC jurisdiction,road,2,DMC,2024-11-20,11,2024
+Street light timing incorrect in CMC jurisdiction,electricity,0,CMC,2024-08-01,8,2024
+Water quality issues in Affluent Society in PMC jurisdiction,water,2,PMC,2024-02-06,2,2024
+Water treatment plant issue in NMC jurisdiction,water,2,NMC,2023-07-01,7,2023
+Major road collapse on Church Street in LMC jurisdiction,road,2,LMC,2024-10-30,10,2024
+Public tap not working at East Zone in TMC jurisdiction,water,0,TMC,2024-09-26,9,2024
+Pothole developing on Cross Street in MMC jurisdiction,road,1,MMC,2023-06-20,6,2023
+Sidewalk damaged on School Road,road,1,SMC,2023-07-24,7,2023
+Building height violation,building,2,KDMC,2024-07-04,7,2024
+Garbage overflow at Industrial Area in UMC jurisdiction,sanitation,1,UMC,2023-03-03,3,2023
+Road markings faded on Market Road,road,0,MMC,2024-05-09,5,2024
+Dumpster missing lid,sanitation,0,LMC,2024-12-17,12,2024
+Recycling not being done in KMC jurisdiction,sanitation,0,KMC,2024-01-29,1,2024
+Tree branch fallen on road at Ward 5 in CMC jurisdiction,road,2,CMC,2023-09-23,9,2023
+Park lights not functioning in HMC jurisdiction,electricity,0,HMC,2024-01-24,1,2024
+Park lights not functioning in BMC jurisdiction,electricity,0,BMC,2023-09-11,9,2023
+Recycling not being done in SMC jurisdiction,sanitation,0,SMC,2024-04-12,4,2024
+Road surface cracks on Nehru Marg in CMC jurisdiction,road,0,CMC,2024-08-18,8,2024
+Bridge approach damaged near Ward 3 in BMC jurisdiction,road,2,BMC,2023-04-30,4,2023
+Power theft suspected in Industrial Area,electricity,2,PMC,2023-07-19,7,2023
+Unauthorized dumping ground,sanitation,2,TMC,2024-09-07,9,2024
+Dumpster missing lid,sanitation,0,DMC,2023-11-03,11,2023
+Street light sensor not working in UMC jurisdiction,electricity,0,UMC,2024-03-26,3,2024
+Dumpster missing lid,sanitation,0,TMC,2024-06-05,6,2024
+Road markings faded on Church Street,road,0,MMC,2024-03-29,3,2024
+Bio-medical waste not disposed properly,sanitation,2,CMC,2023-08-07,8,2023
+Water contamination reported in North Zone,water,2,DMC,2023-08-04,8,2023
+Road surface cracks on Station Road in VMC jurisdiction,road,0,VMC,2023-06-10,6,2023
+Voltage fluctuations frequent,electricity,1,WMC,2023-10-03,10,2023
+Leaking pipeline near Affluent Society in CMC jurisdiction,water,1,CMC,2023-10-08,10,2023
+Park security issue in GMC jurisdiction,parks,1,GMC,2023-03-02,3,2023
+Flower beds neglected in MMC jurisdiction,parks,0,MMC,2023-06-04,6,2023
+Drain cleaning overdue,sanitation,1,RMC,2023-08-08,8,2023
+High mast light not working in JMC jurisdiction,electricity,1,JMC,2024-12-21,12,2024
+Water meter not working in JMC jurisdiction,water,0,JMC,2023-08-17,8,2023
+Stray animals in garbage,sanitation,1,CMC,2024-08-13,8,2024
+Minor pothole on Cross Street,road,0,RMC,2023-08-24,8,2023
+Road surface cracks on Gandhi Road,road,0,GMC,2023-01-28,1,2023
+Play equipment damaged in VMC jurisdiction,parks,1,VMC,2023-08-02,8,2023
+Borewell not functioning in CMC jurisdiction,water,1,CMC,2023-05-08,5,2023
+Low water pressure in Ward 5,water,1,JMC,2023-07-01,7,2023
+Littering in public park in PMC jurisdiction,sanitation,0,PMC,2023-08-17,8,2023
+Property tax assessment error,building,0,DMC,2024-07-03,7,2024
+Public toilet in park dirty in TMC jurisdiction,parks,2,TMC,2023-09-21,9,2023
+Construction waste on roadside in WMC jurisdiction,sanitation,1,WMC,2024-08-07,8,2024
+Road surface cracks on Park Avenue,road,0,KMC,2024-02-18,2,2024
+Street light timing incorrect,electricity,0,GMC,2023-11-05,11,2023
+Sidewalk damaged on River View in SMC jurisdiction,road,1,SMC,2024-08-08,8,2024
+Tree needs pruning in CMC jurisdiction,parks,0,CMC,2023-08-08,8,2023
+Stagnant water causing mosquito breeding in GMC jurisdiction,water,1,GMC,2023-07-10,7,2023
+Public bins missing in RMC jurisdiction,sanitation,0,RMC,2024-07-10,7,2024
+Drain blockage at Residential Colony,water,1,KDMC,2024-06-07,6,2024
+Garbage overflow at Middle Class Colony in HMC jurisdiction,sanitation,1,HMC,2023-08-24,8,2023
+Illegal electricity connection,electricity,2,KMC,2024-09-16,9,2024
+Street light flickering at Ward 3 in NMC jurisdiction,electricity,0,NMC,2024-07-23,7,2024
+Speed breaker damaged on Main Street,road,1,WMC,2023-05-24,5,2023
+Garbage burning in open,sanitation,2,SMC,2024-10-23,10,2024
+Street light flickering at East Zone,electricity,0,RMC,2023-10-10,10,2023
+Drain blockage at Ward 7 in CMC jurisdiction,water,1,CMC,2024-11-19,11,2024
+Walking track damaged in DMC jurisdiction,parks,1,DMC,2023-04-16,4,2023
+Road surface cracks on College Road in DMC jurisdiction,road,0,DMC,2024-08-28,8,2024
+Water supply contaminated with sewage in DMC jurisdiction,water,2,DMC,2024-08-02,8,2024
+Voltage fluctuations frequent in VMC jurisdiction,electricity,1,VMC,2023-01-27,1,2023
+Dumpster missing lid,sanitation,0,RMC,2023-09-12,9,2023
+Recycling not being done in GMC jurisdiction,sanitation,0,GMC,2024-07-14,7,2024
+Sanitation workers strike,sanitation,2,AMC,2023-12-08,12,2023
+Roadside vegetation obstructing view in WMC jurisdiction,road,1,WMC,2024-01-27,1,2024
+Borewell not functioning in AMC jurisdiction,water,1,AMC,2023-03-19,3,2023
+Illegal parking blocking Market Road,road,1,VMC,2024-06-29,6,2024
+High mast light not working in UMC jurisdiction,electricity,1,UMC,2024-06-15,6,2024
+Drain blockage at Ward 1 in KDMC jurisdiction,water,1,KDMC,2024-07-26,7,2024
+No water supply for 24+ hours in HMC jurisdiction,water,2,HMC,2024-09-12,9,2024
+Transformer making noise at Ward 1,electricity,1,PMC,2024-06-25,6,2024
+Public tap not working at Central Zone,water,0,CMC,2023-06-26,6,2023
+Transformer making noise at Affluent Society in LMC jurisdiction,electricity,1,LMC,2024-03-31,3,2024
+Illegal parking blocking Service Road in PMC jurisdiction,road,1,PMC,2024-11-30,11,2024
+Road surface cracks on School Road in KMC jurisdiction,road,0,KMC,2024-02-18,2,2024
+Road damage after rains on Hospital Lane in DMC jurisdiction,road,2,DMC,2024-11-01,11,2024
+Voltage fluctuations frequent,electricity,1,UMC,2024-10-20,10,2024
+Water bill discrepancy for Market Area in CMC jurisdiction,water,1,CMC,2024-01-22,1,2024
+Garbage not collected for 2+ days in BMC jurisdiction,sanitation,2,BMC,2023-04-02,4,2023
+Bridge approach damaged near Ward 3,road,2,SMC,2024-05-22,5,2024
+Street light not working at Industrial Area in VMC jurisdiction,electricity,1,VMC,2024-12-07,12,2024
+Littering in public park in DMC jurisdiction,sanitation,0,DMC,2023-12-02,12,2023
+Overflowing water tank at Ward 3 in VMC jurisdiction,water,2,VMC,2024-05-24,5,2024
+Street light flickering at Ward 4 in DMC jurisdiction,electricity,0,DMC,2024-02-02,2,2024
+Speed breaker damaged on Nehru Marg in NMC jurisdiction,road,1,NMC,2023-07-19,7,2023
+Littering in public park,sanitation,0,LMC,2024-09-08,9,2024
+Roadside vegetation obstructing view,road,1,TMC,2024-10-22,10,2024
+Drain cleaning overdue in KMC jurisdiction,sanitation,1,KMC,2024-01-04,1,2024
+Public tap not working at Middle Class Colony,water,0,MMC,2024-02-16,2,2024
+Stagnant water causing mosquito breeding in RMC jurisdiction,water,1,RMC,2024-02-13,2,2024
+Stagnant water causing mosquito breeding in MMC jurisdiction,water,1,MMC,2023-08-07,8,2023
+Billboard lights causing glare,electricity,1,LMC,2024-09-30,9,2024
+Road hump needs repainting on Hospital Lane in AMC jurisdiction,road,0,AMC,2024-03-29,3,2024
+Illegal parking blocking College Road,road,1,AMC,2024-10-18,10,2024
+Street light not working at Ward 4,electricity,1,WMC,2023-03-29,3,2023
+Public toilet in park dirty in JMC jurisdiction,parks,2,JMC,2024-01-01,1,2024
+Water meter not working in AMC jurisdiction,water,0,AMC,2024-07-29,7,2024
+Park closing early,parks,0,PMC,2024-02-24,2,2024
+Grass not maintained,parks,0,BMC,2024-04-29,4,2024
+Road hump needs repainting on Market Road in NMC jurisdiction,road,0,NMC,2024-11-15,11,2024
+Dumpster missing lid in KDMC jurisdiction,sanitation,0,KDMC,2024-05-21,5,2024
+Public event damage not repaired,parks,1,AMC,2023-07-16,7,2023
+Fire safety violation in TMC jurisdiction,building,2,TMC,2023-06-20,6,2023
+Pothole developing on College Road in KMC jurisdiction,road,1,KMC,2024-01-25,1,2024
+Public toilet unclean at Central Zone,sanitation,1,JMC,2024-07-19,7,2024
+Flower beds neglected,parks,0,KMC,2023-09-06,9,2023
+Irregular water supply timing in WMC jurisdiction,water,1,WMC,2023-05-23,5,2023
+Littering in public park in KDMC jurisdiction,sanitation,0,KDMC,2024-12-03,12,2024
+Street light sensor not working,electricity,0,NMC,2023-03-04,3,2023
+Electrical meter issue in CMC jurisdiction,electricity,0,CMC,2024-07-09,7,2024
+Road surface cracks on Station Road,road,0,KDMC,2023-08-22,8,2023
+Composting facility issue in WMC jurisdiction,sanitation,1,WMC,2023-10-20,10,2023
+Public tap not working at Ward 1 in SMC jurisdiction,water,0,SMC,2024-11-30,11,2024
+Littering in public park,sanitation,0,LMC,2024-11-21,11,2024
+Water quality issues in Residential Colony,water,2,KMC,2024-10-09,10,2024
+Drain blockage at Commercial Complex,water,1,AMC,2023-08-11,8,2023
+Tap leaking at Ward 1 in JMC jurisdiction,water,0,JMC,2023-06-12,6,2023
+Building completion certificate issue in SMC jurisdiction,building,1,SMC,2024-05-26,5,2024
+Sewage smell in Affluent Society,sanitation,1,KMC,2023-08-10,8,2023
+Power cut during office hours,electricity,1,JMC,2023-05-12,5,2023
+Sanitation workers strike,sanitation,2,JMC,2024-07-22,7,2024
+Sewage backup in South Zone in VMC jurisdiction,water,2,VMC,2024-05-17,5,2024
+Water meter not working in BMC jurisdiction,water,0,BMC,2024-10-10,10,2024
+Partial power failure in North Zone,electricity,1,CMC,2023-07-19,7,2023
+Park lights not functioning,electricity,0,VMC,2023-01-12,1,2023
+Road hump needs repainting on Park Avenue in TMC jurisdiction,road,0,TMC,2023-06-01,6,2023
+Water meter not working in LMC jurisdiction,water,0,LMC,2023-10-08,10,2023
+Sidewalk damaged on College Road in NMC jurisdiction,road,1,NMC,2023-01-18,1,2023
+Water supply contaminated with sewage in BMC jurisdiction,water,2,BMC,2024-12-31,12,2024
+Minor pothole on Hospital Lane in KMC jurisdiction,road,0,KMC,2024-12-31,12,2024
+Transformer making noise at Middle Class Colony,electricity,1,VMC,2023-08-01,8,2023
+Large dangerous pothole on Lake Side causing accidents in DMC jurisdiction,road,2,DMC,2023-02-11,2,2023
+Dumpster missing lid,sanitation,0,CMC,2024-02-07,2,2024
+Public tap not working at Affluent Society,water,0,WMC,2023-07-29,7,2023
+Power fluctuations damaging appliances in GMC jurisdiction,electricity,2,GMC,2023-11-14,11,2023
+Electrical maintenance overdue in AMC jurisdiction,electricity,1,AMC,2024-09-03,9,2024
+Public toilet in park dirty in AMC jurisdiction,parks,2,AMC,2023-08-29,8,2023
+Walking track damaged in GMC jurisdiction,parks,1,GMC,2024-07-30,7,2024
+Public bins missing in KDMC jurisdiction,sanitation,0,KDMC,2023-01-31,1,2023
+Low water pressure in Commercial Complex,water,1,AMC,2024-11-03,11,2024
+Public bins missing in NMC jurisdiction,sanitation,0,NMC,2023-10-01,10,2023
+Water treatment plant issue,water,2,SMC,2024-10-27,10,2024
+Power theft suspected in Slum Area,electricity,2,UMC,2023-02-18,2,2023
+Park lights not functioning in RMC jurisdiction,electricity,0,RMC,2024-02-16,2,2024
+Fire safety violation in KMC jurisdiction,building,2,KMC,2024-02-22,2,2024
+Stagnant water causing mosquito breeding,water,1,KMC,2024-10-22,10,2024
+Garbage not collected for 2+ days in AMC jurisdiction,sanitation,2,AMC,2024-10-02,10,2024
+Drain blockage at Ward 7,water,1,AMC,2024-02-10,2,2024
+Public tap not working at Ward 2 in HMC jurisdiction,water,0,HMC,2024-08-12,8,2024
+Irregular water supply timing in MMC jurisdiction,water,1,MMC,2024-10-21,10,2024
+Street light flickering at Ward 1 in CMC jurisdiction,electricity,0,CMC,2023-05-04,5,2023
+Garbage truck leaking in KDMC jurisdiction,sanitation,1,KDMC,2023-05-02,5,2023
+Water bill discrepancy for South Zone in WMC jurisdiction,water,1,WMC,2023-08-02,8,2023
+Minor pothole on School Road in DMC jurisdiction,road,0,DMC,2023-04-05,4,2023
+Drain cleaning overdue in PMC jurisdiction,sanitation,1,PMC,2023-12-12,12,2023
+Property tax assessment error in NMC jurisdiction,building,0,NMC,2024-02-25,2,2024
+Drain cleaning overdue in TMC jurisdiction,sanitation,1,TMC,2023-07-05,7,2023
+Pothole developing on Service Road in AMC jurisdiction,road,1,AMC,2024-03-12,3,2024
+Garbage not collected for 2+ days in VMC jurisdiction,sanitation,2,VMC,2023-08-17,8,2023
+Sanitation workers strike,sanitation,2,SMC,2023-04-29,4,2023
+Bio-medical waste not disposed properly in RMC jurisdiction,sanitation,2,RMC,2023-02-04,2,2023
+Partial power failure in West Zone,electricity,1,KDMC,2024-11-11,11,2024
+Water contamination reported in Ward 1 in KMC jurisdiction,water,2,KMC,2024-08-07,8,2024
+Garbage overflow at East Zone in PMC jurisdiction,sanitation,1,PMC,2023-11-04,11,2023
+Littering in public park in BMC jurisdiction,sanitation,0,BMC,2024-11-12,11,2024
+Power fluctuations damaging appliances in KDMC jurisdiction,electricity,2,KDMC,2024-06-06,6,2024
+Water meter not working in GMC jurisdiction,water,0,GMC,2024-03-18,3,2024
+Missing manhole cover on Station Road in DMC jurisdiction,road,2,DMC,2024-06-17,6,2024
+Medical waste in regular garbage in BMC jurisdiction,sanitation,2,BMC,2023-10-15,10,2023
+Water supply contaminated with sewage,water,2,CMC,2024-09-11,9,2024
+Electrical meter issue,electricity,0,GMC,2024-08-31,8,2024
+Park security issue,parks,1,CMC,2023-12-12,12,2023
+Emergency lights not working in CMC jurisdiction,electricity,2,CMC,2024-08-04,8,2024
+Water contamination reported in Slum Area in DMC jurisdiction,water,2,DMC,2023-11-17,11,2023
+Pothole developing on Park Avenue in BMC jurisdiction,road,1,BMC,2024-07-15,7,2024
+Road surface cracks on Main Street,road,0,MMC,2024-08-03,8,2024
+Tree branch fallen on road at Market Area in GMC jurisdiction,road,2,GMC,2023-08-14,8,2023
+Electrical meter issue,electricity,0,UMC,2023-06-05,6,2023
+Emergency lights not working,electricity,2,AMC,2024-01-28,1,2024
+High mast light not working in CMC jurisdiction,electricity,1,CMC,2023-03-25,3,2023
+Public tap not working at Residential Colony in VMC jurisdiction,water,0,VMC,2023-10-06,10,2023
+Sewage smell in Ward 7 in VMC jurisdiction,sanitation,1,VMC,2024-02-19,2,2024
+Pothole developing on River View in LMC jurisdiction,road,1,LMC,2024-01-04,1,2024
+Partial power failure in Market Area in MMC jurisdiction,electricity,1,MMC,2023-08-23,8,2023
+Grass not maintained in AMC jurisdiction,parks,0,AMC,2024-08-22,8,2024
+Exposed wires at Central Zone in BMC jurisdiction,electricity,2,BMC,2023-08-23,8,2023
+Broken park bench at Rose Garden in UMC jurisdiction,parks,0,UMC,2023-09-19,9,2023
+Sewage backup in East Zone in GMC jurisdiction,water,2,GMC,2023-06-20,6,2023
+Road markings faded on Station Road in LMC jurisdiction,road,0,LMC,2023-07-11,7,2023
+Large dangerous pothole on Hospital Lane causing accidents in GMC jurisdiction,road,2,GMC,2023-02-28,2,2023
+Illegal electricity connection,electricity,2,UMC,2024-06-21,6,2024
+Power fluctuations damaging appliances in LMC jurisdiction,electricity,2,LMC,2023-02-22,2,2023
+Public toilet in park dirty in KDMC jurisdiction,parks,2,KDMC,2024-06-08,6,2024
+Tree branch fallen on road at Ward 2 in KMC jurisdiction,road,2,KMC,2023-08-12,8,2023
+Pipeline repair work incomplete in JMC jurisdiction,water,1,JMC,2023-12-01,12,2023
+Road damage after rains on Market Road,road,2,CMC,2024-01-22,1,2024
+Public toilet unclean at Ward 5,sanitation,1,GMC,2023-07-21,7,2023
+Low water pressure in North Zone in BMC jurisdiction,water,1,BMC,2023-05-17,5,2023
+Large dangerous pothole on Link Road causing accidents,road,2,AMC,2023-03-09,3,2023
+Unauthorized dumping ground,sanitation,2,CMC,2023-09-09,9,2023
+Illegal parking blocking School Road,road,1,JMC,2024-02-19,2,2024
+Water meter not working,water,0,WMC,2024-11-09,11,2024
+Drainage system failure during rain,water,2,MMC,2023-06-07,6,2023
+Power fluctuations damaging appliances in CMC jurisdiction,electricity,2,CMC,2023-08-29,8,2023
+Garbage overflow at Ward 1 in KMC jurisdiction,sanitation,1,KMC,2023-02-03,2,2023
+Road damage after rains on School Road in HMC jurisdiction,road,2,HMC,2024-12-06,12,2024
+Sewage smell in Industrial Area in CMC jurisdiction,sanitation,1,CMC,2023-06-08,6,2023
+Road damage after rains on Garden Street in KMC jurisdiction,road,2,KMC,2023-03-17,3,2023
+Illegal construction at Ward 6,building,2,AMC,2024-03-01,3,2024
+Grass not maintained in BMC jurisdiction,parks,0,BMC,2024-09-10,9,2024
+Property tax assessment error in KMC jurisdiction,building,0,KMC,2024-06-01,6,2024
+Drain cleaning overdue in UMC jurisdiction,sanitation,1,UMC,2023-12-07,12,2023
+Exposed wires at Market Area,electricity,2,KDMC,2024-09-15,9,2024
+Public toilet in park dirty in VMC jurisdiction,parks,2,VMC,2024-11-02,11,2024
+Dumpster missing lid in NMC jurisdiction,sanitation,0,NMC,2024-03-12,3,2024
+Road markings faded on Temple Street in NMC jurisdiction,road,0,NMC,2024-10-16,10,2024
+Water meter not working in KDMC jurisdiction,water,0,KDMC,2023-07-13,7,2023
+Tap leaking at Ward 3 in WMC jurisdiction,water,0,WMC,2023-12-17,12,2023
+Overflowing water tank at Ward 6 in VMC jurisdiction,water,2,VMC,2024-10-14,10,2024
+Electrical maintenance overdue in SMC jurisdiction,electricity,1,SMC,2024-04-13,4,2024
+Public bins missing in UMC jurisdiction,sanitation,0,UMC,2023-04-20,4,2023
+No water supply for 24+ hours,water,2,KMC,2023-06-06,6,2023
+Tap leaking at Commercial Complex,water,0,CMC,2023-08-26,8,2023
+Water feature malfunction,parks,1,PMC,2023-02-11,2,2023
+Garden not watered,parks,0,JMC,2023-05-21,5,2023
+Road surface cracks on Park Avenue in UMC jurisdiction,road,0,UMC,2023-07-09,7,2023
+Exposed wires at Ward 7,electricity,2,TMC,2023-05-10,5,2023
+Exercise equipment broken in CMC jurisdiction,parks,1,CMC,2023-03-02,3,2023
+Leaking pipeline near Ward 4,water,1,GMC,2023-09-19,9,2023
+Complete blackout in East Zone in CMC jurisdiction,electricity,2,CMC,2023-02-11,2,2023
+Street light not working at Market Area in PMC jurisdiction,electricity,1,PMC,2023-07-31,7,2023
+Exercise equipment broken,parks,1,DMC,2024-03-23,3,2024
+Pothole developing on Garden Street in BMC jurisdiction,road,1,BMC,2023-07-28,7,2023
+Dumpster missing lid in LMC jurisdiction,sanitation,0,LMC,2023-08-18,8,2023
+Public bins missing in DMC jurisdiction,sanitation,0,DMC,2024-05-06,5,2024
+Partial power failure in West Zone,electricity,1,KMC,2024-06-18,6,2024
+Street light sensor not working in DMC jurisdiction,electricity,0,DMC,2023-01-21,1,2023
+Stray animals in garbage in CMC jurisdiction,sanitation,1,CMC,2023-07-18,7,2023
+Garden not watered in JMC jurisdiction,parks,0,JMC,2023-09-04,9,2023
+Street light not working at Ward 3 in UMC jurisdiction,electricity,1,UMC,2023-05-21,5,2023
+Park closing early,parks,0,MMC,2023-03-16,3,2023
+Building completion certificate issue,building,1,KMC,2023-08-12,8,2023
+Street light not working at Slum Area in SMC jurisdiction,electricity,1,SMC,2024-07-08,7,2024
+Sewage smell in Market Area,sanitation,1,DMC,2023-04-13,4,2023
+Street light sensor not working in PMC jurisdiction,electricity,0,PMC,2023-10-09,10,2023
+Recycling not being done in BMC jurisdiction,sanitation,0,BMC,2023-08-03,8,2023
+Tap leaking at Ward 5 in LMC jurisdiction,water,0,LMC,2023-07-29,7,2023
+Dead animal not removed in MMC jurisdiction,sanitation,2,MMC,2023-06-12,6,2023
+Sidewalk damaged on Lake Side in UMC jurisdiction,road,1,UMC,2023-06-11,6,2023
+Tap leaking at Ward 1 in WMC jurisdiction,water,0,WMC,2023-10-30,10,2023
+Complete blackout in Ward 5,electricity,2,CMC,2023-08-24,8,2023
+Exposed wires at Residential Colony,electricity,2,UMC,2024-08-17,8,2024
+High mast light not working in KDMC jurisdiction,electricity,1,KDMC,2023-03-27,3,2023
+Street light sensor not working in JMC jurisdiction,electricity,0,JMC,2023-07-02,7,2023
+Voltage fluctuations frequent,electricity,1,KDMC,2024-07-13,7,2024
+Stray animals in garbage in KMC jurisdiction,sanitation,1,KMC,2024-11-19,11,2024
+Billboard lights causing glare in DMC jurisdiction,electricity,1,DMC,2023-03-20,3,2023
+Littering in public park in WMC jurisdiction,sanitation,0,WMC,2024-04-25,4,2024
+Tap leaking at Ward 1 in WMC jurisdiction,water,0,WMC,2023-09-09,9,2023
+Dumpster missing lid in HMC jurisdiction,sanitation,0,HMC,2024-02-19,2,2024
+Drainage system failure during rain,water,2,CMC,2024-07-19,7,2024
+Street light timing incorrect in CMC jurisdiction,electricity,0,CMC,2024-09-20,9,2024
+Broken park bench at Riverside Park,parks,0,HMC,2023-01-06,1,2023
+Sanitation workers strike in AMC jurisdiction,sanitation,2,AMC,2023-09-12,9,2023
+Tap leaking at Market Area,water,0,TMC,2023-05-14,5,2023
+Construction waste on roadside in CMC jurisdiction,sanitation,1,CMC,2023-09-15,9,2023
+Flower beds neglected in VMC jurisdiction,parks,0,VMC,2024-11-22,11,2024
+Street light flickering at Ward 3 in CMC jurisdiction,electricity,0,CMC,2023-11-12,11,2023
+Public toilet unclean at West Zone in UMC jurisdiction,sanitation,1,UMC,2023-05-18,5,2023
+Littering in public park in JMC jurisdiction,sanitation,0,JMC,2024-10-16,10,2024
+Grass not maintained,parks,0,CMC,2023-12-30,12,2023
+Street light flickering at Ward 7 in CMC jurisdiction,electricity,0,CMC,2023-05-18,5,2023
+Minor pothole on Temple Street in MMC jurisdiction,road,0,MMC,2024-09-03,9,2024
+Roadside vegetation obstructing view in JMC jurisdiction,road,1,JMC,2024-05-24,5,2024
+Drain blockage at Ward 2 in RMC jurisdiction,water,1,RMC,2024-09-10,9,2024
+Illegal parking blocking Church Street in CMC jurisdiction,road,1,CMC,2023-08-20,8,2023
+Street light sensor not working in TMC jurisdiction,electricity,0,TMC,2024-02-22,2,2024
+Recycling not being done in CMC jurisdiction,sanitation,0,CMC,2024-04-07,4,2024
+Tap leaking at North Zone in GMC jurisdiction,water,0,GMC,2024-07-02,7,2024
+Construction noise after hours in HMC jurisdiction,building,1,HMC,2023-05-12,5,2023
+Garbage not collected for 2+ days in CMC jurisdiction,sanitation,2,CMC,2023-07-28,7,2023
+Borewell not functioning in TMC jurisdiction,water,1,TMC,2024-04-11,4,2024
+Building permit delay in AMC jurisdiction,building,0,AMC,2023-12-15,12,2023
+Building maintenance overdue,building,1,WMC,2024-11-03,11,2024
+Electrical maintenance overdue in WMC jurisdiction,electricity,1,WMC,2024-06-18,6,2024
+High mast light not working in VMC jurisdiction,electricity,1,VMC,2024-08-01,8,2024
+Drainage cover broken on road,road,1,NMC,2023-07-14,7,2023
+Unauthorized dumping ground,sanitation,2,SMC,2024-03-16,3,2024
+Illegal electricity connection in MMC jurisdiction,electricity,2,MMC,2024-07-25,7,2024
+Tap leaking at Industrial Area in MMC jurisdiction,water,0,MMC,2023-08-10,8,2023
+Medical waste in regular garbage,sanitation,2,TMC,2024-11-10,11,2024
+Poor road repair work on Cross Street in WMC jurisdiction,road,1,WMC,2023-05-31,5,2023
+Irregular water supply timing,water,1,MMC,2023-08-10,8,2023
+Tree branch fallen on road at Ward 2,road,2,NMC,2023-06-18,6,2023
+Road hump needs repainting on Office Lane in HMC jurisdiction,road,0,HMC,2024-02-03,2,2024
+Exercise equipment broken in CMC jurisdiction,parks,1,CMC,2024-10-04,10,2024
+Dumpster missing lid in GMC jurisdiction,sanitation,0,GMC,2024-05-22,5,2024
+Voltage fluctuations frequent,electricity,1,DMC,2023-06-14,6,2023
+Leaking pipeline near Central Zone,water,1,AMC,2024-02-15,2,2024
+Property tax assessment error in LMC jurisdiction,building,0,LMC,2023-12-20,12,2023
+Road surface cracks on Park Avenue,road,0,TMC,2024-08-26,8,2024
+Composting facility issue in MMC jurisdiction,sanitation,1,MMC,2023-05-02,5,2023
+Major road collapse on Park Avenue in VMC jurisdiction,road,2,VMC,2023-06-25,6,2023
+Street light flickering at Residential Colony in AMC jurisdiction,electricity,0,AMC,2024-11-06,11,2024
+Construction waste on roadside,sanitation,1,AMC,2023-05-23,5,2023
+Low water pressure in Middle Class Colony in WMC jurisdiction,water,1,WMC,2024-11-29,11,2024
+Power theft suspected in Industrial Area in BMC jurisdiction,electricity,2,BMC,2023-07-03,7,2023
+High mast light not working in DMC jurisdiction,electricity,1,DMC,2024-11-03,11,2024
+Transformer making noise at Ward 5 in DMC jurisdiction,electricity,1,DMC,2024-08-13,8,2024
+Property tax assessment error in UMC jurisdiction,building,0,UMC,2023-01-01,1,2023
+Street light timing incorrect in PMC jurisdiction,electricity,0,PMC,2024-07-08,7,2024
+Unauthorized dumping ground in GMC jurisdiction,sanitation,2,GMC,2024-06-20,6,2024
+Street light sensor not working in RMC jurisdiction,electricity,0,RMC,2024-10-15,10,2024
+Road damage after rains on Cross Street in CMC jurisdiction,road,2,CMC,2023-09-24,9,2023
+Dumpster missing lid,sanitation,0,UMC,2024-05-09,5,2024
+Building material on road in CMC jurisdiction,building,1,CMC,2024-08-26,8,2024
+Dumpster missing lid in WMC jurisdiction,sanitation,0,WMC,2024-05-31,5,2024
+Sidewalk damaged on Main Street in DMC jurisdiction,road,1,DMC,2024-12-22,12,2024
+Bridge approach damaged near Ward 7 in KDMC jurisdiction,road,2,KDMC,2023-04-01,4,2023
+Street light timing incorrect in JMC jurisdiction,electricity,0,JMC,2023-06-27,6,2023
+Public toilet in park dirty in DMC jurisdiction,parks,2,DMC,2024-03-12,3,2024
+Littering in public park,sanitation,0,KDMC,2023-07-01,7,2023
+Power theft suspected in Commercial Complex in PMC jurisdiction,electricity,2,PMC,2024-07-28,7,2024
+Littering in public park in DMC jurisdiction,sanitation,0,DMC,2023-05-13,5,2023
+Exposed wires at Ward 2,electricity,2,MMC,2024-08-20,8,2024
+Garbage truck leaking in LMC jurisdiction,sanitation,1,LMC,2023-06-21,6,2023
+Dumpster missing lid in WMC jurisdiction,sanitation,0,WMC,2023-05-12,5,2023
+Park lights not functioning,electricity,0,KDMC,2023-01-27,1,2023
+Illegal parking blocking Lake Side in LMC jurisdiction,road,1,LMC,2023-01-07,1,2023
+Walking track damaged in MMC jurisdiction,parks,1,MMC,2023-07-28,7,2023
+Park lights not functioning in AMC jurisdiction,electricity,0,AMC,2024-12-24,12,2024
+Public tap not working at Ward 2 in KMC jurisdiction,water,0,KMC,2024-09-25,9,2024
+Garbage burning in open,sanitation,2,LMC,2024-07-21,7,2024
+Road hump needs repainting on Church Street in AMC jurisdiction,road,0,AMC,2023-06-29,6,2023
+Recycling not being done,sanitation,0,CMC,2023-01-30,1,2023
+Bio-medical waste not disposed properly in CMC jurisdiction,sanitation,2,CMC,2023-08-30,8,2023
+Bridge approach damaged near East Zone,road,2,JMC,2024-07-07,7,2024
+Public toilet unclean at Commercial Complex in TMC jurisdiction,sanitation,1,TMC,2023-03-13,3,2023
+Sidewalk damaged on College Road,road,1,JMC,2024-06-15,6,2024
+Public toilet in park dirty in BMC jurisdiction,parks,2,BMC,2023-11-06,11,2023
+Public tap not working at South Zone in CMC jurisdiction,water,0,CMC,2023-03-10,3,2023
+Bridge approach damaged near Ward 1 in CMC jurisdiction,road,2,CMC,2023-07-23,7,2023
+Garbage overflow at Ward 7,sanitation,1,CMC,2024-08-13,8,2024
+Park lights not functioning in CMC jurisdiction,electricity,0,CMC,2023-04-28,4,2023
+Building cracks noticed in KMC jurisdiction,building,1,KMC,2024-11-20,11,2024
+Recycling not being done in NMC jurisdiction,sanitation,0,NMC,2023-12-12,12,2023
+Minor pothole on Market Road,road,0,NMC,2023-10-16,10,2023
+Street light timing incorrect in KMC jurisdiction,electricity,0,KMC,2024-01-20,1,2024
+Sanitation workers strike in SMC jurisdiction,sanitation,2,SMC,2023-10-10,10,2023
+Demolition debris not cleared in UMC jurisdiction,building,1,UMC,2023-05-14,5,2023
+Public tap not working at Slum Area in SMC jurisdiction,water,0,SMC,2023-06-20,6,2023
+Garbage truck leaking in SMC jurisdiction,sanitation,1,SMC,2023-03-02,3,2023
+Exposed wires at Commercial Complex,electricity,2,VMC,2024-10-17,10,2024
+Tap leaking at West Zone in AMC jurisdiction,water,0,AMC,2023-04-19,4,2023
+Roadside vegetation obstructing view in KDMC jurisdiction,road,1,KDMC,2024-06-12,6,2024
+Road markings faded on Park Avenue,road,0,SMC,2023-10-22,10,2023
+Street light timing incorrect,electricity,0,NMC,2023-06-29,6,2023
+Dead animal not removed in MMC jurisdiction,sanitation,2,MMC,2024-08-22,8,2024
+Minor pothole on Main Street in DMC jurisdiction,road,0,DMC,2023-09-30,9,2023
+Speed breaker damaged on Link Road in LMC jurisdiction,road,1,LMC,2024-11-01,11,2024
+Public tap not working at Ward 3 in SMC jurisdiction,water,0,SMC,2023-06-26,6,2023
+Unauthorized vendors in park,parks,1,WMC,2024-10-16,10,2024
+Speed breaker damaged on Lake Side in LMC jurisdiction,road,1,LMC,2024-07-23,7,2024
+Electrical meter issue in AMC jurisdiction,electricity,0,AMC,2023-08-04,8,2023
+Tap leaking at Market Area,water,0,GMC,2024-11-07,11,2024
+Public bins missing,sanitation,0,WMC,2023-04-25,4,2023
+Road surface cracks on College Road,road,0,RMC,2024-06-03,6,2024
+Illegal construction at West Zone in DMC jurisdiction,building,2,DMC,2023-12-30,12,2023
+No water supply for 24+ hours in MMC jurisdiction,water,2,MMC,2023-05-09,5,2023
+Road surface cracks on Hill Road in PMC jurisdiction,road,0,PMC,2024-09-06,9,2024
+Broken park bench at Rose Garden in SMC jurisdiction,parks,0,SMC,2024-06-07,6,2024
+Dead animal not removed,sanitation,2,KDMC,2024-08-31,8,2024
+Garbage overflow at Residential Colony in UMC jurisdiction,sanitation,1,UMC,2024-07-18,7,2024
+Public bins missing in CMC jurisdiction,sanitation,0,CMC,2024-07-16,7,2024
+Construction noise after hours in NMC jurisdiction,building,1,NMC,2024-08-25,8,2024
+Minor pothole on Lake Side in DMC jurisdiction,road,0,DMC,2023-03-05,3,2023
+Emergency lights not working in UMC jurisdiction,electricity,2,UMC,2024-03-07,3,2024
+Irregular water supply timing in KMC jurisdiction,water,1,KMC,2023-09-24,9,2023
+Major road collapse on MG Road,road,2,GMC,2023-11-15,11,2023
+Drainage system failure during rain in TMC jurisdiction,water,2,TMC,2023-07-11,7,2023
+Road hump needs repainting on School Road in LMC jurisdiction,road,0,LMC,2024-04-30,4,2024
+Road hump needs repainting on MG Road in KDMC jurisdiction,road,0,KDMC,2023-07-01,7,2023
+Building permit delay in UMC jurisdiction,building,0,UMC,2024-08-25,8,2024
+Drain blockage at Ward 7,water,1,UMC,2023-06-27,6,2023
+Roadside vegetation obstructing view in SMC jurisdiction,road,1,SMC,2024-03-16,3,2024
+Street light not working at Industrial Area in UMC jurisdiction,electricity,1,UMC,2024-10-12,10,2024
+Stray animals in garbage,sanitation,1,GMC,2023-10-02,10,2023
+Stray animals in garbage in NMC jurisdiction,sanitation,1,NMC,2024-04-23,4,2024
+Littering in public park in AMC jurisdiction,sanitation,0,AMC,2024-07-22,7,2024
+Recycling not being done,sanitation,0,VMC,2023-09-19,9,2023
+Recycling not being done in WMC jurisdiction,sanitation,0,WMC,2024-07-12,7,2024
+Construction debris on Nehru Marg,road,1,SMC,2023-01-13,1,2023
+Voltage fluctuations frequent in KDMC jurisdiction,electricity,1,KDMC,2023-06-26,6,2023
+Water bill discrepancy for West Zone in RMC jurisdiction,water,1,RMC,2024-06-28,6,2024
+Electrical maintenance overdue in KDMC jurisdiction,electricity,1,KDMC,2023-08-11,8,2023
+Recycling not being done in JMC jurisdiction,sanitation,0,JMC,2023-05-07,5,2023
+Voltage fluctuations frequent,electricity,1,GMC,2024-08-04,8,2024
+Unauthorized dumping ground,sanitation,2,PMC,2024-11-28,11,2024
+Road surface cracks on College Road in CMC jurisdiction,road,0,CMC,2024-06-17,6,2024
+Street light flickering at Ward 2,electricity,0,KMC,2023-01-16,1,2023
+Road hump needs repainting on Garden Street in KDMC jurisdiction,road,0,KDMC,2023-04-28,4,2023
+Traffic signal not working at Residential Colony in WMC jurisdiction,road,2,WMC,2024-07-14,7,2024
+Construction noise after hours in LMC jurisdiction,building,1,LMC,2024-12-06,12,2024
+Drainage system failure during rain in VMC jurisdiction,water,2,VMC,2023-03-17,3,2023
+Building permit delay,building,0,NMC,2024-07-08,7,2024
+No water supply for 24+ hours,water,2,CMC,2024-04-25,4,2024
+High mast light not working in UMC jurisdiction,electricity,1,UMC,2024-07-15,7,2024
+Voltage fluctuations frequent in CMC jurisdiction,electricity,1,CMC,2024-09-13,9,2024
+Street light not working at Central Zone,electricity,1,RMC,2024-03-15,3,2024
+Park lights not functioning in LMC jurisdiction,electricity,0,LMC,2024-08-31,8,2024
+Public bins missing in NMC jurisdiction,sanitation,0,NMC,2023-03-18,3,2023
+Tap leaking at Ward 6 in GMC jurisdiction,water,0,GMC,2024-05-03,5,2024
+Power cut during office hours in GMC jurisdiction,electricity,1,GMC,2023-05-16,5,2023
+Electrical maintenance overdue,electricity,1,RMC,2023-02-16,2,2023
+Street light sensor not working in AMC jurisdiction,electricity,0,AMC,2023-10-14,10,2023
+Sidewalk damaged on Station Road in HMC jurisdiction,road,1,HMC,2024-04-08,4,2024
+Emergency lights not working in PMC jurisdiction,electricity,2,PMC,2023-11-19,11,2023
+Waterlogging on Garden Street during rain in RMC jurisdiction,road,2,RMC,2024-08-06,8,2024
+Construction debris on MG Road in MMC jurisdiction,road,1,MMC,2024-05-10,5,2024
+Roadside vegetation obstructing view in CMC jurisdiction,road,1,CMC,2024-07-22,7,2024
+Large dangerous pothole on Link Road causing accidents in KDMC jurisdiction,road,2,KDMC,2023-06-07,6,2023
+Transformer making noise at Ward 3 in SMC jurisdiction,electricity,1,SMC,2023-10-31,10,2023
+Public toilet in park dirty in RMC jurisdiction,parks,2,RMC,2023-09-05,9,2023
+Water feature malfunction,parks,1,BMC,2024-07-12,7,2024
+Sewage smell in West Zone,sanitation,1,CMC,2024-07-08,7,2024
+Public event damage not repaired in VMC jurisdiction,parks,1,VMC,2023-12-10,12,2023
+Drain blockage at Ward 1 in AMC jurisdiction,water,1,AMC,2024-09-27,9,2024
+No water supply for 24+ hours in CMC jurisdiction,water,2,CMC,2024-09-24,9,2024
+Tap leaking at Industrial Area,water,0,DMC,2023-05-13,5,2023
+Power theft suspected in Central Zone in CMC jurisdiction,electricity,2,CMC,2023-08-25,8,2023
+Dumpster missing lid,sanitation,0,VMC,2024-09-28,9,2024
+Irregular water supply timing in CMC jurisdiction,water,1,CMC,2023-12-23,12,2023
+Public toilet in park dirty,parks,2,JMC,2024-01-03,1,2024
+Medical waste in regular garbage in CMC jurisdiction,sanitation,2,CMC,2024-01-06,1,2024
+Road markings faded on Link Road in VMC jurisdiction,road,0,VMC,2024-02-05,2,2024
+Pothole developing on Station Road in AMC jurisdiction,road,1,AMC,2024-08-09,8,2024
+Stagnant water causing mosquito breeding,water,1,LMC,2024-07-30,7,2024
+Building material on road in CMC jurisdiction,building,1,CMC,2024-08-30,8,2024
+Littering in public park in VMC jurisdiction,sanitation,0,VMC,2023-09-04,9,2023
+Pothole developing on Office Lane in LMC jurisdiction,road,1,LMC,2024-03-31,3,2024
+Power theft suspected in Central Zone in TMC jurisdiction,electricity,2,TMC,2024-03-20,3,2024
+Dead animal not removed,sanitation,2,KMC,2024-05-03,5,2024
+Illegal parking blocking Temple Street in WMC jurisdiction,road,1,WMC,2023-08-23,8,2023
+Grass not maintained in PMC jurisdiction,parks,0,PMC,2023-07-18,7,2023
+Water meter not working,water,0,BMC,2024-09-01,9,2024
+Garbage truck leaking in DMC jurisdiction,sanitation,1,DMC,2024-09-14,9,2024
+Building completion certificate issue in HMC jurisdiction,building,1,HMC,2023-01-30,1,2023
+Construction waste on roadside in GMC jurisdiction,sanitation,1,GMC,2024-02-06,2,2024
+Complete blackout in Market Area in CMC jurisdiction,electricity,2,CMC,2024-05-28,5,2024
+Drainage system failure during rain in MMC jurisdiction,water,2,MMC,2023-02-11,2,2023
+Garbage burning in open in KDMC jurisdiction,sanitation,2,KDMC,2023-03-03,3,2023
+Public tap not working at Ward 7,water,0,NMC,2024-08-04,8,2024
+Sidewalk damaged on Garden Street in VMC jurisdiction,road,1,VMC,2023-06-22,6,2023
+No water supply for 24+ hours,water,2,KDMC,2023-09-19,9,2023
+Transformer making noise at East Zone,electricity,1,MMC,2024-12-29,12,2024
+Speed breaker damaged on Hill Road,road,1,KDMC,2024-06-25,6,2024
+Recycling not being done in JMC jurisdiction,sanitation,0,JMC,2023-09-03,9,2023
+Overflowing water tank at West Zone in MMC jurisdiction,water,2,MMC,2023-07-01,7,2023
+Pipeline repair work incomplete in NMC jurisdiction,water,1,NMC,2023-09-03,9,2023
+Low water pressure in West Zone in NMC jurisdiction,water,1,NMC,2024-08-20,8,2024
+Missing manhole cover on Nehru Marg in LMC jurisdiction,road,2,LMC,2024-04-13,4,2024
+Transformer making noise at Ward 5,electricity,1,RMC,2023-03-23,3,2023
+Electrical meter issue in UMC jurisdiction,electricity,0,UMC,2023-08-03,8,2023
+Public toilet in park dirty,parks,2,TMC,2023-06-01,6,2023
+Borewell not functioning in CMC jurisdiction,water,1,CMC,2023-11-28,11,2023
+Bio-medical waste not disposed properly in UMC jurisdiction,sanitation,2,UMC,2024-01-12,1,2024
+Complete blackout in Ward 5 in BMC jurisdiction,electricity,2,BMC,2024-11-29,11,2024
+Tap leaking at Ward 1 in VMC jurisdiction,water,0,VMC,2023-07-10,7,2023
+Recycling not being done,sanitation,0,WMC,2024-09-09,9,2024
+Drainage cover broken on road,road,1,DMC,2023-08-19,8,2023
+Garbage burning in open,sanitation,2,DMC,2023-09-26,9,2023
+Stagnant water causing mosquito breeding in CMC jurisdiction,water,1,CMC,2023-09-26,9,2023
+Minor pothole on Station Road,road,0,CMC,2024-11-06,11,2024
+Road damage after rains on Park Avenue in GMC jurisdiction,road,2,GMC,2024-11-20,11,2024
+Public tap not working at Residential Colony in KDMC jurisdiction,water,0,KDMC,2023-08-05,8,2023
+Street light not working at Slum Area,electricity,1,AMC,2023-05-21,5,2023
+Road damage after rains on Office Lane,road,2,TMC,2024-05-23,5,2024
+Littering in public park,sanitation,0,NMC,2024-08-08,8,2024
+Garbage burning in open in WMC jurisdiction,sanitation,2,WMC,2024-08-03,8,2024
+Pipeline repair work incomplete in HMC jurisdiction,water,1,HMC,2023-06-18,6,2023
+Public bins missing in JMC jurisdiction,sanitation,0,JMC,2024-03-06,3,2024
+Unauthorized dumping ground in CMC jurisdiction,sanitation,2,CMC,2024-09-09,9,2024
+Electrical maintenance overdue in NMC jurisdiction,electricity,1,NMC,2023-02-21,2,2023
+Water bill discrepancy for Ward 3 in LMC jurisdiction,water,1,LMC,2023-07-26,7,2023
+Water bill discrepancy for South Zone in BMC jurisdiction,water,1,BMC,2024-02-21,2,2024
+Complete blackout in Ward 4,electricity,2,LMC,2024-08-02,8,2024
+Littering in public park in RMC jurisdiction,sanitation,0,RMC,2023-06-14,6,2023
+Construction waste on roadside,sanitation,1,SMC,2024-09-20,9,2024
+Emergency lights not working in CMC jurisdiction,electricity,2,CMC,2024-02-07,2,2024
+Street light timing incorrect,electricity,0,WMC,2023-09-22,9,2023
+Construction safety violation in LMC jurisdiction,building,2,LMC,2023-06-27,6,2023
+Electrical meter issue,electricity,0,JMC,2024-06-15,6,2024
+Stagnant water causing mosquito breeding in MMC jurisdiction,water,1,MMC,2024-08-22,8,2024
+Littering in public park in TMC jurisdiction,sanitation,0,TMC,2024-08-03,8,2024
+Overflowing water tank at Commercial Complex in KMC jurisdiction,water,2,KMC,2023-01-29,1,2023
+Construction waste on roadside in KMC jurisdiction,sanitation,1,KMC,2024-04-17,4,2024
+Borewell not functioning in WMC jurisdiction,water,1,WMC,2024-08-19,8,2024
+Power theft suspected in Central Zone in GMC jurisdiction,electricity,2,GMC,2023-07-13,7,2023
+Irregular water supply timing in KDMC jurisdiction,water,1,KDMC,2024-07-09,7,2024
+Road hump needs repainting on Service Road in NMC jurisdiction,road,0,NMC,2024-02-21,2,2024
+Water pipe burst at Middle Class Colony causing flooding,water,2,TMC,2024-10-28,10,2024
+Public bins missing,sanitation,0,GMC,2023-02-21,2,2023
+Water meter not working,water,0,LMC,2023-06-13,6,2023
+Waterlogging on MG Road during rain in WMC jurisdiction,road,2,WMC,2023-05-18,5,2023
+Street light flickering at East Zone in CMC jurisdiction,electricity,0,CMC,2023-07-22,7,2023
+Traffic signal not working at Central Zone,road,2,KMC,2023-11-19,11,2023
+Drain cleaning overdue in GMC jurisdiction,sanitation,1,GMC,2023-01-30,1,2023
+Garbage not collected for 2+ days in KMC jurisdiction,sanitation,2,KMC,2023-10-31,10,2023
+Partial power failure in Ward 6 in LMC jurisdiction,electricity,1,LMC,2023-03-28,3,2023
+Transformer making noise at Central Zone in SMC jurisdiction,electricity,1,SMC,2024-09-26,9,2024
+Littering in public park in JMC jurisdiction,sanitation,0,JMC,2023-06-26,6,2023
+Public toilet in park dirty in GMC jurisdiction,parks,2,GMC,2024-04-10,4,2024
+Dumpster missing lid in NMC jurisdiction,sanitation,0,NMC,2023-01-19,1,2023
+Stray animals in garbage in WMC jurisdiction,sanitation,1,WMC,2024-04-20,4,2024
+Drain blockage at South Zone in CMC jurisdiction,water,1,CMC,2023-10-02,10,2023
+Fountain not working,parks,1,AMC,2024-08-03,8,2024
+Water supply contaminated with sewage in RMC jurisdiction,water,2,RMC,2024-09-11,9,2024
+Public toilet unclean at Commercial Complex in AMC jurisdiction,sanitation,1,AMC,2023-03-15,3,2023
+Public toilet in park dirty in MMC jurisdiction,parks,2,MMC,2024-08-28,8,2024
+Illegal parking blocking Station Road in WMC jurisdiction,road,1,WMC,2024-01-22,1,2024
+Stray animals in garbage in TMC jurisdiction,sanitation,1,TMC,2023-07-29,7,2023
+Pothole developing on Link Road in BMC jurisdiction,road,1,BMC,2023-08-18,8,2023
+Water bill discrepancy for North Zone,water,1,VMC,2024-11-20,11,2024
+Public bins missing in HMC jurisdiction,sanitation,0,HMC,2024-06-21,6,2024
+Recycling not being done in MMC jurisdiction,sanitation,0,MMC,2024-11-05,11,2024
+Transformer making noise at Ward 6 in MMC jurisdiction,electricity,1,MMC,2023-07-07,7,2023
+Dumpster missing lid in AMC jurisdiction,sanitation,0,AMC,2023-04-26,4,2023
+Partial power failure in Ward 3 in CMC jurisdiction,electricity,1,CMC,2024-09-21,9,2024
+Garbage truck leaking in WMC jurisdiction,sanitation,1,WMC,2024-06-23,6,2024
+Pothole developing on Main Street in PMC jurisdiction,road,1,PMC,2024-03-18,3,2024
+Pothole developing on Main Street in AMC jurisdiction,road,1,AMC,2023-07-21,7,2023
+Street light timing incorrect,electricity,0,VMC,2023-01-04,1,2023
+Waterlogging on Hospital Lane during rain,road,2,GMC,2024-07-17,7,2024
+Occupancy certificate delay,building,1,AMC,2024-09-22,9,2024
+Property tax assessment error in HMC jurisdiction,building,0,HMC,2023-07-28,7,2023
+Construction safety violation in VMC jurisdiction,building,2,VMC,2023-04-18,4,2023
+Drain blockage at Ward 1 in RMC jurisdiction,water,1,RMC,2024-07-05,7,2024
+Building permit delay in HMC jurisdiction,building,0,HMC,2024-08-30,8,2024
+Stagnant water causing mosquito breeding in AMC jurisdiction,water,1,AMC,2023-04-07,4,2023
+Public tap not working at Commercial Complex,water,0,HMC,2023-06-16,6,2023
+Transformer making noise at Market Area in DMC jurisdiction,electricity,1,DMC,2023-11-08,11,2023
+Low water pressure in Middle Class Colony in DMC jurisdiction,water,1,DMC,2024-09-01,9,2024
+Stray animals in garbage in UMC jurisdiction,sanitation,1,UMC,2024-08-07,8,2024
+Water supply contaminated with sewage,water,2,CMC,2023-04-26,4,2023
+Bridge approach damaged near Ward 7 in HMC jurisdiction,road,2,HMC,2024-08-18,8,2024
+Emergency lights not working in NMC jurisdiction,electricity,2,NMC,2023-01-29,1,2023
+Water supply contaminated with sewage,water,2,AMC,2023-01-11,1,2023
+Major road collapse on River View in BMC jurisdiction,road,2,BMC,2024-04-14,4,2024
+Tap leaking at Middle Class Colony,water,0,SMC,2024-08-09,8,2024
+Public toilet in park dirty in JMC jurisdiction,parks,2,JMC,2024-07-07,7,2024
+Partial power failure in Middle Class Colony in GMC jurisdiction,electricity,1,GMC,2023-08-31,8,2023
+Play equipment damaged in RMC jurisdiction,parks,1,RMC,2023-08-06,8,2023
+Irregular water supply timing in VMC jurisdiction,water,1,VMC,2024-09-02,9,2024
+Public bins missing in CMC jurisdiction,sanitation,0,CMC,2024-12-05,12,2024
+Tree branch fallen on road at Ward 5 in NMC jurisdiction,road,2,NMC,2023-02-14,2,2023
+Public tap not working at Residential Colony,water,0,MMC,2024-01-19,1,2024
+Water treatment plant issue in GMC jurisdiction,water,2,GMC,2024-02-03,2,2024
+Garbage overflow at Slum Area,sanitation,1,JMC,2023-05-21,5,2023
+Littering in public park in AMC jurisdiction,sanitation,0,AMC,2023-09-13,9,2023
+Sanitation workers strike in KDMC jurisdiction,sanitation,2,KDMC,2024-10-17,10,2024
+Building plans not approved in MMC jurisdiction,building,1,MMC,2024-07-12,7,2024
+Power cut during office hours in JMC jurisdiction,electricity,1,JMC,2024-08-21,8,2024
+Bridge approach damaged near Ward 4 in KMC jurisdiction,road,2,KMC,2024-05-29,5,2024
+Road markings faded on Garden Street in KDMC jurisdiction,road,0,KDMC,2023-10-03,10,2023
+Street light sensor not working in NMC jurisdiction,electricity,0,NMC,2023-12-08,12,2023
+Road surface cracks on Lake Side,road,0,HMC,2024-06-09,6,2024
+Road hump needs repainting on Station Road in UMC jurisdiction,road,0,UMC,2023-03-06,3,2023
+Construction debris on Gandhi Road,road,1,MMC,2023-08-20,8,2023
+Billboard lights causing glare in KDMC jurisdiction,electricity,1,KDMC,2024-02-10,2,2024
+Park lights not functioning in VMC jurisdiction,electricity,0,VMC,2023-12-16,12,2023
+Street light not working at Ward 4 in TMC jurisdiction,electricity,1,TMC,2024-09-01,9,2024
+Poor road repair work on Hospital Lane in UMC jurisdiction,road,1,UMC,2023-10-22,10,2023
+Power cut during office hours,electricity,1,AMC,2024-05-17,5,2024
+Garbage burning in open in CMC jurisdiction,sanitation,2,CMC,2023-06-13,6,2023
+Drain blockage at Ward 7 in KDMC jurisdiction,water,1,KDMC,2023-08-03,8,2023
+Irregular water supply timing,water,1,UMC,2024-08-14,8,2024
+Dog waste in park,parks,0,WMC,2024-08-09,8,2024
+Public event damage not repaired in SMC jurisdiction,parks,1,SMC,2024-11-03,11,2024
+Power theft suspected in Ward 1,electricity,2,LMC,2024-11-15,11,2024
+Speed breaker damaged on College Road in PMC jurisdiction,road,1,PMC,2024-08-21,8,2024
+Traffic signal not working at North Zone in KMC jurisdiction,road,2,KMC,2023-11-19,11,2023
+Walking track damaged in BMC jurisdiction,parks,1,BMC,2023-05-19,5,2023
+Dumpster missing lid,sanitation,0,KDMC,2024-06-27,6,2024
+Power cut during office hours in CMC jurisdiction,electricity,1,CMC,2024-09-25,9,2024
+Road hump needs repainting on Park Avenue in JMC jurisdiction,road,0,JMC,2023-10-26,10,2023
+Poor road repair work on Nehru Marg in VMC jurisdiction,road,1,VMC,2024-08-04,8,2024
+High mast light not working in HMC jurisdiction,electricity,1,HMC,2023-07-06,7,2023
+Irrigation system broken in MMC jurisdiction,parks,1,MMC,2023-01-05,1,2023
+Traffic signal not working at South Zone in WMC jurisdiction,road,2,WMC,2023-07-29,7,2023
+Building permit delay in UMC jurisdiction,building,0,UMC,2023-08-08,8,2023
+Sidewalk damaged on Hospital Lane,road,1,MMC,2023-09-27,9,2023
+Water quality issues in Middle Class Colony,water,2,SMC,2024-04-09,4,2024
+Garbage not collected for 2+ days in GMC jurisdiction,sanitation,2,GMC,2023-08-02,8,2023
+Sanitation workers strike in HMC jurisdiction,sanitation,2,HMC,2024-04-26,4,2024
+Property tax assessment error,building,0,HMC,2023-07-10,7,2023
+Road markings faded on Garden Street in BMC jurisdiction,road,0,BMC,2023-01-08,1,2023
+Public tap not working at Commercial Complex,water,0,DMC,2023-10-06,10,2023
+Minor pothole on Main Street in SMC jurisdiction,road,0,SMC,2024-09-22,9,2024
+Heritage building damage in KMC jurisdiction,building,2,KMC,2024-04-21,4,2024
+Composting facility issue,sanitation,1,KMC,2024-08-11,8,2024
+Illegal parking blocking Market Road in DMC jurisdiction,road,1,DMC,2023-01-15,1,2023
+Poor road repair work on Garden Street in KMC jurisdiction,road,1,KMC,2023-06-23,6,2023
+Public toilet in park dirty,parks,2,BMC,2023-08-31,8,2023
+Stray animals in garbage in KDMC jurisdiction,sanitation,1,KDMC,2024-07-10,7,2024
+Construction debris on MG Road in WMC jurisdiction,road,1,WMC,2024-05-21,5,2024
+Water pipe burst at Industrial Area causing flooding in TMC jurisdiction,water,2,TMC,2024-04-17,4,2024
+Recycling not being done in LMC jurisdiction,sanitation,0,LMC,2023-04-22,4,2023
+Drain cleaning overdue,sanitation,1,HMC,2024-11-01,11,2024
+Road hump needs repainting on MG Road in KDMC jurisdiction,road,0,KDMC,2023-11-10,11,2023
+Tree branch fallen on road at North Zone,road,2,SMC,2023-05-15,5,2023
+Sidewalk damaged on Cross Street in TMC jurisdiction,road,1,TMC,2024-08-24,8,2024
+Water meter not working in KMC jurisdiction,water,0,KMC,2024-10-29,10,2024
+Public toilet unclean at West Zone,sanitation,1,TMC,2024-12-09,12,2024
+Street light timing incorrect in BMC jurisdiction,electricity,0,BMC,2024-08-11,8,2024
+Unauthorized commercial use,building,1,WMC,2023-09-19,9,2023
+Drainage system failure during rain in HMC jurisdiction,water,2,HMC,2024-04-19,4,2024
+Garbage burning in open in CMC jurisdiction,sanitation,2,CMC,2024-10-02,10,2024
+Road markings faded on Temple Street in SMC jurisdiction,road,0,SMC,2024-03-23,3,2024
+Building permit delay in AMC jurisdiction,building,0,AMC,2024-06-24,6,2024
+Tap leaking at Ward 3,water,0,TMC,2023-07-24,7,2023
+Emergency lights not working in KMC jurisdiction,electricity,2,KMC,2023-12-03,12,2023
+Minor pothole on MG Road in BMC jurisdiction,road,0,BMC,2024-01-21,1,2024
+Missing manhole cover on College Road,road,2,KDMC,2024-10-04,10,2024
+Roadside vegetation obstructing view,road,1,CMC,2024-08-18,8,2024
+Public bins missing in KDMC jurisdiction,sanitation,0,KDMC,2023-09-22,9,2023
+Dead animal not removed,sanitation,2,NMC,2023-07-13,7,2023
+Stray animals in garbage in KDMC jurisdiction,sanitation,1,KDMC,2023-09-02,9,2023
+Water bill discrepancy for North Zone in VMC jurisdiction,water,1,VMC,2024-12-21,12,2024
+Irregular water supply timing in BMC jurisdiction,water,1,BMC,2023-05-22,5,2023
+Public tap not working at Ward 3 in RMC jurisdiction,water,0,RMC,2024-12-06,12,2024
+Road surface cracks on Lake Side in RMC jurisdiction,road,0,RMC,2023-08-16,8,2023
+Street light flickering at Market Area,electricity,0,UMC,2024-10-05,10,2024
+Littering in public park in CMC jurisdiction,sanitation,0,CMC,2024-02-12,2,2024
+Drainage cover broken on road in AMC jurisdiction,road,1,AMC,2024-03-12,3,2024
+Public bins missing in KMC jurisdiction,sanitation,0,KMC,2023-04-02,4,2023
+Dumpster missing lid in UMC jurisdiction,sanitation,0,UMC,2024-03-15,3,2024
+Water contamination reported in Ward 3 in TMC jurisdiction,water,2,TMC,2023-01-08,1,2023
+Unauthorized dumping ground in CMC jurisdiction,sanitation,2,CMC,2023-06-02,6,2023
+Water treatment plant issue,water,2,KDMC,2024-07-01,7,2024
+Fire safety violation in KMC jurisdiction,building,2,KMC,2023-07-07,7,2023
+Drain blockage at Commercial Complex in KDMC jurisdiction,water,1,KDMC,2023-08-01,8,2023
+Public toilet unclean at Ward 3 in PMC jurisdiction,sanitation,1,PMC,2024-10-14,10,2024
+Drain blockage at Central Zone in RMC jurisdiction,water,1,RMC,2023-06-26,6,2023
+Illegal electricity connection in UMC jurisdiction,electricity,2,UMC,2023-05-31,5,2023
+Water meter not working in VMC jurisdiction,water,0,VMC,2023-01-19,1,2023
+Road surface cracks on Park Avenue in BMC jurisdiction,road,0,BMC,2024-01-15,1,2024
+Poor road repair work on MG Road,road,1,HMC,2023-09-03,9,2023
+Poor road repair work on Main Street,road,1,HMC,2023-07-27,7,2023
+Property tax assessment error in WMC jurisdiction,building,0,WMC,2024-08-29,8,2024
+Flower beds neglected in KDMC jurisdiction,parks,0,KDMC,2023-01-14,1,2023
+Medical waste in regular garbage,sanitation,2,JMC,2024-10-05,10,2024
+Construction debris on Hospital Lane in SMC jurisdiction,road,1,SMC,2023-05-03,5,2023
+Unauthorized vendors in park,parks,1,LMC,2024-04-27,4,2024
+Exposed wires at Ward 4,electricity,2,SMC,2023-04-19,4,2023
+Electrical maintenance overdue,electricity,1,WMC,2023-06-08,6,2023
+Property tax assessment error in AMC jurisdiction,building,0,AMC,2023-10-28,10,2023
+Recycling not being done in VMC jurisdiction,sanitation,0,VMC,2023-05-05,5,2023
+Missing manhole cover on Temple Street in WMC jurisdiction,road,2,WMC,2024-04-11,4,2024
+Public toilet in park dirty in VMC jurisdiction,parks,2,VMC,2023-01-10,1,2023
+No water supply for 24+ hours,water,2,HMC,2023-06-10,6,2023
+Industrial waste mixing in JMC jurisdiction,sanitation,2,JMC,2023-04-14,4,2023
+Poor road repair work on Service Road in RMC jurisdiction,road,1,RMC,2023-09-08,9,2023
+Park gates broken in JMC jurisdiction,parks,1,JMC,2023-04-03,4,2023
+Water treatment plant issue in GMC jurisdiction,water,2,GMC,2023-06-09,6,2023
+Construction waste on roadside in MMC jurisdiction,sanitation,1,MMC,2023-09-10,9,2023
+Public tap not working at Ward 2,water,0,VMC,2024-09-04,9,2024
+Low water pressure in Central Zone in KMC jurisdiction,water,1,KMC,2023-04-15,4,2023
+Exposed wires at Ward 2 in SMC jurisdiction,electricity,2,SMC,2024-05-13,5,2024
+Street light timing incorrect in LMC jurisdiction,electricity,0,LMC,2023-06-15,6,2023
+Pothole developing on Garden Street in NMC jurisdiction,road,1,NMC,2023-09-14,9,2023
+Sewage backup in Slum Area,water,2,CMC,2024-12-24,12,2024
+Pipeline repair work incomplete in VMC jurisdiction,water,1,VMC,2023-05-22,5,2023
+Composting facility issue in HMC jurisdiction,sanitation,1,HMC,2023-08-28,8,2023
+Property tax assessment error,building,0,LMC,2023-01-10,1,2023
+Emergency lights not working,electricity,2,SMC,2023-09-23,9,2023
+Road surface cracks on Garden Street,road,0,VMC,2023-07-04,7,2023
+Composting facility issue in DMC jurisdiction,sanitation,1,DMC,2024-05-18,5,2024
+Bridge approach damaged near Ward 4 in AMC jurisdiction,road,2,AMC,2024-07-19,7,2024
+Street light flickering at Market Area,electricity,0,AMC,2023-01-09,1,2023
+Major road collapse on River View in GMC jurisdiction,road,2,GMC,2023-03-21,3,2023
+Exposed wires at Ward 1,electricity,2,LMC,2023-03-24,3,2023
+Public toilet in park dirty in LMC jurisdiction,parks,2,LMC,2024-03-30,3,2024
+Sewage smell in East Zone in PMC jurisdiction,sanitation,1,PMC,2024-12-18,12,2024
+Electrical maintenance overdue,electricity,1,AMC,2024-07-20,7,2024
+Public toilet in park dirty in NMC jurisdiction,parks,2,NMC,2023-10-14,10,2023
+Overflowing water tank at East Zone in WMC jurisdiction,water,2,WMC,2023-06-16,6,2023
+Missing manhole cover on Market Road in CMC jurisdiction,road,2,CMC,2024-07-04,7,2024
+Traffic signal not working at South Zone,road,2,BMC,2024-02-07,2,2024
+Water meter not working in LMC jurisdiction,water,0,LMC,2023-10-12,10,2023
+Walking track damaged in WMC jurisdiction,parks,1,WMC,2024-08-02,8,2024
+Sidewalk damaged on Lake Side,road,1,VMC,2023-10-08,10,2023
+Park gates broken in LMC jurisdiction,parks,1,LMC,2024-08-07,8,2024
+Medical waste in regular garbage,sanitation,2,GMC,2023-10-04,10,2023
+Road surface cracks on Cross Street in RMC jurisdiction,road,0,RMC,2023-11-22,11,2023
+Sewage backup in West Zone in LMC jurisdiction,water,2,LMC,2023-05-10,5,2023
+Bio-medical waste not disposed properly in KMC jurisdiction,sanitation,2,KMC,2023-08-30,8,2023
+Water supply contaminated with sewage,water,2,JMC,2024-08-27,8,2024
+Leaking pipeline near Ward 6 in CMC jurisdiction,water,1,CMC,2024-07-25,7,2024
+Major road collapse on Cross Street in BMC jurisdiction,road,2,BMC,2024-07-09,7,2024
+Public toilet unclean at Ward 1,sanitation,1,VMC,2023-09-30,9,2023
+Public bins missing in CMC jurisdiction,sanitation,0,CMC,2023-06-12,6,2023
+Water treatment plant issue in NMC jurisdiction,water,2,NMC,2024-02-26,2,2024
+Garbage overflow at Ward 5 in LMC jurisdiction,sanitation,1,LMC,2023-01-01,1,2023
+Dumpster missing lid in BMC jurisdiction,sanitation,0,BMC,2023-07-09,7,2023
+Major road collapse on Market Road in UMC jurisdiction,road,2,UMC,2024-04-19,4,2024
+Sanitation workers strike,sanitation,2,BMC,2023-05-13,5,2023
+Pothole developing on MG Road in RMC jurisdiction,road,1,RMC,2023-08-22,8,2023
+Poor road repair work on Market Road,road,1,LMC,2024-11-20,11,2024
+Unauthorized building modifications in MMC jurisdiction,building,2,MMC,2024-09-24,9,2024
+Dead animal not removed,sanitation,2,NMC,2023-04-12,4,2023
+Sewage backup in Central Zone,water,2,TMC,2024-07-02,7,2024
+Large dangerous pothole on Main Street causing accidents in WMC jurisdiction,road,2,WMC,2023-08-14,8,2023
+Illegal parking blocking School Road,road,1,BMC,2024-10-12,10,2024
+Road markings faded on Link Road in HMC jurisdiction,road,0,HMC,2023-02-22,2,2023
+Recycling not being done in VMC jurisdiction,sanitation,0,VMC,2023-03-10,3,2023
+Stagnant water causing mosquito breeding,water,1,HMC,2024-09-15,9,2024
+Building permit delay in DMC jurisdiction,building,0,DMC,2023-04-23,4,2023
+Water pipe burst at South Zone causing flooding,water,2,MMC,2023-08-22,8,2023
+Water supply contaminated with sewage in CMC jurisdiction,water,2,CMC,2023-01-28,1,2023
+Poor road repair work on School Road,road,1,MMC,2024-10-19,10,2024
+Road hump needs repainting on Hospital Lane in HMC jurisdiction,road,0,HMC,2024-03-17,3,2024
+Street light flickering at Residential Colony in WMC jurisdiction,electricity,0,WMC,2023-07-30,7,2023
+Garbage overflow at Slum Area in AMC jurisdiction,sanitation,1,AMC,2024-08-17,8,2024
+Recycling not being done in GMC jurisdiction,sanitation,0,GMC,2023-10-26,10,2023
+Minor pothole on Church Street in WMC jurisdiction,road,0,WMC,2024-08-02,8,2024
+Public tap not working at Affluent Society in GMC jurisdiction,water,0,GMC,2023-10-06,10,2023
+Drain cleaning overdue,sanitation,1,KDMC,2023-04-25,4,2023
+Irrigation system broken in KMC jurisdiction,parks,1,KMC,2023-12-03,12,2023
+Exposed wires at Ward 6 in KDMC jurisdiction,electricity,2,KDMC,2024-06-25,6,2024
+Tap leaking at Affluent Society in UMC jurisdiction,water,0,UMC,2023-01-18,1,2023
+Road hump needs repainting on Gandhi Road in AMC jurisdiction,road,0,AMC,2023-09-28,9,2023
+Property tax assessment error in AMC jurisdiction,building,0,AMC,2024-09-02,9,2024
+Traffic signal not working at Central Zone in SMC jurisdiction,road,2,SMC,2023-07-07,7,2023
+Leaking pipeline near Residential Colony in BMC jurisdiction,water,1,BMC,2024-04-04,4,2024
+Garden not watered in VMC jurisdiction,parks,0,VMC,2024-12-07,12,2024
+Voltage fluctuations frequent in HMC jurisdiction,electricity,1,HMC,2023-03-17,3,2023
+Transformer making noise at Ward 5,electricity,1,DMC,2023-09-20,9,2023
+Street light sensor not working in MMC jurisdiction,electricity,0,MMC,2023-01-12,1,2023
+Drainage system failure during rain in CMC jurisdiction,water,2,CMC,2023-12-20,12,2023
+Transformer making noise at Central Zone,electricity,1,WMC,2024-03-20,3,2024
+Recycling not being done,sanitation,0,CMC,2024-09-05,9,2024
+Building cracks noticed,building,1,TMC,2023-10-24,10,2023
+Street light flickering at Ward 7 in PMC jurisdiction,electricity,0,PMC,2024-08-11,8,2024
+Roadside vegetation obstructing view in UMC jurisdiction,road,1,UMC,2024-08-28,8,2024
+Major road collapse on Main Street in JMC jurisdiction,road,2,JMC,2023-08-28,8,2023
+Property tax assessment error in RMC jurisdiction,building,0,RMC,2023-01-05,1,2023
+Public bins missing in TMC jurisdiction,sanitation,0,TMC,2024-02-23,2,2024
+Transformer making noise at North Zone,electricity,1,DMC,2023-01-07,1,2023
+Littering in public park,sanitation,0,GMC,2023-11-22,11,2023
+Electrical maintenance overdue,electricity,1,KDMC,2023-12-25,12,2023
+High mast light not working in CMC jurisdiction,electricity,1,CMC,2023-07-18,7,2023
+Road markings faded on Service Road in AMC jurisdiction,road,0,AMC,2024-04-04,4,2024
+Exposed wires at Ward 1 in DMC jurisdiction,electricity,2,DMC,2024-07-01,7,2024
+Power theft suspected in Middle Class Colony,electricity,2,BMC,2024-01-01,1,2024
+Medical waste in regular garbage in AMC jurisdiction,sanitation,2,AMC,2023-12-27,12,2023
+Property tax assessment error in KDMC jurisdiction,building,0,KDMC,2023-12-19,12,2023
+Stray animals in garbage,sanitation,1,PMC,2024-04-07,4,2024
+Water meter not working,water,0,UMC,2023-09-12,9,2023
+Street light not working at East Zone in AMC jurisdiction,electricity,1,AMC,2024-07-11,7,2024
+Public bins missing in TMC jurisdiction,sanitation,0,TMC,2023-01-13,1,2023
+Irregular water supply timing,water,1,JMC,2024-01-27,1,2024
+Leaking pipeline near South Zone,water,1,CMC,2023-05-16,5,2023
+Park lights not functioning in MMC jurisdiction,electricity,0,MMC,2024-09-11,9,2024
+High mast light not working in NMC jurisdiction,electricity,1,NMC,2023-07-24,7,2023
+Public toilet in park dirty in VMC jurisdiction,parks,2,VMC,2024-07-04,7,2024
+Water meter not working in AMC jurisdiction,water,0,AMC,2024-11-04,11,2024
+Road hump needs repainting on MG Road in WMC jurisdiction,road,0,WMC,2023-10-07,10,2023
+Drain blockage at Ward 7 in BMC jurisdiction,water,1,BMC,2023-03-07,3,2023
+Medical waste in regular garbage,sanitation,2,CMC,2024-08-13,8,2024
+Water feature malfunction in VMC jurisdiction,parks,1,VMC,2024-02-22,2,2024
+Water pipe burst at Central Zone causing flooding in VMC jurisdiction,water,2,VMC,2023-01-14,1,2023
+Missing manhole cover on Main Street in HMC jurisdiction,road,2,HMC,2023-02-23,2,2023
+Pothole developing on Office Lane in GMC jurisdiction,road,1,GMC,2023-05-04,5,2023
+Road surface cracks on Main Street,road,0,PMC,2023-08-31,8,2023
+Garbage not collected for 2+ days in BMC jurisdiction,sanitation,2,BMC,2024-06-30,6,2024
+Tap leaking at Affluent Society in JMC jurisdiction,water,0,JMC,2024-07-24,7,2024
+Partial power failure in Slum Area in KMC jurisdiction,electricity,1,KMC,2023-02-23,2,2023
+Road surface cracks on Lake Side,road,0,LMC,2024-02-20,2,2024
+Bridge approach damaged near Affluent Society in KDMC jurisdiction,road,2,KDMC,2023-03-14,3,2023
+Road surface cracks on Park Avenue in LMC jurisdiction,road,0,LMC,2023-04-07,4,2023
+Pothole developing on Hill Road in CMC jurisdiction,road,1,CMC,2023-09-19,9,2023
+Water meter not working,water,0,JMC,2024-07-21,7,2024
+Walking track damaged in DMC jurisdiction,parks,1,DMC,2024-07-26,7,2024
+Road markings faded on Lake Side in TMC jurisdiction,road,0,TMC,2023-08-11,8,2023
+Drain cleaning overdue in WMC jurisdiction,sanitation,1,WMC,2024-11-29,11,2024
+Water treatment plant issue in VMC jurisdiction,water,2,VMC,2024-08-30,8,2024
+Sidewalk damaged on Hospital Lane in SMC jurisdiction,road,1,SMC,2023-05-22,5,2023
+Drain blockage at Ward 1,water,1,WMC,2024-05-09,5,2024
+Public tap not working at South Zone in GMC jurisdiction,water,0,GMC,2024-02-03,2,2024
+Dog waste in park in CMC jurisdiction,parks,0,CMC,2023-03-13,3,2023
+Property tax assessment error,building,0,TMC,2023-09-09,9,2023
+Waterlogging on Temple Street during rain in TMC jurisdiction,road,2,TMC,2023-09-01,9,2023
+Pothole developing on Market Road,road,1,NMC,2023-10-04,10,2023
+Public toilet unclean at Market Area in RMC jurisdiction,sanitation,1,RMC,2023-05-22,5,2023
+Public toilet in park dirty in MMC jurisdiction,parks,2,MMC,2023-02-10,2,2023
+Roadside vegetation obstructing view,road,1,CMC,2024-07-08,7,2024
+Public bins missing in MMC jurisdiction,sanitation,0,MMC,2023-05-11,5,2023
+Speed breaker damaged on Market Road in VMC jurisdiction,road,1,VMC,2024-07-15,7,2024
+Public tap not working at Ward 3 in TMC jurisdiction,water,0,TMC,2024-04-06,4,2024
+Dumpster missing lid in DMC jurisdiction,sanitation,0,DMC,2024-10-14,10,2024
+Electrical meter issue in UMC jurisdiction,electricity,0,UMC,2024-06-18,6,2024
+Illegal electricity connection,electricity,2,WMC,2023-10-05,10,2023
+Overflowing water tank at Ward 1,water,2,UMC,2024-03-31,3,2024
+Tap leaking at Commercial Complex,water,0,UMC,2024-03-03,3,2024
+Water treatment plant issue in RMC jurisdiction,water,2,RMC,2023-06-26,6,2023
+Unauthorized dumping ground in KMC jurisdiction,sanitation,2,KMC,2024-01-01,1,2024
+Tap leaking at Ward 6,water,0,PMC,2023-11-06,11,2023
+Garbage truck leaking in DMC jurisdiction,sanitation,1,DMC,2023-07-26,7,2023
+Play equipment damaged,parks,1,LMC,2024-02-23,2,2024
+Minor pothole on Temple Street in JMC jurisdiction,road,0,JMC,2024-07-01,7,2024
+Road markings faded on College Road,road,0,TMC,2024-07-15,7,2024
+Pothole developing on Garden Street in WMC jurisdiction,road,1,WMC,2023-11-16,11,2023
+Roadside vegetation obstructing view in LMC jurisdiction,road,1,LMC,2024-06-29,6,2024
+Poor road repair work on Hospital Lane,road,1,HMC,2023-10-11,10,2023
+Tap leaking at Market Area in SMC jurisdiction,water,0,SMC,2024-10-20,10,2024
+Transformer making noise at Industrial Area in GMC jurisdiction,electricity,1,GMC,2024-05-07,5,2024
+Unauthorized dumping ground in CMC jurisdiction,sanitation,2,CMC,2024-07-15,7,2024
+Drainage cover broken on road in KMC jurisdiction,road,1,KMC,2023-05-28,5,2023
+Street light not working at Ward 5,electricity,1,HMC,2023-08-22,8,2023
+Dumpster missing lid,sanitation,0,MMC,2024-07-09,7,2024
+Water bill discrepancy for Industrial Area,water,1,UMC,2024-08-17,8,2024
+Borewell not functioning in LMC jurisdiction,water,1,LMC,2023-11-18,11,2023
+Poor road repair work on Station Road in RMC jurisdiction,road,1,RMC,2024-07-17,7,2024
+Sewage smell in Commercial Complex in KMC jurisdiction,sanitation,1,KMC,2023-04-22,4,2023
+Littering in public park in KMC jurisdiction,sanitation,0,KMC,2024-05-15,5,2024
+Low water pressure in Ward 4 in WMC jurisdiction,water,1,WMC,2024-08-23,8,2024
+Road hump needs repainting on Cross Street in MMC jurisdiction,road,0,MMC,2024-09-20,9,2024
+Public toilet unclean at Ward 7 in PMC jurisdiction,sanitation,1,PMC,2023-12-04,12,2023
+Traffic signal not working at Ward 2 in JMC jurisdiction,road,2,JMC,2024-10-21,10,2024
+Billboard lights causing glare,electricity,1,SMC,2023-10-14,10,2023
+Overflowing water tank at Ward 4,water,2,UMC,2023-11-15,11,2023
+Bio-medical waste not disposed properly,sanitation,2,WMC,2024-08-19,8,2024
+Unauthorized vendors in park in LMC jurisdiction,parks,1,LMC,2023-05-26,5,2023
+Construction without permission in GMC jurisdiction,building,2,GMC,2023-10-26,10,2023
+Transformer making noise at Industrial Area in AMC jurisdiction,electricity,1,AMC,2024-06-05,6,2024
+Park gates broken in AMC jurisdiction,parks,1,AMC,2023-11-04,11,2023
+Unauthorized vendors in park in KDMC jurisdiction,parks,1,KDMC,2023-09-18,9,2023
+Stray animals in garbage,sanitation,1,PMC,2024-08-09,8,2024
+Water meter not working,water,0,DMC,2024-09-16,9,2024
+Road surface cracks on Station Road in TMC jurisdiction,road,0,TMC,2024-11-11,11,2024
+Garbage truck leaking,sanitation,1,BMC,2023-07-28,7,2023
+Construction safety violation in TMC jurisdiction,building,2,TMC,2024-10-11,10,2024
+Property tax assessment error,building,0,CMC,2023-07-11,7,2023
+Sewage backup in South Zone,water,2,TMC,2023-09-04,9,2023
+Irregular water supply timing,water,1,BMC,2023-08-02,8,2023
+Construction quality issues in MMC jurisdiction,building,1,MMC,2023-01-17,1,2023
+Road surface cracks on Gandhi Road in WMC jurisdiction,road,0,WMC,2023-12-25,12,2023
+Water meter not working in UMC jurisdiction,water,0,UMC,2023-05-12,5,2023
+Bridge approach damaged near Ward 1,road,2,UMC,2023-12-09,12,2023
+Road markings faded on Link Road in GMC jurisdiction,road,0,GMC,2024-12-13,12,2024
+Recycling not being done in CMC jurisdiction,sanitation,0,CMC,2023-04-28,4,2023
+Drain cleaning overdue in HMC jurisdiction,sanitation,1,HMC,2023-11-21,11,2023
+Pothole developing on College Road in NMC jurisdiction,road,1,NMC,2023-09-07,9,2023
+Roadside vegetation obstructing view,road,1,UMC,2023-03-29,3,2023
+Road hump needs repainting on Temple Street in TMC jurisdiction,road,0,TMC,2024-04-12,4,2024
+Power cut during office hours in HMC jurisdiction,electricity,1,HMC,2023-05-12,5,2023
+Street light flickering at Ward 5,electricity,0,UMC,2024-08-15,8,2024
+Bridge approach damaged near West Zone in KDMC jurisdiction,road,2,KDMC,2023-07-20,7,2023
+Dumpster missing lid,sanitation,0,TMC,2023-05-22,5,2023
+Littering in public park in KMC jurisdiction,sanitation,0,KMC,2024-05-06,5,2024
+Major road collapse on Market Road in HMC jurisdiction,road,2,HMC,2023-05-20,5,2023
+Road surface cracks on Station Road in CMC jurisdiction,road,0,CMC,2023-02-18,2,2023
+Minor pothole on Park Avenue in WMC jurisdiction,road,0,WMC,2023-08-01,8,2023
+Tap leaking at East Zone in PMC jurisdiction,water,0,PMC,2024-01-08,1,2024
+Sewage backup in East Zone,water,2,CMC,2023-09-18,9,2023
+Fountain not working in JMC jurisdiction,parks,1,JMC,2023-07-10,7,2023
+Water treatment plant issue in WMC jurisdiction,water,2,WMC,2023-01-06,1,2023
+Park closing early in CMC jurisdiction,parks,0,CMC,2024-01-05,1,2024
+Tap leaking at Market Area in HMC jurisdiction,water,0,HMC,2023-04-18,4,2023
+Composting facility issue,sanitation,1,SMC,2024-12-15,12,2024
+Road hump needs repainting on College Road in VMC jurisdiction,road,0,VMC,2023-04-16,4,2023
+Speed breaker damaged on River View,road,1,MMC,2023-05-31,5,2023
+Partial power failure in Market Area in WMC jurisdiction,electricity,1,WMC,2023-08-18,8,2023
+Street light timing incorrect in HMC jurisdiction,electricity,0,HMC,2023-04-01,4,2023
+Major road collapse on River View in DMC jurisdiction,road,2,DMC,2024-12-08,12,2024
+Tap leaking at Commercial Complex,water,0,GMC,2024-10-10,10,2024
+Recycling not being done,sanitation,0,VMC,2023-07-15,7,2023
+Composting facility issue in KDMC jurisdiction,sanitation,1,KDMC,2024-11-19,11,2024
+Stray animals in garbage in CMC jurisdiction,sanitation,1,CMC,2023-04-24,4,2023
+Building permit delay in RMC jurisdiction,building,0,RMC,2023-09-10,9,2023
+Leaking pipeline near East Zone in KDMC jurisdiction,water,1,KDMC,2023-10-06,10,2023
+Irrigation system broken,parks,1,DMC,2024-12-03,12,2024
+Street light flickering at Ward 7 in KMC jurisdiction,electricity,0,KMC,2023-12-04,12,2023
+Tap leaking at South Zone in BMC jurisdiction,water,0,BMC,2024-03-11,3,2024
+Exposed wires at Commercial Complex in PMC jurisdiction,electricity,2,PMC,2024-07-10,7,2024
+Emergency lights not working in DMC jurisdiction,electricity,2,DMC,2024-05-17,5,2024
+Grass not maintained in KDMC jurisdiction,parks,0,KDMC,2023-03-23,3,2023
+Road markings faded on Hill Road in UMC jurisdiction,road,0,UMC,2023-11-27,11,2023
+Garbage overflow at Ward 5 in KDMC jurisdiction,sanitation,1,KDMC,2023-10-17,10,2023
+High mast light not working,electricity,1,WMC,2023-02-01,2,2023
+Illegal parking blocking Market Road,road,1,HMC,2023-07-08,7,2023
+Composting facility issue in VMC jurisdiction,sanitation,1,VMC,2024-10-31,10,2024
+Water meter not working in TMC jurisdiction,water,0,TMC,2023-02-13,2,2023
+Electrical maintenance overdue in PMC jurisdiction,electricity,1,PMC,2023-05-25,5,2023
+Tap leaking at Central Zone,water,0,PMC,2024-11-06,11,2024
+Power fluctuations damaging appliances in HMC jurisdiction,electricity,2,HMC,2024-09-12,9,2024
+Park gates broken in JMC jurisdiction,parks,1,JMC,2024-09-19,9,2024
+Bio-medical waste not disposed properly,sanitation,2,HMC,2023-09-26,9,2023
+Power theft suspected in Ward 5 in NMC jurisdiction,electricity,2,NMC,2023-06-29,6,2023
+Garbage overflow at Middle Class Colony,sanitation,1,NMC,2023-07-11,7,2023
+Roadside vegetation obstructing view in KMC jurisdiction,road,1,KMC,2023-08-17,8,2023
+Street light flickering at Ward 5 in UMC jurisdiction,electricity,0,UMC,2024-10-12,10,2024
+Recycling not being done in LMC jurisdiction,sanitation,0,LMC,2023-12-05,12,2023
+Recycling not being done in UMC jurisdiction,sanitation,0,UMC,2023-08-20,8,2023
+Road markings faded on Station Road in DMC jurisdiction,road,0,DMC,2023-05-15,5,2023
+Speed breaker damaged on Hill Road in AMC jurisdiction,road,1,AMC,2024-08-27,8,2024
+Industrial waste mixing in PMC jurisdiction,sanitation,2,PMC,2024-05-27,5,2024
+Complete blackout in Ward 6 in RMC jurisdiction,electricity,2,RMC,2024-03-04,3,2024
+Street light timing incorrect in SMC jurisdiction,electricity,0,SMC,2024-09-25,9,2024
+Street light flickering at Ward 2 in BMC jurisdiction,electricity,0,BMC,2023-07-08,7,2023
+Stray animals in garbage in KDMC jurisdiction,sanitation,1,KDMC,2024-09-06,9,2024
+Electrical pole leaning dangerously in KDMC jurisdiction,electricity,2,KDMC,2023-10-24,10,2023
+Public tap not working at Ward 4 in TMC jurisdiction,water,0,TMC,2023-12-28,12,2023
+Street light sensor not working in KDMC jurisdiction,electricity,0,KDMC,2023-05-16,5,2023
+Major road collapse on Nehru Marg,road,2,CMC,2023-03-16,3,2023
+Water meter not working in HMC jurisdiction,water,0,HMC,2023-08-02,8,2023
+Electrical meter issue,electricity,0,KDMC,2024-06-20,6,2024
+Missing manhole cover on Hill Road in TMC jurisdiction,road,2,TMC,2024-03-14,3,2024
+Construction debris on Park Avenue,road,1,SMC,2024-05-14,5,2024
+Water treatment plant issue,water,2,WMC,2023-09-24,9,2023
+Transformer making noise at West Zone,electricity,1,AMC,2024-08-14,8,2024
+Water meter not working in NMC jurisdiction,water,0,NMC,2023-11-19,11,2023
+Poor road repair work on Hill Road,road,1,NMC,2023-07-10,7,2023
+Complete blackout in Affluent Society in RMC jurisdiction,electricity,2,RMC,2024-11-02,11,2024
+Road surface cracks on Park Avenue in WMC jurisdiction,road,0,WMC,2024-07-22,7,2024
+Sewage smell in Market Area in VMC jurisdiction,sanitation,1,VMC,2024-11-18,11,2024
+Public toilet in park dirty in HMC jurisdiction,parks,2,HMC,2023-04-26,4,2023
+Electrical meter issue,electricity,0,VMC,2024-07-10,7,2024
+Property tax assessment error in LMC jurisdiction,building,0,LMC,2024-06-05,6,2024
+Construction quality issues,building,1,VMC,2024-10-15,10,2024
+Park lights not functioning in RMC jurisdiction,electricity,0,RMC,2023-02-23,2,2023
+Minor pothole on College Road,road,0,RMC,2024-01-19,1,2024
+Bio-medical waste not disposed properly in TMC jurisdiction,sanitation,2,TMC,2023-12-06,12,2023
+Garbage truck leaking in BMC jurisdiction,sanitation,1,BMC,2023-03-11,3,2023
+Road hump needs repainting on River View,road,0,RMC,2023-12-15,12,2023
+Minor pothole on Link Road in HMC jurisdiction,road,0,HMC,2023-08-11,8,2023
+High mast light not working in BMC jurisdiction,electricity,1,BMC,2024-10-16,10,2024
+Construction waste on roadside,sanitation,1,BMC,2024-09-14,9,2024
+Drainage system failure during rain in HMC jurisdiction,water,2,HMC,2024-08-05,8,2024
+Road markings faded on Temple Street in TMC jurisdiction,road,0,TMC,2023-07-14,7,2023
+Public bins missing in RMC jurisdiction,sanitation,0,RMC,2024-12-23,12,2024
+Leaking pipeline near Commercial Complex in SMC jurisdiction,water,1,SMC,2024-06-05,6,2024
+Street light sensor not working,electricity,0,JMC,2024-03-11,3,2024
+Emergency lights not working,electricity,2,TMC,2023-07-27,7,2023
+Dumpster missing lid,sanitation,0,KMC,2024-03-12,3,2024
+Roadside vegetation obstructing view,road,1,TMC,2023-08-18,8,2023
+Public bins missing in DMC jurisdiction,sanitation,0,DMC,2023-04-29,4,2023
+Broken park bench at Central Park in WMC jurisdiction,parks,0,WMC,2023-03-26,3,2023
+Road surface cracks on Gandhi Road in GMC jurisdiction,road,0,GMC,2023-10-25,10,2023
+Minor pothole on MG Road in GMC jurisdiction,road,0,GMC,2024-01-11,1,2024
+Building height violation in KMC jurisdiction,building,2,KMC,2024-01-09,1,2024
+Street light timing incorrect,electricity,0,AMC,2024-08-16,8,2024
+Water treatment plant issue in TMC jurisdiction,water,2,TMC,2024-12-10,12,2024
+Minor pothole on Market Road in HMC jurisdiction,road,0,HMC,2024-07-27,7,2024
+Leaking pipeline near Ward 5 in NMC jurisdiction,water,1,NMC,2023-08-01,8,2023
+Street light flickering at West Zone,electricity,0,SMC,2024-10-10,10,2024
+Water meter not working in MMC jurisdiction,water,0,MMC,2024-10-20,10,2024
+Public toilet in park dirty,parks,2,SMC,2023-04-01,4,2023
+Recycling not being done in VMC jurisdiction,sanitation,0,VMC,2024-02-16,2,2024
+Street light sensor not working in JMC jurisdiction,electricity,0,JMC,2023-05-19,5,2023
+Public tap not working at Central Zone,water,0,CMC,2024-06-28,6,2024
+Minor pothole on Garden Street in NMC jurisdiction,road,0,NMC,2024-02-01,2,2024
+Road hump needs repainting on Temple Street,road,0,AMC,2024-05-18,5,2024
+Street light flickering at Ward 5 in SMC jurisdiction,electricity,0,SMC,2023-01-19,1,2023
+Minor pothole on River View in CMC jurisdiction,road,0,CMC,2024-09-07,9,2024
+Street light flickering at South Zone in NMC jurisdiction,electricity,0,NMC,2024-12-07,12,2024
+Street light sensor not working,electricity,0,VMC,2023-08-02,8,2023
+No water supply for 24+ hours in SMC jurisdiction,water,2,SMC,2023-03-09,3,2023
+Garbage burning in open in UMC jurisdiction,sanitation,2,UMC,2024-06-10,6,2024
+Dumpster missing lid in CMC jurisdiction,sanitation,0,CMC,2023-08-23,8,2023
+Billboard lights causing glare in TMC jurisdiction,electricity,1,TMC,2024-10-28,10,2024
+Medical waste in regular garbage in BMC jurisdiction,sanitation,2,BMC,2023-11-09,11,2023
+Major road collapse on Temple Street in BMC jurisdiction,road,2,BMC,2024-04-19,4,2024
+Stray animals in garbage in GMC jurisdiction,sanitation,1,GMC,2024-12-03,12,2024
+Street light timing incorrect in MMC jurisdiction,electricity,0,MMC,2023-12-26,12,2023
+Minor pothole on Market Road,road,0,SMC,2024-09-02,9,2024
+Sewage smell in Slum Area in SMC jurisdiction,sanitation,1,SMC,2023-12-05,12,2023
+Construction waste on roadside in PMC jurisdiction,sanitation,1,PMC,2024-11-03,11,2024
+Water contamination reported in Commercial Complex in BMC jurisdiction,water,2,BMC,2023-04-07,4,2023
+Medical waste in regular garbage in RMC jurisdiction,sanitation,2,RMC,2024-12-01,12,2024
+Garbage overflow at Commercial Complex in AMC jurisdiction,sanitation,1,AMC,2023-03-02,3,2023
+Power theft suspected in Slum Area,electricity,2,MMC,2023-11-15,11,2023
+Recycling not being done in RMC jurisdiction,sanitation,0,RMC,2024-01-11,1,2024
+Construction waste on roadside in SMC jurisdiction,sanitation,1,SMC,2023-05-16,5,2023
+Public toilet unclean at Ward 3 in LMC jurisdiction,sanitation,1,LMC,2023-12-06,12,2023
+Road surface cracks on Park Avenue in GMC jurisdiction,road,0,GMC,2024-12-25,12,2024
+Water contamination reported in Industrial Area in JMC jurisdiction,water,2,JMC,2023-06-15,6,2023
+Littering in public park,sanitation,0,WMC,2024-05-30,5,2024
+Pipeline repair work incomplete in MMC jurisdiction,water,1,MMC,2023-01-28,1,2023
+Medical waste in regular garbage,sanitation,2,KDMC,2023-02-27,2,2023
+Park closing early in JMC jurisdiction,parks,0,JMC,2024-02-11,2,2024
+Water meter not working in GMC jurisdiction,water,0,GMC,2024-07-12,7,2024
+Road surface cracks on Hill Road,road,0,UMC,2023-06-27,6,2023
+Park lights not functioning in KDMC jurisdiction,electricity,0,KDMC,2024-10-14,10,2024
+Roadside vegetation obstructing view,road,1,TMC,2024-08-29,8,2024
+Garbage overflow at Ward 2 in AMC jurisdiction,sanitation,1,AMC,2023-05-13,5,2023
+Public bins missing,sanitation,0,BMC,2024-04-12,4,2024
+Construction debris on Church Street in TMC jurisdiction,road,1,TMC,2024-04-14,4,2024
+Water contamination reported in West Zone,water,2,CMC,2023-11-08,11,2023
+Building material on road in DMC jurisdiction,building,1,DMC,2023-12-19,12,2023
+Composting facility issue in LMC jurisdiction,sanitation,1,LMC,2023-08-30,8,2023
+Garbage burning in open,sanitation,2,HMC,2024-03-11,3,2024
+Building completion certificate issue in DMC jurisdiction,building,1,DMC,2023-07-20,7,2023
+Play equipment damaged in NMC jurisdiction,parks,1,NMC,2023-05-24,5,2023
+Composting facility issue,sanitation,1,NMC,2023-11-06,11,2023
+Borewell not functioning in DMC jurisdiction,water,1,DMC,2023-08-12,8,2023
+Property tax assessment error,building,0,LMC,2024-12-01,12,2024
+Pothole developing on MG Road in SMC jurisdiction,road,1,SMC,2023-08-14,8,2023
+Street light sensor not working in KMC jurisdiction,electricity,0,KMC,2024-10-21,10,2024
+Speed breaker damaged on Park Avenue in KMC jurisdiction,road,1,KMC,2023-06-24,6,2023
+Drainage cover broken on road in HMC jurisdiction,road,1,HMC,2024-07-03,7,2024
+Garbage not collected for 2+ days,sanitation,2,VMC,2024-05-06,5,2024
+Drain blockage at Ward 5 in JMC jurisdiction,water,1,JMC,2023-05-08,5,2023
+Park lights not functioning in TMC jurisdiction,electricity,0,TMC,2023-08-05,8,2023
+Garbage burning in open in PMC jurisdiction,sanitation,2,PMC,2024-09-15,9,2024
+Partial power failure in Commercial Complex,electricity,1,KDMC,2023-08-05,8,2023
+Road hump needs repainting on Park Avenue in TMC jurisdiction,road,0,TMC,2024-05-20,5,2024
+Composting facility issue in PMC jurisdiction,sanitation,1,PMC,2024-12-08,12,2024
+Public toilet in park dirty in SMC jurisdiction,parks,2,SMC,2024-06-23,6,2024
+Electrical pole leaning dangerously in BMC jurisdiction,electricity,2,BMC,2023-02-27,2,2023
+Construction debris on Cross Street in KMC jurisdiction,road,1,KMC,2023-10-06,10,2023
+Dog waste in park in AMC jurisdiction,parks,0,AMC,2023-02-08,2,2023
+Composting facility issue in CMC jurisdiction,sanitation,1,CMC,2023-11-10,11,2023
+Poor road repair work on Garden Street in CMC jurisdiction,road,1,CMC,2024-12-10,12,2024
+Street light flickering at Ward 6 in NMC jurisdiction,electricity,0,NMC,2024-10-28,10,2024
+Drain blockage at West Zone in TMC jurisdiction,water,1,TMC,2024-01-12,1,2024
+Partial power failure in Ward 4 in RMC jurisdiction,electricity,1,RMC,2024-06-11,6,2024
+Minor pothole on Office Lane,road,0,GMC,2023-10-19,10,2023
+Street light sensor not working,electricity,0,UMC,2023-07-17,7,2023
+Dumpster missing lid in CMC jurisdiction,sanitation,0,CMC,2024-09-23,9,2024
+Drain blockage at Ward 6 in MMC jurisdiction,water,1,MMC,2023-08-28,8,2023
+Drainage cover broken on road,road,1,WMC,2023-11-09,11,2023
+Garbage not collected for 2+ days in NMC jurisdiction,sanitation,2,NMC,2024-11-20,11,2024
+Garbage truck leaking,sanitation,1,WMC,2024-06-03,6,2024
+Unauthorized dumping ground in AMC jurisdiction,sanitation,2,AMC,2024-07-29,7,2024
+Construction without permission in UMC jurisdiction,building,2,UMC,2024-04-05,4,2024
+Water quality issues in Ward 6,water,2,CMC,2024-07-26,7,2024
+Flower beds neglected,parks,0,MMC,2024-03-08,3,2024
+Poor road repair work on Cross Street in DMC jurisdiction,road,1,DMC,2024-04-13,4,2024
+Street light sensor not working,electricity,0,BMC,2023-12-15,12,2023
+Electrical pole leaning dangerously,electricity,2,CMC,2024-09-17,9,2024
+Composting facility issue in MMC jurisdiction,sanitation,1,MMC,2024-07-05,7,2024
+Water meter not working,water,0,PMC,2024-10-19,10,2024
+Public toilet in park dirty in CMC jurisdiction,parks,2,CMC,2023-09-25,9,2023
+Flower beds neglected in CMC jurisdiction,parks,0,CMC,2024-04-03,4,2024
+Pothole developing on Church Street in MMC jurisdiction,road,1,MMC,2024-11-09,11,2024
+Water supply contaminated with sewage in MMC jurisdiction,water,2,MMC,2023-10-12,10,2023
+Road surface cracks on Link Road,road,0,BMC,2024-07-28,7,2024
+Transformer making noise at South Zone,electricity,1,CMC,2023-05-08,5,2023
+Public event damage not repaired in CMC jurisdiction,parks,1,CMC,2023-08-15,8,2023
+Recycling not being done in KDMC jurisdiction,sanitation,0,KDMC,2024-08-14,8,2024
+Road hump needs repainting on Market Road in JMC jurisdiction,road,0,JMC,2023-07-18,7,2023
+Heritage building damage in WMC jurisdiction,building,2,WMC,2024-10-27,10,2024
+Drain blockage at Commercial Complex in JMC jurisdiction,water,1,JMC,2023-07-14,7,2023
+Street light timing incorrect in TMC jurisdiction,electricity,0,TMC,2024-04-21,4,2024
+Street light flickering at Slum Area in KMC jurisdiction,electricity,0,KMC,2023-12-30,12,2023
+Bio-medical waste not disposed properly in KDMC jurisdiction,sanitation,2,KDMC,2024-09-04,9,2024
+Billboard lights causing glare in LMC jurisdiction,electricity,1,LMC,2023-03-20,3,2023
+Borewell not functioning in KDMC jurisdiction,water,1,KDMC,2024-11-15,11,2024
+Sidewalk damaged on Hill Road in RMC jurisdiction,road,1,RMC,2024-09-06,9,2024
+Illegal parking blocking Station Road,road,1,KDMC,2024-12-09,12,2024
+Water supply contaminated with sewage in SMC jurisdiction,water,2,SMC,2023-06-09,6,2023
+Road hump needs repainting on River View in KDMC jurisdiction,road,0,KDMC,2024-05-11,5,2024
+Electrical meter issue,electricity,0,LMC,2023-05-12,5,2023
+Exercise equipment broken in DMC jurisdiction,parks,1,DMC,2023-07-28,7,2023
+Bridge approach damaged near Middle Class Colony,road,2,MMC,2023-12-24,12,2023
+Power cut during office hours in UMC jurisdiction,electricity,1,UMC,2024-12-11,12,2024
+Street light sensor not working in WMC jurisdiction,electricity,0,WMC,2024-08-14,8,2024
+Public toilet unclean at Middle Class Colony,sanitation,1,KDMC,2023-12-05,12,2023
+Exposed wires at Industrial Area in PMC jurisdiction,electricity,2,PMC,2024-09-27,9,2024
+Dog waste in park in KMC jurisdiction,parks,0,KMC,2023-06-27,6,2023
+Dead animal not removed in PMC jurisdiction,sanitation,2,PMC,2023-11-18,11,2023
+Garden not watered,parks,0,KDMC,2023-04-01,4,2023
+Bridge approach damaged near Ward 7,road,2,RMC,2023-03-06,3,2023
+Road markings faded on MG Road in NMC jurisdiction,road,0,NMC,2024-06-29,6,2024
+Garbage burning in open in WMC jurisdiction,sanitation,2,WMC,2024-07-16,7,2024
+Public bins missing in MMC jurisdiction,sanitation,0,MMC,2023-11-09,11,2023
+Dog waste in park,parks,0,UMC,2024-09-03,9,2024
+Tree branch fallen on road at South Zone in WMC jurisdiction,road,2,WMC,2024-03-02,3,2024
+Recycling not being done,sanitation,0,GMC,2023-05-07,5,2023
+Major road collapse on Park Avenue in KMC jurisdiction,road,2,KMC,2024-05-26,5,2024
+Garbage overflow at Ward 1 in KDMC jurisdiction,sanitation,1,KDMC,2023-08-24,8,2023
+Park closing early in JMC jurisdiction,parks,0,JMC,2023-05-12,5,2023
+Sidewalk damaged on Office Lane in PMC jurisdiction,road,1,PMC,2023-10-30,10,2023
+Building cracks noticed in VMC jurisdiction,building,1,VMC,2023-01-30,1,2023
+Water quality issues in Ward 2,water,2,VMC,2023-01-24,1,2023
+Construction debris on Lake Side in CMC jurisdiction,road,1,CMC,2024-12-05,12,2024
+Bridge approach damaged near Market Area,road,2,JMC,2023-08-14,8,2023
+Electrical maintenance overdue,electricity,1,HMC,2024-01-26,1,2024
+Pothole developing on Park Avenue,road,1,KMC,2023-07-18,7,2023
+Power theft suspected in East Zone in JMC jurisdiction,electricity,2,JMC,2024-08-06,8,2024
+Water meter not working,water,0,UMC,2024-06-13,6,2024
+Power cut during office hours in MMC jurisdiction,electricity,1,MMC,2024-11-07,11,2024
+Irrigation system broken in UMC jurisdiction,parks,1,UMC,2023-06-12,6,2023
+Speed breaker damaged on Hospital Lane in TMC jurisdiction,road,1,TMC,2023-09-09,9,2023
+Construction waste on roadside in KMC jurisdiction,sanitation,1,KMC,2024-10-13,10,2024
+Drain cleaning overdue in WMC jurisdiction,sanitation,1,WMC,2023-12-09,12,2023
+Partial power failure in Central Zone,electricity,1,JMC,2024-03-22,3,2024
+Public bins missing in JMC jurisdiction,sanitation,0,JMC,2023-06-08,6,2023
+Billboard lights causing glare in BMC jurisdiction,electricity,1,BMC,2024-12-11,12,2024
+Pothole developing on Link Road in HMC jurisdiction,road,1,HMC,2023-07-28,7,2023
+Partial power failure in Central Zone in DMC jurisdiction,electricity,1,DMC,2023-10-07,10,2023
+Drain blockage at Slum Area in VMC jurisdiction,water,1,VMC,2024-10-06,10,2024
+Power fluctuations damaging appliances in UMC jurisdiction,electricity,2,UMC,2023-06-12,6,2023
+Road hump needs repainting on Link Road in PMC jurisdiction,road,0,PMC,2023-07-02,7,2023
+Public bins missing in JMC jurisdiction,sanitation,0,JMC,2024-03-31,3,2024
+Water meter not working in BMC jurisdiction,water,0,BMC,2023-11-30,11,2023
+Pipeline repair work incomplete in BMC jurisdiction,water,1,BMC,2024-12-11,12,2024
+Electrical meter issue in KDMC jurisdiction,electricity,0,KDMC,2024-05-10,5,2024
+Stagnant water causing mosquito breeding in HMC jurisdiction,water,1,HMC,2023-04-17,4,2023
+No water supply for 24+ hours in DMC jurisdiction,water,2,DMC,2024-06-30,6,2024
+Property tax assessment error in TMC jurisdiction,building,0,TMC,2024-09-04,9,2024
+Public toilet in park dirty,parks,2,GMC,2024-02-25,2,2024
+Power theft suspected in Ward 7 in HMC jurisdiction,electricity,2,HMC,2023-10-18,10,2023
+Littering in public park in LMC jurisdiction,sanitation,0,LMC,2024-02-02,2,2024
+Illegal electricity connection in GMC jurisdiction,electricity,2,GMC,2024-07-10,7,2024
+Drainage cover broken on road in RMC jurisdiction,road,1,RMC,2024-08-22,8,2024
+Water meter not working in CMC jurisdiction,water,0,CMC,2023-09-03,9,2023
+Garbage truck leaking in KDMC jurisdiction,sanitation,1,KDMC,2024-09-10,9,2024
+Medical waste in regular garbage in MMC jurisdiction,sanitation,2,MMC,2023-06-07,6,2023
+Building material on road,building,1,KDMC,2024-06-19,6,2024
+Building permit delay,building,0,KMC,2023-06-20,6,2023
+Stray animals in garbage,sanitation,1,KMC,2023-11-10,11,2023
+Construction waste on roadside in JMC jurisdiction,sanitation,1,JMC,2024-04-05,4,2024
+Public toilet in park dirty in KDMC jurisdiction,parks,2,KDMC,2023-05-18,5,2023
+Building permit delay in HMC jurisdiction,building,0,HMC,2023-11-28,11,2023
+Road hump needs repainting on Station Road in AMC jurisdiction,road,0,AMC,2024-02-03,2,2024
+Road hump needs repainting on Service Road in AMC jurisdiction,road,0,AMC,2024-02-15,2,2024
+Power theft suspected in Ward 1 in DMC jurisdiction,electricity,2,DMC,2023-05-14,5,2023
+Construction waste on roadside in CMC jurisdiction,sanitation,1,CMC,2024-07-11,7,2024
+Minor pothole on Temple Street,road,0,CMC,2024-04-11,4,2024
+Tree needs pruning in KDMC jurisdiction,parks,0,KDMC,2023-09-17,9,2023
+Speed breaker damaged on MG Road,road,1,RMC,2023-03-25,3,2023
+Public toilet in park dirty in KMC jurisdiction,parks,2,KMC,2024-08-08,8,2024
+Street light not working at East Zone in DMC jurisdiction,electricity,1,DMC,2024-09-09,9,2024
+Public toilet in park dirty in NMC jurisdiction,parks,2,NMC,2024-12-16,12,2024
+Exposed wires at Market Area,electricity,2,LMC,2023-01-10,1,2023
+Garbage truck leaking,sanitation,1,DMC,2023-12-15,12,2023
+Tap leaking at Slum Area,water,0,PMC,2024-08-12,8,2024
+Stagnant water causing mosquito breeding in NMC jurisdiction,water,1,NMC,2024-04-17,4,2024
+Voltage fluctuations frequent in AMC jurisdiction,electricity,1,AMC,2023-08-04,8,2023
+Overflowing water tank at Commercial Complex in TMC jurisdiction,water,2,TMC,2024-06-03,6,2024
+Composting facility issue in RMC jurisdiction,sanitation,1,RMC,2024-03-20,3,2024
+Illegal electricity connection in CMC jurisdiction,electricity,2,CMC,2024-02-21,2,2024
+Roadside vegetation obstructing view in AMC jurisdiction,road,1,AMC,2023-03-29,3,2023
+Tap leaking at Ward 5 in RMC jurisdiction,water,0,RMC,2024-03-05,3,2024
+Recycling not being done in UMC jurisdiction,sanitation,0,UMC,2023-06-17,6,2023
+Dumpster missing lid in WMC jurisdiction,sanitation,0,WMC,2023-07-15,7,2023
+Billboard lights causing glare in KMC jurisdiction,electricity,1,KMC,2024-06-01,6,2024
+Emergency lights not working in BMC jurisdiction,electricity,2,BMC,2023-09-29,9,2023
+Unauthorized vendors in park in NMC jurisdiction,parks,1,NMC,2023-12-15,12,2023
+Public event damage not repaired in TMC jurisdiction,parks,1,TMC,2024-03-30,3,2024
+Fire safety violation in KMC jurisdiction,building,2,KMC,2024-05-10,5,2024
+Public bins missing,sanitation,0,PMC,2024-08-14,8,2024
+Leaking pipeline near Ward 6 in SMC jurisdiction,water,1,SMC,2024-06-02,6,2024
+Minor pothole on Park Avenue,road,0,AMC,2024-05-15,5,2024
+Water meter not working in VMC jurisdiction,water,0,VMC,2024-09-26,9,2024
+Tree needs pruning in GMC jurisdiction,parks,0,GMC,2024-04-22,4,2024
+Water quality issues in Industrial Area,water,2,GMC,2023-06-07,6,2023
+Bridge approach damaged near Ward 5 in KMC jurisdiction,road,2,KMC,2024-12-22,12,2024
+Public toilet in park dirty,parks,2,KDMC,2024-09-10,9,2024
