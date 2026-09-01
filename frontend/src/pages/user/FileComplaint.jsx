@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Button from '../../components/button.jsx';
-import { predictionService, complaintService } from '../../services/apiService.js';
+import { complaintService } from '../../services/apiService.js';
 
 const FileComplaint = () => {
     const [formData, setFormData] = useState({
@@ -25,23 +25,23 @@ const FileComplaint = () => {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
-        if (!file) return;
+        if (file) {
+            setFormData((prev) => ({ ...prev, image: file }));
 
-        setFormData(prev => ({ ...prev, image: file }));
-
-        const reader = new FileReader();
-        reader.onloadend = () => setImagePreview(reader.result);
-        reader.readAsDataURL(file);
+            const reader = new FileReader();
+            reader.onloadend = () => setImagePreview(reader.result);
+            reader.readAsDataURL(file);
+        }
     };
 
     const handleGetLocation = () => {
         if (!navigator.geolocation) {
-            setError('Geolocation not supported');
+            setError('Geolocation is not supported by your browser');
             return;
         }
 
@@ -49,34 +49,31 @@ const FileComplaint = () => {
         setError(null);
 
         navigator.geolocation.getCurrentPosition(
-            async (pos) => {
-                const { latitude, longitude } = pos.coords;
-                setFormData(prev => ({
-                    ...prev,
-                    location: `${latitude}, ${longitude}`
-                }));
+            async (position) => {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                const locString = `${lat}, ${lng}`;
+
+                setFormData((prev) => ({ ...prev, location: locString }));
 
                 try {
-                    const response = await complaintService.reverseGeocode(latitude, longitude);
-                    if (response.success && response.address) {
-                        const { area, city, pincode } = response.address;
-                        setReadableAddress(`${area || ''}, ${city}${pincode ? ' - ' + pincode : ''}`);
-                    }
-                } catch (err) {
-                    console.error('Failed to geocode:', err);
-                    setReadableAddress('Coordinates obtained, but address look-up failed');
+                    const response = await fetch(
+                        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`
+                    );
+                    const data = await response.json();
+                    setReadableAddress(data.display_name || locString);
+                } catch {
+                    setReadableAddress(locString);
                 } finally {
                     setIsFetchingLocation(false);
                 }
             },
             () => {
-                setError('Failed to fetch location');
+                setError('Unable to retrieve your location');
                 setIsFetchingLocation(false);
             }
         );
     };
-
-    /* -------------------- FIXED SUBMIT LOGIC -------------------- */
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -91,50 +88,33 @@ const FileComplaint = () => {
         setPredictionResult(null);
 
         try {
-            /* 1️⃣ Call ML backend */
-            const predictionResponse =
-                await predictionService.predictComplaint(
-                    formData.description,
-                    formData.image
-                );
-
-            console.log('ML Backend Response:', predictionResponse);
-
-            /* 2️⃣ Normalize ML response */
-            const mlComplaint =
-                predictionResponse.complaint || predictionResponse;
-
-            /* ✅ GUARANTEED sector */
-            const sector =
-                mlComplaint?.nlp_result?.predicted_sector ?? 'General';
-
-            /* 3️⃣ Build payload for main backend */
+            /* Build complaint payload — Groq Multimodal AI performs classification on backend */
             const complaintPayload = {
                 complaint_id: `CMP-${Date.now()}`,
                 description: formData.description,
                 location: formData.location,
-                image: imagePreview,               // base64 image
-                sector: String(sector),             // 🔥 FIX
-                priority: 'Medium',
-                status: 'Pending',
-                nlp_result: mlComplaint?.nlp_result || {},
-                cnn_result: mlComplaint?.cnn_result || {},
-                user_id: user._id
+                image: imagePreview,
+                municipalityCode: user?.municipalityCode || 'BMC',
+                user_id: user?._id
             };
 
-            console.log('Final Payload:', complaintPayload);
+            console.log('Final Complaint Payload:', complaintPayload);
 
-            /* 4️⃣ Save complaint */
+            /* Save complaint via Express backend */
             const savedComplaint =
                 await complaintService.fileComplaint(complaintPayload);
 
+            console.log('Full Backend API Response:', savedComplaint);
+
             setPredictionResult({
                 message: savedComplaint.message,
-                complaint: savedComplaint.complaint
+                complaint: savedComplaint.complaint,
+                deduplication: savedComplaint.deduplication,
+                rawResponse: savedComplaint
             });
 
         } catch (err) {
-            console.error('Prediction/Filing error:', err);
+            console.error('Filing error:', err);
             setError(err.message || 'Something went wrong');
         } finally {
             setIsSubmitting(false);
@@ -213,7 +193,7 @@ const FileComplaint = () => {
                     <img
                         src={imagePreview}
                         alt="Preview"
-                        className="rounded-lg border border-gray-200"
+                        className="rounded-lg border border-gray-200 max-h-64 object-cover w-full"
                     />
                 )}
 
@@ -228,14 +208,14 @@ const FileComplaint = () => {
                 <div className="flex gap-4">
                     <Button
                         type="button"
-                        label="Cancel"
+                        label="Reset"
                         variant="secondary"
-                        onClick={() => navigate('/user-dashboard')}
+                        onClick={handleReset}
                         className="flex-1"
                     />
                     <Button
                         type="submit"
-                        label={isSubmitting ? 'Submitting...' : 'File Complaint'}
+                        label={isSubmitting ? 'Analyzing & Filing...' : 'File Complaint'}
                         variant="primary"
                         disabled={isSubmitting}
                         className="flex-1"
@@ -243,16 +223,64 @@ const FileComplaint = () => {
                 </div>
             </form>
 
-            {/* Result Message */}
+            {/* Result & API Output Card */}
             {predictionResult && (
-                <div className={`mt-6 p-4 rounded border ${predictionResult.complaint?.status === 'Rejected' ? 'bg-red-100 text-red-700 border-red-200' : predictionResult.complaint?.status === 'Flagged' ? 'bg-yellow-100 text-yellow-700 border-yellow-200' : 'bg-green-100 text-green-700 border-green-200'}`}>
-                    {predictionResult.complaint?.status === 'Rejected' ? '❌ ' : predictionResult.complaint?.status === 'Flagged' ? '⚠️ ' : '✅ '}
-                    {predictionResult.complaint?.status === 'Rejected' ? 'Complaint Discarded: Suspicious Content' : predictionResult.message}
+                <div className={`mt-6 p-6 rounded-xl border ${predictionResult.complaint?.status === 'Rejected' ? 'bg-red-50 border-red-200 text-red-800' : predictionResult.complaint?.status === 'Flagged' ? 'bg-yellow-50 border-yellow-200 text-yellow-800' : 'bg-emerald-50 border-emerald-200 text-emerald-800'}`}>
+                    <div className="flex items-center gap-3 mb-3">
+                        <span className="text-2xl">
+                            {predictionResult.complaint?.status === 'Rejected' ? '❌' : predictionResult.complaint?.status === 'Flagged' ? '⚠️' : '✅'}
+                        </span>
+                        <div>
+                            <h3 className="text-lg font-bold">
+                                {predictionResult.complaint?.status === 'Rejected' ? 'Complaint Rejected (Suspicious Content)' : predictionResult.message}
+                            </h3>
+                            <p className="text-xs text-gray-500">ID: {predictionResult.complaint?.complaint_id}</p>
+                        </div>
+                    </div>
+
                     {(predictionResult.complaint?.status === 'Flagged' || predictionResult.complaint?.status === 'Rejected') && (
-                       <p className={`mt-2 text-sm ${predictionResult.complaint?.status === 'Rejected' ? 'text-red-600/80' : 'text-yellow-600/80'}`}>
-                         {predictionResult.complaint.flagReason}
+                       <p className="mt-2 text-sm p-3 rounded bg-white border border-gray-200 font-medium text-gray-700">
+                         <b>Notice:</b> {predictionResult.complaint?.flagReason}
                        </p>
                     )}
+
+                    {/* Groq AI Classification Breakdown */}
+                    {predictionResult.complaint?.aiClassification && (
+                        <div className="mt-4 p-4 rounded-lg bg-white border border-gray-200 space-y-2">
+                            <div className="flex justify-between items-center border-b border-gray-200 pb-2 mb-2">
+                                <span className="text-xs font-bold uppercase tracking-wider text-emerald-600">🤖 Groq Multimodal AI Output</span>
+                                <span className="text-xs px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 font-mono">
+                                    {predictionResult.complaint.aiClassification.provider} ({predictionResult.complaint.aiClassification.model})
+                                </span>
+                            </div>
+                            <div className="grid grid-cols-2 gap-2 text-xs text-gray-700">
+                                <div><span className="text-gray-500">Defect Class:</span> <b className="text-gray-900 font-mono">{predictionResult.complaint.aiClassification.defectClass}</b></div>
+                                <div><span className="text-gray-500">Priority/Severity:</span> <b className="text-gray-900">{predictionResult.complaint.priority}</b></div>
+                                <div><span className="text-gray-500">Confidence:</span> <b className="text-gray-900">{(predictionResult.complaint.aiClassification.confidence * 100).toFixed(1)}% ({predictionResult.complaint.aiClassification.confidenceTier})</b></div>
+                                <div><span className="text-gray-500">Status:</span> <b className="text-gray-900">{predictionResult.complaint.status}</b></div>
+                            </div>
+                            {predictionResult.complaint.aiClassification.detectedIssue && (
+                                <div className="text-xs pt-1">
+                                    <span className="text-gray-500">Detected Issue:</span> <span className="text-gray-900 font-medium">{predictionResult.complaint.aiClassification.detectedIssue}</span>
+                                </div>
+                            )}
+                            {predictionResult.complaint.aiClassification.evidence && (
+                                <div className="text-xs pt-1">
+                                    <span className="text-gray-500">AI Evidence:</span> <span className="text-gray-700 italic">{predictionResult.complaint.aiClassification.evidence}</span>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {/* Expandable Raw JSON Response Viewer */}
+                    <details className="mt-4 text-xs">
+                        <summary className="cursor-pointer font-mono text-emerald-600 hover:underline select-none">
+                            🔍 View Full Raw API Response (JSON)
+                        </summary>
+                        <pre className="mt-2 p-3 rounded bg-gray-900 text-emerald-300 overflow-x-auto max-h-64 font-mono text-[11px]">
+                            {JSON.stringify(predictionResult.rawResponse, null, 2)}
+                        </pre>
+                    </details>
                 </div>
             )}
         </div>
