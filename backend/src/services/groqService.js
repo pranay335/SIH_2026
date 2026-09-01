@@ -8,6 +8,18 @@ const DEFAULT_GROQ_MODEL = 'qwen/qwen3.6-27b';
 const MAX_IMAGE_SIZE_BYTES = 10 * 1024 * 1024; // 10MB Base64 size limit
 const REQUEST_TIMEOUT_MS = 30000; // 30s timeout limit
 
+// Groq models confirmed to accept multimodal (image_url) content. Matching on the
+// literal substring "vision" is unreliable — none of Groq's actual vision-capable
+// models (qwen/qwen3.6-27b, qwen/qwen3.8-27b) contain that word, so that check
+// silently dropped every image sent to the model while it kept fabricating
+// "visual evidence" text anyway. Keep this list in sync with Groq's vision docs.
+const VISION_CAPABLE_MODELS = new Set([
+  'qwen/qwen3.6-27b',
+  'qwen/qwen3.8-27b',
+  'meta-llama/llama-4-scout-17b-16e-instruct',
+  'meta-llama/llama-4-maverick-17b-128e-instruct'
+]);
+
 class GroqService {
   constructor() {
     this.client = null;
@@ -128,7 +140,14 @@ class GroqService {
     }
 
     const modelName = process.env.GROQ_MODEL || DEFAULT_GROQ_MODEL;
-    const isVisionModel = modelName.includes('vision');
+    const isVisionModel = VISION_CAPABLE_MODELS.has(modelName);
+
+    // An image was uploaded but the configured model can't actually see it — the model
+    // must be told this explicitly so it never fabricates visual confirmation language.
+    const imageProvidedButUnviewable = !!imageMeta && !isVisionModel;
+    if (imageProvidedButUnviewable) {
+      console.warn(`⚠️ GROQ_MODEL "${modelName}" is not vision-capable — image will NOT be analyzed. Set GROQ_MODEL=qwen/qwen3.6-27b to enable real image classification.`);
+    }
 
     // 4. Construct user message content via dedicated groqPrompt module
     const userContent = groqPrompt.buildUserContent({
@@ -136,7 +155,8 @@ class GroqService {
       imageMeta,
       address,
       municipalityCode,
-      isVisionModel
+      isVisionModel,
+      imageProvidedButUnviewable
     });
 
     const messages = [
@@ -156,7 +176,8 @@ class GroqService {
         model: modelName,
         messages,
         temperature: 0.1,
-        max_completion_tokens: 4000
+        max_completion_tokens: 4000,
+        response_format: { type: 'json_object' }
       };
 
       const completionPromise = client.chat.completions.create(completionParams);
@@ -222,6 +243,7 @@ class GroqService {
       return {
         success: true,
         modelUsed: modelName,
+        imageAnalyzed: !!imageMeta && isVisionModel,
         defectClass: data.defectClass,
         classId: data.defectClass,
         displayName: data.displayName,
