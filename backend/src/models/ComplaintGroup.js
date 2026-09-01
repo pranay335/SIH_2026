@@ -60,7 +60,7 @@ const complaintGroupSchema = new mongoose.Schema({
 
   status: {
     type: String,
-    enum: ['Pending', 'Assigned', 'In Progress', 'Resolved', 'Closed'],
+    enum: ['Pending', 'Assigned', 'In Progress', 'Resolved', 'Closed', 'Flagged', 'Rejected'],
     default: 'Pending'
   },
 

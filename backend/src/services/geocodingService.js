@@ -5,16 +5,16 @@ class GeocodingService {
     // Multiple geocoding services for reliability
     this.services = [
       {
-        name: 'OpenStreetMap Nominatim',
-        url: 'https://nominatim.openstreetmap.org/reverse',
-        searchUrl: 'https://nominatim.openstreetmap.org/search',
-        timeout: 5000
-      },
-      {
         name: 'Photon (Komoot)',
         url: 'https://photon.komoot.io/reverse',
         searchUrl: 'https://photon.komoot.io/api',
-        timeout: 8000
+        timeout: 5000
+      },
+      {
+        name: 'OpenStreetMap Nominatim',
+        url: 'https://nominatim.openstreetmap.org/reverse',
+        searchUrl: 'https://nominatim.openstreetmap.org/search',
+        timeout: 2000
       }
     ];
 
@@ -57,8 +57,7 @@ class GeocodingService {
       const response = await axios.get(service.url, {
         params,
         headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-          'Referer': 'http://localhost:3000'
+          'User-Agent': 'CivicMind/1.0 (municipal grievance platform; contact via GitHub repo)'
         },
         timeout: service.timeout
       });
